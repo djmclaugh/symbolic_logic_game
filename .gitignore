@@ -1,0 +1,10 @@
+##########
+# Code I didn't write
+##########
+
+# vuejs
+public/lib/vue@3.2.8/dist/vue.runtime.global.js
+
+# generated code
+public/src/**/*.js
+public/src/**/*.js.map
