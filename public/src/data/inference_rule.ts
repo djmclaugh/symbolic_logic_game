@@ -58,7 +58,7 @@ export const DoubleNegationIntroduction: InferenceRule = {
 export const DoubleNegationElimination: InferenceRule = {
   name: "Double Negation Elimination",
   inputDescription: "A proposition from the bank that starts with \"¬(¬(\" and ends with \"))\"",
-  outputDescription: "The chosen, but with the \"¬(¬(\" prefix and the \"))\" suffix removed",
+  outputDescription: "The chosen proposition, but with the \"¬(¬(\" prefix and the \"))\" suffix removed",
   inputTypes: [InputType.BankProposition],
   doesApply: (propositions: Input[]) => {
     if (propositions.length != 1) {
