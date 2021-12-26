@@ -1,5 +1,7 @@
 import Vue from '../vue.js'
 
+import FreePropositionPicker from './free_proposition_picker.js'
+
 import InferenceRule, { Blank, Input, InputType } from '../data/inference_rule.js'
 import PropositionHelpers, {Proposition} from '../data/proposition.js'
 
@@ -27,6 +29,38 @@ export default {
       alreadyFound: false,
     };
     const data: InferenceRuleData = Vue.reactive(initialData);
+
+    function inputFromType(t: InputType, i: number): any {
+      if (t == InputType.AnyProposition) {
+        return Vue.h(FreePropositionPicker, {
+          onChange: () => {},
+          style: { 'margin': '8px' },
+        });
+      } else if (t == InputType.BankProposition) {
+        const options = [];
+        for (let i = 0; i < props.propositions.length; ++i) {
+          const p = props.propositions[i];
+          options.push(Vue.h('option', { value: i }, PropositionHelpers.toString(p)));
+        }
+        return Vue.h('select', {
+          onChange: onChange(i),
+          style: { 'margin': '8px' },
+        }, [
+          Vue.h('option', { value: -1 }, "Select a proposition"),
+        ].concat(options));
+      } else if (t ==  InputType.LeftRight) {
+        return Vue.h('select', {
+          style: { 'margin': '8px' },
+          onChange: onChange(i),
+        }, [
+          Vue.h('option', { value: "" }, "Select a side"),
+          Vue.h('option', { value: "left" }, "Left"),
+          Vue.h('option', { value: "right" }, "Right"),
+        ]);
+      } else {
+        return Vue.h('span', {}, `Unknown input type: ${t}`);
+      }
+    }
 
     function onClick(e: MouseEvent) {
       data.errorMessage = null;
@@ -85,38 +119,25 @@ export default {
         style: {
           "font-weight": "bold",
         },
-      }, "Needs: "));
-      details.push(Vue.h('span', {}, props.rule.inputDescription));
-      details.push(Vue.h('br'));
-
-      const options = [];
-      for (let i = 0; i < props.propositions.length; ++i) {
-        const p = props.propositions[i];
-        options.push(Vue.h('option', { value: i }, PropositionHelpers.toString(p)));
-      }
-      for (let i = 0; i < props.rule.inputTypes.length; ++i) {
-        const t = props.rule.inputTypes[i];
-        if (t == InputType.BankProposition) {
-          details.push(Vue.h('select', {
-            onChange: onChange(i),
-          }, [
-            Vue.h('option', { value: -1 }, "Select a proposition"),
-          ].concat(options)));
-        } else if (t ==  InputType.LeftRight) {
-          details.push(Vue.h('select', {
-            onChange: onChange(i),
-          }, [
-            Vue.h('option', { value: "" }, "Select a side"),
-            Vue.h('option', { value: "left" }, "Left"),
-            Vue.h('option', { value: "right" }, "Right"),
+      }, 'Needs: '));
+      if (props.rule.inputDescriptions.length == 1) {
+        details.push(Vue.h('span', {}, props.rule.inputDescriptions[0]));
+        const t = props.rule.inputTypes[0];
+        details.push(Vue.h('br'));
+        details.push(inputFromType(props.rule.inputTypes[0], 0));
+        details.push(Vue.h('br'));
+      } else {
+        const list = [];
+        for (let i = 0; i < props.rule.inputTypes.length; ++i) {
+          list.push(Vue.h('li', {}, [
+            props.rule.inputDescriptions[i],
+            Vue.h('br'),
+            inputFromType(props.rule.inputTypes[i], i)
           ]));
-        } else {
-          details.push(Vue.h('span', {}, `Unknown input type: ${t}`));
         }
-
+        details.push(Vue.h('ul', {}, list));
       }
 
-      details.push(Vue.h('br'));
       details.push(Vue.h('br'));
 
       details.push(Vue.h('span', {
@@ -129,11 +150,12 @@ export default {
 
       details.push(Vue.h('button', {
         onClick: onClick,
+        style: { 'margin': '8px' },
       }, "Apply!"));
       if (data.errorMessage != null) {
         details.push(Vue.h('br'));
         details.push(Vue.h('br'));
-        details.push(Vue.h('span', {}, data.errorMessage));
+        details.push(Vue.h('span', { class: 'error' }, data.errorMessage));
       }
       if (data.producedProposition != null) {
         const p = PropositionHelpers.toString(data.producedProposition);

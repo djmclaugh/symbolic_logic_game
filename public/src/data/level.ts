@@ -3,6 +3,10 @@ import InferenceRule, {
   DoubleNegationElimination,
   ConjunctionIntroduction,
   ConjunctionElimination,
+  DisjunctionIntroduction,
+  DisjunctionElimination,
+  ConditionalIntroduction,
+  ConditionalElimination,
 } from './inference_rule.js'
 import PropHelper, { Proposition, lit, not, and, or } from './proposition.js'
 
@@ -14,7 +18,7 @@ export default interface Level {
 
 export const LEVELS: Level[] = [
   {
-    rules: [DoubleNegationIntroduction],
+    rules: [ConditionalIntroduction],
     propositions: [
       lit("Adam likes apples"),
       lit("David likes apples"),
@@ -73,6 +77,24 @@ export const LEVELS: Level[] = [
       DoubleNegationElimination,
       ConjunctionIntroduction,
       ConjunctionElimination,
+    ],
+    propositions: [
+      and(lit("Alice likes apples"), not(not(lit("Alice likes oranges")))),
+      not(not(and(lit("Bob likes apples"), lit("Bob likes oranges")))),
+    ],
+    target: and(lit("Alice likes oranges"), lit("Bob likes oranges")),
+  },
+
+  {
+    rules: [
+      DoubleNegationIntroduction,
+      DoubleNegationElimination,
+      ConjunctionIntroduction,
+      ConjunctionElimination,
+      DisjunctionIntroduction,
+      DisjunctionElimination,
+      ConditionalIntroduction,
+      ConditionalElimination,
     ],
     propositions: [
       and(lit("Alice likes apples"), not(not(lit("Alice likes oranges")))),

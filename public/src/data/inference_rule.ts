@@ -1,6 +1,8 @@
 import PropositionHelpers, {
   Proposition,
   Conjunction,
+  Disjunction,
+  Conditional,
   lit,
   not,
   and,
@@ -12,16 +14,19 @@ import PropositionHelpers, {
 export type Restriction = (inputs: Input[]) => string;
 export type Transformation = (inputs: Input[]) => Proposition;
 
-export type Input = Proposition|"left"|"right";
+export type Proof = never;
+export type Input = Proposition|"left"|"right"|Proof;
 
 export enum InputType {
+  AnyProposition,
   BankProposition,
   LeftRight,
+  Proof,
 }
 
 export default interface InferenceRule {
     readonly name: string,
-    readonly inputDescription: string,
+    readonly inputDescriptions: string[],
     readonly outputDescription: string,
     readonly inputTypes: InputType[],
     readonly doesApply: Restriction,
@@ -30,7 +35,7 @@ export default interface InferenceRule {
 
 export const Blank: InferenceRule = {
   name: "",
-  inputDescription: "",
+  inputDescriptions: [],
   outputDescription: "",
   inputTypes: [],
   doesApply: () => "",
@@ -41,8 +46,8 @@ export const Blank: InferenceRule = {
 
 export const DoubleNegationIntroduction: InferenceRule = {
   name: "Double Negation Introduction",
-  inputDescription: "Any proposition already in the bank.",
-  outputDescription: "The chosen proposition, but with \"¬(¬(\" prefixed and \"))\" suffixed.",
+  inputDescriptions: ["Any proposition already in the bank, 𝑃."],
+  outputDescription: "¬(¬(𝑃))",
   inputTypes: [InputType.BankProposition],
   doesApply: (inputs: Input[]) => {
     if (inputs.length != 1) {
@@ -57,8 +62,8 @@ export const DoubleNegationIntroduction: InferenceRule = {
 
 export const DoubleNegationElimination: InferenceRule = {
   name: "Double Negation Elimination",
-  inputDescription: "A proposition from the bank that starts with \"¬(¬(\" and ends with \"))\"",
-  outputDescription: "The chosen proposition, but with the \"¬(¬(\" prefix and the \"))\" suffix removed",
+  inputDescriptions: ["A proposition from the bank of the form ¬(¬(𝑃))."],
+  outputDescription: "𝑃",
   inputTypes: [InputType.BankProposition],
   doesApply: (propositions: Input[]) => {
     if (propositions.length != 1) {
@@ -87,8 +92,11 @@ export const DoubleNegationElimination: InferenceRule = {
 
 export const ConjunctionIntroduction: InferenceRule = {
   name: "Conjunction Introduction",
-  inputDescription: "Any two propositions already in the bank.",
-  outputDescription: "The two chosen propositions, each wrapped in parentheses, seperated by a \"∧\".",
+  inputDescriptions: [
+    "Left Proposition: Any proposition already in the bank, 𝐿.",
+    "Right Proposition: Any proposition already in the bank, 𝑅."
+  ],
+  outputDescription: "(𝐿) ∧ (𝑅)",
   inputTypes: [InputType.BankProposition, InputType.BankProposition],
   doesApply: (propositions: Input[]) => {
     if (propositions.length != 2) {
@@ -103,8 +111,11 @@ export const ConjunctionIntroduction: InferenceRule = {
 
 export const ConjunctionElimination: InferenceRule = {
   name: "Conjunction Elimination",
-  inputDescription: "A proposition from the bank that has a \"∧\" that isn't inside parentheses and a choice between \"left\" and \"right\".",
-  outputDescription: "The chosen side of the chosen proposition.",
+  inputDescriptions: [
+    "Conjunction: A proposition from the bank of the form (𝐿) ∧ (𝑅)",
+    "Side: A choice between \"Left\" and \"Right\".",
+  ],
+  outputDescription: "𝐿 if \"Left\" was chosen. 𝑅 if \"Right\" was chosen.",
   inputTypes: [InputType.BankProposition, InputType.LeftRight],
   doesApply: (inputs: Input[]) => {
     if (inputs.length != 2) {
@@ -112,11 +123,11 @@ export const ConjunctionElimination: InferenceRule = {
     }
     const p = inputs[0] as Proposition;
     if (!PropositionHelpers.isConjunction(p)) {
-      return "Chosen proposition must have a \"∧\" that isn't inside parentheses.";
+      return "Chosen conjunction must have a \"∧\" that isn't inside parentheses.";
     }
     const d = inputs[1];
     if (d != "left" && d != "right") {
-      return "Chosen direction must be \"Left\" or \"Right\".";
+      return "Chosen side must be \"Left\" or \"Right\".";
     }
     return "";
   },
@@ -129,5 +140,122 @@ export const ConjunctionElimination: InferenceRule = {
       return p.right;
     }
     throw new Error(`This should never happen: ${JSON.stringify(inputs)}`);
+  },
+}
+
+export const DisjunctionIntroduction: InferenceRule = {
+  name: "Disjunction Introduction",
+  inputDescriptions: [
+    "Known Proposition: Any proposition already in the bank,  𝐾",
+    "Other Proposition: Any proposition, 𝑂.",
+    "Side of known proposition: A choice between \"Left\" and \"Right\"."
+  ],
+  outputDescription: "(𝐾) ∨ (𝑂) if \"Left\" was chosen. (𝑂) ∨ (𝐾) if \"Right\" was chosen.",
+  inputTypes: [InputType.BankProposition, InputType.AnyProposition, InputType.LeftRight],
+  doesApply: (propositions: Input[]) => {
+    if (propositions.length != 3) {
+      return "Can only be applied to two propositions and a direction at a time.";
+    }
+    return "";
+  },
+  apply: (inputs: Input[]) => {
+    const d = inputs[2] as "left"|"right";
+    if (d == "left") {
+      return or(inputs[0] as Proposition, inputs[1] as Proposition);
+    } else if (d == "right"){
+      return or(inputs[1] as Proposition, inputs[0] as Proposition);
+    }
+    throw new Error(`This should never happen: ${JSON.stringify(inputs)}`);
+  },
+}
+
+export const DisjunctionElimination: InferenceRule = {
+  name: "Disjunction Elimination",
+  inputDescriptions: [
+    "Disjunction: A proposition from the bank of the form (𝐿) ∨ (𝑅).",
+    "Left Conditional: Proposition from the bank of the form (𝐿) → (𝑄).",
+    "Right Conditional: Proposition from the bank of the form (𝑅) → (𝑄).",
+  ],
+  outputDescription: "𝑄",
+  inputTypes: [InputType.BankProposition, InputType.BankProposition, InputType.BankProposition],
+  doesApply: (inputs: Input[]) => {
+    if (inputs.length != 3) {
+      return "Can only be applied to three propositions at a time.";
+    }
+    const d = inputs[0] as Proposition;
+    if (!PropositionHelpers.isDisjunction(d)) {
+      return "Chosen disjunction must have a \"∨\" that isn't inside parentheses.";
+    }
+    const l = inputs[1] as Proposition;
+    if (!PropositionHelpers.isConditional(l)) {
+      return "Chosen left conditional must have a \"→\" that isn't inside parentheses.";
+    }
+    if (!PropositionHelpers.areTheSame(d.left, l.left)) {
+      return "Left side of disjunction must be identical to antecedent of left conditional.";
+    }
+    const r = inputs[2] as Proposition;
+    if (!PropositionHelpers.isConditional(r)) {
+      return "Chosen right conditional must have a \"→\" that isn't inside parentheses.";
+    }
+    if (!PropositionHelpers.areTheSame(d.left, l.left)) {
+      return "Right side of disjunction must be identical to antecedent of right conditional.";
+    }
+    if (!PropositionHelpers.areTheSame(l.right, r.right)) {
+      return "Consequent of both chosen conditionals must be identical.";
+    }
+    return "";
+  },
+  apply: (inputs: Input[]) => {
+    const p = inputs[1] as Conditional;
+    return p.right;
+  },
+}
+
+export const ConditionalIntroduction: InferenceRule = {
+  name: "Conditional Introduction",
+  inputDescriptions: [
+    "Antecedent: Any proposition, 𝑃.",
+    "Consequent: Any proposition, 𝑄.",
+    "Proof: Win a modified version of this level where 𝑃 is added to the bank and where the target is 𝑄."],
+  outputDescription: "(𝑃) → (𝑄)",
+  inputTypes: [InputType.AnyProposition, InputType.AnyProposition, InputType.Proof],
+  doesApply: (inputs: Input[]) => {
+    if (inputs.length != 3) {
+      return "Can only be applied to two propositions and a proof at a time.";
+    }
+
+    return "";
+  },
+  apply: (inputs: Input[]) => {
+    const p = inputs[0] as Conditional;
+    return p.right;
+  },
+}
+
+export const ConditionalElimination: InferenceRule = {
+  name: "Conditional Elimination",
+  inputDescriptions: [
+    "Antecedent: Any proposition already in the bank, 𝑃.",
+    "Conditional: A proposition from the bank of the form (𝑃) → (𝑄).",
+  ],
+  outputDescription: "𝑄",
+  inputTypes: [InputType.BankProposition, InputType.BankProposition],
+  doesApply: (inputs: Input[]) => {
+    if (inputs.length != 2) {
+      return "Can only be applied to one proposition and one side at a time.";
+    }
+    const a = inputs[0] as Proposition;
+    const p = inputs[1] as Proposition;
+    if (!PropositionHelpers.isConditional(p)) {
+      return "Chosen conditional must have a \"→\" that isn't inside parentheses.";
+    }
+    if (!PropositionHelpers.areTheSame(a, p.left)) {
+      return "Left side of chosen conditional must match chosen antecedent.";
+    }
+    return "";
+  },
+  apply: (inputs: Input[]) => {
+    const p = inputs[1] as Conditional;
+    return p.right;
   },
 }

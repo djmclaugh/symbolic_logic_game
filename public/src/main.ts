@@ -26,7 +26,7 @@ const initialPropositions: Proposition[] = [
 const App = {
   setup(): any {
     const initialData: AppData = {
-      currentLevel: 0,
+      currentLevel: 6,
       unlockedLevels: LEVELS.length,
     };
     const data: AppData = Vue.reactive(initialData);

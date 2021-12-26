@@ -3,9 +3,33 @@ export enum PropositionType {
   NEGATION,
   CONJUNCTION,
   DISJUNCTION,
+  CONDITIONAL,
 }
 
-export type Proposition = Literal|Negation|Conjunction|Disjunction;
+export const PROPOSITION_TYPES = [
+  PropositionType.LITERAL,
+  PropositionType.NEGATION,
+  PropositionType.CONJUNCTION,
+  PropositionType.DISJUNCTION,
+  PropositionType.CONDITIONAL,
+]
+
+export function propositionTypeToString(t: PropositionType) {
+  switch(t) {
+    case PropositionType.LITERAL:
+      return "Literal";
+    case PropositionType.NEGATION:
+      return "Negation";
+    case PropositionType.CONJUNCTION:
+      return "Conjunction";
+    case PropositionType.DISJUNCTION:
+      return "Disjunction";
+    case PropositionType.CONDITIONAL:
+      return "Conditional";
+  }
+}
+
+export type Proposition = Literal|Negation|Conjunction|Disjunction|Conditional;
 
 export default class PropositionHelpers {
   public static types = PropositionType;
@@ -21,6 +45,9 @@ export default class PropositionHelpers {
   public static isDisjunction(p: Proposition): p is Disjunction {
     return p.type == PropositionType.DISJUNCTION;
   }
+  public static isConditional(p: Proposition): p is Conditional {
+    return p.type == PropositionType.CONDITIONAL;
+  }
 
   public static areTheSame(p1: Proposition, p2: Proposition): boolean {
     if (p1.type != p2.type) {
@@ -33,6 +60,8 @@ export default class PropositionHelpers {
     } else if (PropositionHelpers.isConjunction(p1) && PropositionHelpers.isConjunction(p2)) {
       return PropositionHelpers.areTheSame(p1.left, p2.left) && PropositionHelpers.areTheSame(p1.right, p2.right);
     } else if (PropositionHelpers.isDisjunction(p1) && PropositionHelpers.isDisjunction(p2)) {
+      return PropositionHelpers.areTheSame(p1.left, p2.left) && PropositionHelpers.areTheSame(p1.right, p2.right);
+    } else if (PropositionHelpers.isConditional(p1) && PropositionHelpers.isConditional(p2)) {
       return PropositionHelpers.areTheSame(p1.left, p2.left) && PropositionHelpers.areTheSame(p1.right, p2.right);
     }
     throw new Error(`Unknown proposition types: ${JSON.stringify(p1)}\n${JSON.stringify(p2)}`);
@@ -52,6 +81,10 @@ export default class PropositionHelpers {
       let l = PropositionHelpers.toString(p.left);
       let r = PropositionHelpers.toString(p.right);
       return `(${l}) ∨ (${r})`;
+    } else if (PropositionHelpers.isConditional(p)) {
+      let l = PropositionHelpers.toString(p.left);
+      let r = PropositionHelpers.toString(p.right);
+      return `(${l}) → (${r})`;
     }
     throw new Error("Unknown proposition type: " + JSON.stringify(p));
   }
@@ -75,6 +108,12 @@ export interface Conjunction {
 
 export interface Disjunction {
   readonly type: PropositionType.DISJUNCTION,
+  readonly left: Proposition,
+  readonly right: Proposition,
+}
+
+export interface Conditional {
+  readonly type: PropositionType.CONDITIONAL,
   readonly left: Proposition,
   readonly right: Proposition,
 }
@@ -104,6 +143,14 @@ export function and(a: Proposition, b: Proposition): Conjunction {
 export function or(a: Proposition, b: Proposition): Disjunction {
   return {
     type: PropositionType.DISJUNCTION,
+    left: a,
+    right: b,
+  };
+}
+
+export function then(a: Proposition, b: Proposition): Conditional {
+  return {
+    type: PropositionType.CONDITIONAL,
     left: a,
     right: b,
   };

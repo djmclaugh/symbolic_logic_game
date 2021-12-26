@@ -4,8 +4,12 @@ body {
   background-color: #f9f9f9;
 }
 
-.rule-bank {
-
+.error {
+  display: inline-block;
+  font-family: monospace;
+  padding: 4px;
+  border-radius: 2px;
+  background-color: #FF000040;
 }
 
 details {
@@ -29,13 +33,20 @@ summary:hover {
     background-color: #f0f0f0;
 }
 
-details[open] summary {
+details[open] > summary {
     border-bottom: 1px solid #a0a0a0;
     border-radius: 4px;
 
 }
 
-details div {
+details > div {
   display: inline-block;
   padding: 12px;
+}
+
+.free-proposition-picker {
+  display: flex;
+  align-items: flex-start;
+  margin: 16px;
+  flex-wrap: wrap;
 }
