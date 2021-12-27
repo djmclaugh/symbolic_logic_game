@@ -81,7 +81,10 @@ export const LEVELS: Level[] = [
 
   {
     name: 'New Rule: Conditional Introduction',
-    rules: [ConditionalIntroduction],
+    rules: [
+      ConditionalIntroduction,
+      ConjunctionIntroduction,
+    ],
     propositions: [
       lit("It is cold"),
       lit("It is rainy")
