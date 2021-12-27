@@ -23,6 +23,7 @@ export default {
 
     function onChange(e: InputEvent) {
       e.stopPropagation();
+      e.preventDefault();
       let p: Literal|null = null;
       const t = e.target as HTMLInputElement;
       data.text = t.value;

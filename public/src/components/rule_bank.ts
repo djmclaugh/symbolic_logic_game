@@ -21,6 +21,7 @@ export default {
       for (const rule of props.rules) {
         items.push(Vue.h(InferenceRuleComponent, {
           rule: rule,
+          allRules: props.rules,
           propositions: props.propositions,
           onNewProposition: (p: Proposition) => { emit('newProposition', p); },
         }));

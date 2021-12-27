@@ -2,11 +2,14 @@ import Vue from '../vue.js'
 
 import FreePropositionPicker from './free_proposition_picker.js'
 
+import LevelComponent from './level.js'
+import Level from '../data/level.js'
 import InferenceRule, { Blank, Input, InputType } from '../data/inference_rule.js'
-import PropositionHelpers, {Proposition} from '../data/proposition.js'
+import PropositionHelpers, { Proposition, then } from '../data/proposition.js'
 
 class InferenceRuleProps {
   readonly rule: InferenceRule = Blank;
+  readonly allRules: InferenceRule[] = [];
   readonly propositions: Proposition[] = [];
 }
 
@@ -28,12 +31,13 @@ export default {
       producedProposition: null,
       alreadyFound: false,
     };
+    let lastProofKey = "";
     const data: InferenceRuleData = Vue.reactive(initialData);
 
     function inputFromType(t: InputType, i: number): any {
       if (t == InputType.AnyProposition) {
         return Vue.h(FreePropositionPicker, {
-          onChange: () => {},
+          onChange: onFreeChange(i),
           style: { 'margin': '8px' },
         });
       } else if (t == InputType.BankProposition) {
@@ -43,7 +47,7 @@ export default {
           options.push(Vue.h('option', { value: i }, PropositionHelpers.toString(p)));
         }
         return Vue.h('select', {
-          onChange: onChange(i),
+          onChange: onBankChange(i),
           style: { 'margin': '8px' },
         }, [
           Vue.h('option', { value: -1 }, "Select a proposition"),
@@ -51,12 +55,41 @@ export default {
       } else if (t ==  InputType.LeftRight) {
         return Vue.h('select', {
           style: { 'margin': '8px' },
-          onChange: onChange(i),
+          onChange: onDirectionChange(i),
         }, [
           Vue.h('option', { value: "" }, "Select a side"),
           Vue.h('option', { value: "left" }, "Left"),
           Vue.h('option', { value: "right" }, "Right"),
         ]);
+      } else if (t == InputType.Proof) {
+        if (data.selectedPropositions[0] == null || data.selectedPropositions[1] == null) {
+          return Vue.h('em', {
+            style: {
+              'display': 'inline-block',
+              'margin-top': '8px',
+            }
+          }, 'Antecedent and consequent must be chosen before working on proof.');
+        } else {
+          const p = data.selectedPropositions[0] as Proposition;
+          const q = data.selectedPropositions[1] as Proposition;
+          if (lastProofKey != PropositionHelpers.toString(then(p, q))) {
+            data.selectedPropositions[2] = 'not done';
+          }
+          lastProofKey = PropositionHelpers.toString(then(p, q))
+          const sublevel: Level = {
+            name: `Sublevel: ${lastProofKey}`,
+            rules: props.allRules,
+            propositions: props.propositions.concat([data.selectedPropositions[0] as Proposition]),
+            target: data.selectedPropositions[1] as Proposition,
+          };
+          return Vue.h(LevelComponent, {
+            id: lastProofKey,
+            level: sublevel,
+            isSublevel: true,
+            onLevelClear: () => { data.selectedPropositions[2] = 'done'; },
+            onRestart: () => { data.selectedPropositions[2] = 'not done'; },
+          })
+        }
       } else {
         return Vue.h('span', {}, `Unknown input type: ${t}`);
       }
@@ -92,23 +125,33 @@ export default {
       }
     }
 
-    function onChange(i: number) {
+    function onFreeChange(i: number) {
+      return (p: Proposition|null) => {
+        data.selectedPropositions[i] = p;
+      };
+    }
+
+    function onBankChange(i: number) {
       return (e: InputEvent) => {
+        e.stopPropagation();
         const target: HTMLSelectElement = e.target as HTMLSelectElement;
-        const type = props.rule.inputTypes[i];
-        if (type == InputType.BankProposition) {
-          const v : number = parseInt(target.value);
-          if (v == -1) {
-            data.selectedPropositions[i] = null;
-          } else {
-            data.selectedPropositions[i] = props.propositions[v];
-          }
-        } else if (type == InputType.LeftRight) {
-          if (target.value == "") {
-            data.selectedPropositions[i] = null;
-          } else {
-            data.selectedPropositions[i] = target.value as "left"|"right";
-          }
+        const v : number = parseInt(target.value);
+        if (v == -1) {
+          data.selectedPropositions[i] = null;
+        } else {
+          data.selectedPropositions[i] = props.propositions[v];
+        }
+      };
+    }
+
+    function onDirectionChange(i: number) {
+      return (e: InputEvent) => {
+        e.stopPropagation();
+        const target: HTMLSelectElement = e.target as HTMLSelectElement;
+        if (target.value == "") {
+          data.selectedPropositions[i] = null;
+        } else {
+          data.selectedPropositions[i] = target.value as "left"|"right";
         }
       };
     }

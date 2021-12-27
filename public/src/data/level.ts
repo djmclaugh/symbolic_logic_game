@@ -8,9 +8,10 @@ import InferenceRule, {
   ConditionalIntroduction,
   ConditionalElimination,
 } from './inference_rule.js'
-import PropHelper, { Proposition, lit, not, and, or } from './proposition.js'
+import PropHelper, { Proposition, lit, not, and, or, then } from './proposition.js'
 
 export default interface Level {
+  name: string,
   rules: InferenceRule[],
   propositions: Proposition[],
   target: Proposition,
@@ -18,7 +19,8 @@ export default interface Level {
 
 export const LEVELS: Level[] = [
   {
-    rules: [ConditionalIntroduction],
+    name: 'New Rule: Double Negation Introduction',
+    rules: [DoubleNegationIntroduction],
     propositions: [
       lit("Adam likes apples"),
       lit("David likes apples"),
@@ -27,19 +29,8 @@ export const LEVELS: Level[] = [
     target: not(not(lit("David likes apples"))),
   },
   {
-    rules: [DoubleNegationIntroduction],
-    propositions: [
-      lit("It's not sunny"),
-      lit("It's raining"),
-      not(lit("It's sunny")),
-      not(lit("It's not raining")),
-    ],
-    target: not(not(not(lit("It's sunny")))),
-  },
-  {
-    rules: [
-      DoubleNegationElimination,
-    ],
+    name: 'New Rule: Double Negation Elimination',
+    rules: [DoubleNegationElimination],
     propositions: [
       not(lit("Today is not Sunday")),
       not(not(lit("Today is Sunday"))),
@@ -48,6 +39,7 @@ export const LEVELS: Level[] = [
     target: lit("Today is Sunday"),
   },
   {
+    name: 'New Rule: Conjunction Introduction',
     rules: [
       ConjunctionIntroduction,
     ],
@@ -60,6 +52,7 @@ export const LEVELS: Level[] = [
   },
 
   {
+    name: 'New Rule: Conjunction Elimination',
     rules: [
       ConjunctionElimination,
     ],
@@ -72,6 +65,7 @@ export const LEVELS: Level[] = [
   },
 
   {
+    name: 'Test 1',
     rules: [
       DoubleNegationIntroduction,
       DoubleNegationElimination,
@@ -86,20 +80,46 @@ export const LEVELS: Level[] = [
   },
 
   {
-    rules: [
-      DoubleNegationIntroduction,
-      DoubleNegationElimination,
-      ConjunctionIntroduction,
-      ConjunctionElimination,
-      DisjunctionIntroduction,
-      DisjunctionElimination,
-      ConditionalIntroduction,
-      ConditionalElimination,
-    ],
+    name: 'New Rule: Conditional Introduction',
+    rules: [ConditionalIntroduction],
     propositions: [
-      and(lit("Alice likes apples"), not(not(lit("Alice likes oranges")))),
-      not(not(and(lit("Bob likes apples"), lit("Bob likes oranges")))),
+      lit("It is cold"),
+      lit("It is rainy")
     ],
-    target: and(lit("Alice likes oranges"), lit("Bob likes oranges")),
+    target: then(lit("It is windy"), and(lit("It is cold"), lit("It is windy"))),
   },
+
+  {
+    name: 'New Rule: Conditional Elimination',
+    rules: [ConditionalElimination],
+    propositions: [
+      then(lit("It is breakfast"), lit("I drink orange juice")),
+      then(lit("It is lunch"), lit("I drink water")),
+      then(lit("It is dinner"), lit("I drink water")),
+      lit('It is breakfast'),
+    ],
+    target: lit('I drink orange juice'),
+  },
+
+  {
+    name: 'New Rule: Disjunction Introduction',
+    rules: [DisjunctionIntroduction],
+    propositions: [
+      lit("I have tea")
+    ],
+    target: or(lit("I have coffee"), lit("I have tea")),
+  },
+
+  {
+    name: 'New Rule: Disjunction Elimination',
+    rules: [DisjunctionElimination],
+    propositions: [
+      then(lit("It is breakfast"), lit("I drink orange juice")),
+      then(lit("It is lunch"), lit("I drink water")),
+      then(lit("It is dinner"), lit("I drink water")),
+      or(lit('It is lunch'), lit('It is dinner')),
+    ],
+    target: lit('I drink water'),
+  },
+
 ]

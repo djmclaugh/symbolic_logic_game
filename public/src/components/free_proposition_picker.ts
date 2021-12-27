@@ -45,7 +45,7 @@ const FreePropositionPicker = {
         case PropositionType.LITERAL:
           emit('change', p);
           break;
-        case PropositionType.LITERAL:
+        case PropositionType.NEGATION:
           emit('change', not(p));
           break;
         default:
@@ -95,6 +95,7 @@ const FreePropositionPicker = {
       }
       items.push(Vue.h('select', {
           onChange: (e: InputEvent) => {
+            e.stopPropagation();
             const t: HTMLSelectElement = e.target as HTMLSelectElement;
             data.chosenType = parseInt(t.value);
             data.prop1 = null;

@@ -6,7 +6,8 @@ import PropositionHelpers, {
   lit,
   not,
   and,
-  or
+  or,
+  then,
 } from './proposition.js'
 
 // Returns a user-visible error message if the restriction is not satisfied.
@@ -14,8 +15,7 @@ import PropositionHelpers, {
 export type Restriction = (inputs: Input[]) => string;
 export type Transformation = (inputs: Input[]) => Proposition;
 
-export type Proof = never;
-export type Input = Proposition|"left"|"right"|Proof;
+export type Input = Proposition|"left"|"right"|"done"|"not done";
 
 export enum InputType {
   AnyProposition,
@@ -173,8 +173,8 @@ export const DisjunctionElimination: InferenceRule = {
   name: "Disjunction Elimination",
   inputDescriptions: [
     "Disjunction: A proposition from the bank of the form (𝐿) ∨ (𝑅).",
-    "Left Conditional: Proposition from the bank of the form (𝐿) → (𝑄).",
-    "Right Conditional: Proposition from the bank of the form (𝑅) → (𝑄).",
+    "Left Conditional: A proposition from the bank of the form (𝐿) → (𝑄).",
+    "Right Conditional: A proposition from the bank of the form (𝑅) → (𝑄).",
   ],
   outputDescription: "𝑄",
   inputTypes: [InputType.BankProposition, InputType.BankProposition, InputType.BankProposition],
@@ -223,12 +223,15 @@ export const ConditionalIntroduction: InferenceRule = {
     if (inputs.length != 3) {
       return "Can only be applied to two propositions and a proof at a time.";
     }
-
+    if (inputs[2] != "done") {
+      return "Proof not yet completed. Chosen consequent must appear in the word bank.";
+    }
     return "";
   },
   apply: (inputs: Input[]) => {
-    const p = inputs[0] as Conditional;
-    return p.right;
+    const p = inputs[0] as Proposition;
+    const q = inputs[1] as Proposition;
+    return then(p, q);
   },
 }
 

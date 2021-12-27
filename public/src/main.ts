@@ -26,7 +26,7 @@ const initialPropositions: Proposition[] = [
 const App = {
   setup(): any {
     const initialData: AppData = {
-      currentLevel: 6,
+      currentLevel: 0,
       unlockedLevels: LEVELS.length,
     };
     const data: AppData = Vue.reactive(initialData);
@@ -47,7 +47,7 @@ const App = {
           value: i,
           selected: data.currentLevel == i,
           disabled: data.unlockedLevels < i,
-        }, `Level ${i + 1}`));
+        }, LEVELS[i].name));
       }
       items.push(Vue.h('select', {
           onChange: (e: InputEvent) => {
@@ -58,7 +58,7 @@ const App = {
 
       items.push(Vue.h(LevelComponent, {
         key: data.currentLevel,
-        level: data.currentLevel,
+        level: LEVELS[data.currentLevel],
         onLevelClear: () => {
           data.unlockedLevels = Math.max(data.currentLevel + 1, data.unlockedLevels);
         },

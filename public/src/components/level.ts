@@ -7,14 +7,12 @@ import Level, { LEVELS } from '../data/level.js'
 import PropositionHelpers, { Proposition } from '../data/proposition.js'
 
 class LevelProps {
-  readonly level: number = 0;
+  readonly level: Level = LEVELS[0];
+  readonly isSublevel: boolean|undefined = false;
 }
 
 interface LevelData {
-  readonly level: Level;
   propositions: Proposition[];
-  foundTarget: boolean;
-  // Used to force sub-components to re-render from scratch.
   uuid: number;
 }
 
@@ -22,51 +20,69 @@ export default {
   props: Object.keys(new LevelProps()),
   setup(props: LevelProps, {attrs, slots, emit}: any): any {
     const initialData: LevelData = {
-      level: LEVELS[props.level],
-      propositions: LEVELS[props.level].propositions.concat(),
-      foundTarget: false,
+      propositions: props.level.propositions.concat(),
       uuid: 0,
     };
     const data: LevelData = Vue.reactive(initialData);
+
+    function didFindTarget(): boolean {
+      for (let p of data.propositions) {
+        if (PropositionHelpers.areTheSame(p, props.level.target)) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    if (didFindTarget()) {
+      emit("levelClear");
+    }
 
     return () => {
       let items = [];
 
       items.push(Vue.h('h2', {}, [
-        'Level ' + (props.level + 1),
+        props.level.name,
         ' - ',
         Vue.h('button', {
           onClick: () => {
-            data.propositions = LEVELS[props.level].propositions.concat();
+            data.propositions = props.level.propositions.concat();
             data.uuid += 1;
+            emit("restart");
+            if (didFindTarget()) {
+              emit("levelClear");
+            }
           },
         }, 'Restart'),
       ]));
 
       items.push(Vue.h(RuleBankComponent, {
         key: data.uuid,
-        rules: data.level.rules,
+        rules: props.level.rules,
         propositions: data.propositions,
         onNewProposition: (p: Proposition) => {
           data.propositions.push(p);
-          if (PropositionHelpers.areTheSame(p, data.level.target)) {
-            data.foundTarget = true;
+          if (PropositionHelpers.areTheSame(p, props.level.target)) {
             emit("levelClear");
           }
         },
       }));
       items.push(Vue.h(PropositionBankComponent, {propositions: data.propositions}));
-      items.push(Vue.h('h3', {}, 'Target: ' + PropositionHelpers.toString(data.level.target)));
+      items.push(Vue.h('h3', {}, 'Target: ' + PropositionHelpers.toString(props.level.target)));
 
-      if (data.foundTarget) {
+      if (didFindTarget()) {
         items.push(Vue.h('p', {}, 'Target proposition created - Level Complete!'));
-        items.push(Vue.h('p', {}, [
-          'Next level unlocked.',
-          ' ',
-          Vue.h('button', {
-            onClick: () => { emit("nextLevel"); }
-          }, 'Go to next level')
-        ]));
+        if (props.isSublevel) {
+          items.push(Vue.h('p', {}, 'Proof completed - Ready to apply conditional introduction.'));
+        } else {
+          items.push(Vue.h('p', {}, [
+            'Next level unlocked.',
+            ' ',
+            Vue.h('button', {
+              onClick: () => { emit("nextLevel"); }
+            }, 'Go to next level')
+          ]));
+        }
       }
 
       // items.push(Vue.h('h2', {}, 'New Symbols: ( (left parenthesis)'));
