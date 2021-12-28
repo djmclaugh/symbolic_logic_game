@@ -420,3 +420,43 @@ export const ModusTolens: InferenceRule = {
     return not(p.right);
   },
 }
+
+export const ConstructiveDelimma: InferenceRule = {
+  name: "Constructive Delimma",
+  inputDescriptions: [
+    "Disjunction: A proposition from the bank of the form (𝐿) ∨ (𝑅).",
+    "Left Conditional: A proposition from the bank of the form (𝐿) → (𝑃).",
+    "Right Conditional: A proposition from the bank of the form (𝑅) → (𝑄).",
+  ],
+  outputDescription: "(𝑃) ∨ (𝑄)",
+  inputTypes: [InputType.BankProposition, InputType.BankProposition, InputType.BankProposition],
+  doesApply: (inputs: Input[]) => {
+    if (inputs.length != 3) {
+      return "Can only be applied to three propositions at a time.";
+    }
+    const d = inputs[0] as Proposition;
+    if (!PropositionHelpers.isDisjunction(d)) {
+      return "Chosen disjunction must have a \"∨\" that isn't inside parentheses.";
+    }
+    const l = inputs[1] as Proposition;
+    if (!PropositionHelpers.isConditional(l)) {
+      return "Chosen left conditional must have a \"→\" that isn't inside parentheses.";
+    }
+    if (!PropositionHelpers.areTheSame(d.left, l.left)) {
+      return "Left side of disjunction must be identical to antecedent of left conditional.";
+    }
+    const r = inputs[2] as Proposition;
+    if (!PropositionHelpers.isConditional(r)) {
+      return "Chosen right conditional must have a \"→\" that isn't inside parentheses.";
+    }
+    if (!PropositionHelpers.areTheSame(d.left, l.left)) {
+      return "Right side of disjunction must be identical to antecedent of right conditional.";
+    }
+    return "";
+  },
+  apply: (inputs: Input[]) => {
+    const p = inputs[1] as Conditional;
+    const q = inputs[2] as Conditional;
+    return or(p.right, q.right);
+  },
+}

@@ -13,6 +13,7 @@ import {
   HypotheticalSyllogism,
   SelfConditional,
   ConditionalFromConsequent,
+  ConstructiveDelimma,
 } from '../inference_rule.js'
 import { lit, not, and, or, then } from '../proposition.js'
 
@@ -36,7 +37,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
       "The last level was too easy. From now on, you won't start with the target proposition already in your bank. You'll have to create the target proposition yourself by using the allowed inference rules.",
       "For this level you are only given conjunction introduction. It says that you can take any two propositions from your bank and combine them by putting a \"∧\" in between.",
       "The behaviour of the \"∧\" symbol is inspired by the word \"and\". The idea is for \"(𝐿) ∧ (𝑅)\" to mean that both 𝐿 and 𝑅 are true. But remember, we're doing symbolic logic; Any meaning we give to the symbols is only for our own intuition. At the end of the day, only the inference rule matters.",
-      "Note: This rule is one of the 9 rules taken for granted under the \"natural deduction\" way of defining of propositional logic.",
+      "Note: This rule is one of the 9 rules taken for granted under the \"natural deduction\" way of defining propositional logic.",
       "Note: Again, remember we're doing symbolic logic. You have to create the target proposition EXACTLY. It has to be the exact same sequence of symbols. You can use copy/paste and ctrl-f to convince yourself whether or not the target proposition is in the proposition bank.",
     ],
     rules: [ ConjunctionIntroduction ],
@@ -50,7 +51,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   {
     name: "Rule #2: Conjunction Elimination",
     description: [
-      "For this level you are given \"conjunction elimination\" which is also called \"simplification\". It says that if you have the \"∧\" symbol in a proposition and that it's not within parentheses, the you can make the proposition that consists of just what's on the left or just what's on the right.",
+      "For this level you are given \"conjunction elimination\" which is also called \"simplification\". It says that if you have the \"∧\" symbol in a proposition and that it's not within parentheses, then you can make the proposition that consists of just what's on the left or just what's on the right.",
       "This rule is conjunction introduction's counterpart.",
       "Note: This rule is also one of the 9 rules taken for granted.",
     ],
@@ -90,7 +91,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     name: 'Prove Derived Rule: Conjunction Association',
     description: [
       "Here we'll derive a rule that tells us that conjunction is associative. In other words, it doesn't matter in what order we do the conjunction.",
-      "Note: Because conjunction is associative, in real life, people will write \"𝑃 ∧ 𝑄 ∧ 𝑅\" instead of \"(𝑃 ∧ 𝑄) ∧ 𝑅\" or \"𝑃 ∧ (𝑄 ∧ 𝑅)\"."
+      "Note: Because conjunction is associative, in real life, people will write \"𝑃 ∧ 𝑄 ∧ 𝑅\" instead of \"(𝑃 ∧ 𝑄) ∧ 𝑅\" or \"𝑃 ∧ (𝑄 ∧ 𝑅)\", just like like people write \"2 × 3 × 4\" instead of \"(2 × 3) × 4\" or \"2 × (3 × 4)\"."
     ],
     rules: [ConjunctionIntroduction, ConjunctionElimination],
     propositions: [
@@ -128,7 +129,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   {
     name: 'Rule #4: Conditional Elimination',
     description: [
-      "Conditional elimination (also called modus ponens) is one of the 9 rules taken for granted. It's the counter part of conditional introduction.",
+      "Conditional elimination (also called modus ponens) is one of the 9 rules taken for granted. It's the counterpart of conditional introduction.",
       "It says that if you have a conditional and you have it's left side (also called its antecedent), then you can have the conditional's right side (also called its consequent).",
     ],
     rules: [ConditionalElimination],
@@ -189,6 +190,16 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     ],
     target: lit("I drink water"),
   },
+
+  {
+    name: 'Prove Derived Rule: Disjunction Commutation',
+    rules: [DisjunctionIntroduction, DisjunctionElimination, ConditionalIntroduction],
+    propositions: [
+      or(lit("I like apples"), lit("I like oranges")),
+    ],
+    target: or(lit("I like oranges"), lit("I like apples")),
+  },
+
   {
     name: 'Prove Derived Rule: Constructive Dilemma',
     description: [
@@ -202,6 +213,34 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     ],
     target: or(lit("I drink coffee"), lit("I drink water")),
   },
+
+  {
+    name: 'Prove Derived Rule: Disjunction Association',
+    rules: [ConditionalIntroduction, ConditionalElimination, DisjunctionIntroduction, DisjunctionElimination],
+    propositions: [
+      or(lit("I like apples"), or(lit("I like bananas"), lit("I like oranges"))),
+    ],
+    target: or(or(lit("I like apples"), lit("I like bananas")), lit("I like oranges")),
+  },
+
+  {
+    name: 'Prove Derived Rule: Conjunction Distribution',
+    rules: [ConjunctionIntroduction, ConjunctionElimination, ConditionalIntroduction, ConstructiveDelimma],
+    propositions: [
+      and(lit("I eat toast"), or(lit("I drink juice"), lit("I drink milk"))),
+    ],
+    target: or(and(lit("I eat toast"), lit("I drink juice")), and(lit("I eat toast"), lit("I drink milk"))),
+  },
+
+  {
+    name: 'Prove Derived Rule: Disjunction Distribution',
+    rules: [ConjunctionIntroduction, ConjunctionElimination, ConditionalIntroduction, DisjunctionIntroduction, DisjunctionElimination,],
+    propositions: [
+      or(lit("I'll have pasta"), and(lit("I'll have soup"), lit("I'll have salad"))),
+    ],
+    target: and(or(lit("I'll have pasta"), lit("I'll have soup")), or(lit("I'll have pasta"), lit("I'll have salad"))),
+  },
+
   {
     name: 'Rule #7: Negation Introduction',
     description: [
@@ -271,7 +310,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     target: lit('I like apples'),
   },
   {
-    name: 'Impossible : Double Negation Elimination From Other Base Rules',
+    name: 'Impossible: Double Negation Elimination From Other Base Rules',
     description: [
       "If you want, you can try to prove double negation elimination by only using the 8 other base rules.",
       "Note: This is impossible and you should only attempt this if you are curious about what makes it impossible.",
@@ -291,6 +330,34 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
       not(not(lit('I like apples'))),
     ],
     target: lit('I like apples'),
+  },
+  {
+    name: 'Prove Tautology: Law Of Noncontradiction',
+    description: [
+      "A thing cannot be true and false at the same time."
+    ],
+    rules: [
+      ConjunctionElimination,
+      ConditionalIntroduction,
+      NegationIntroduction,
+    ],
+    propositions: [],
+    target: not(and(lit("I'm here"), not(lit("I'm here")))),
+  },
+  {
+    name: 'Prove Tautology: Law Of Excluded Middle',
+    description: [
+      "A thing HAS to be either true or false.",
+      "Note: This law ends up being equivalent to double negation elimination. So we actually do not have this law in intuitionistic logic since that logic doesn't use double negation elimination.",
+    ],
+    rules: [
+      ConditionalIntroduction,
+      DisjunctionIntroduction,
+      NegationIntroduction,
+      DoubleNegationElimination,
+    ],
+    propositions: [],
+    target: or(lit("I'm here"), not(lit("I'm here"))),
   },
 ];
 export default NATURAL_DEDUCTION_SYSTEM;
