@@ -1,4 +1,5 @@
 import PropositionHelpers, {
+  Negation,
   Proposition,
   Conjunction,
   Disjunction,
@@ -42,7 +43,66 @@ export const Blank: InferenceRule = {
   apply: () => {
     return lit("");
   },
-}
+};
+
+export const NegationIntroduction: InferenceRule = {
+  name: "Negation Introduction",
+  inputDescriptions: [
+    "Conditional: A proposition from the bank of the form (𝑃) → (𝑄)",
+    "Contradiction: A proposition from the bank of the form (𝑃) → (¬(𝑄))"
+  ],
+  outputDescription: "¬(𝑃)",
+  inputTypes: [InputType.BankProposition, InputType.BankProposition],
+  doesApply: (inputs: Input[]) => {
+    if (inputs.length != 2) {
+      return "Can only be applied to two propositions at a time."
+    }
+    let a = inputs[0] as Proposition;
+    let b = inputs[1] as Proposition;
+    if (!PropositionHelpers.isConditional(a)) {
+      return "Chosen conditional must have a \"→\" that isn't inside parentheses."
+    }
+    if (!PropositionHelpers.isConditional(b)) {
+      return "Chosen contradiction must have a \"→\" that isn't inside parentheses."
+    }
+    if (!PropositionHelpers.areTheSame(a.left, b.left)) {
+      return "Chosen conditional and contradiction must have the same left side."
+    }
+    if (!PropositionHelpers.areTheSame(not(a.right), b.right)) {
+      return "Rigth side of contradiction must be the negation of the right side of the chosen conditional."
+    }
+    return "";
+  },
+  apply: (inputs: Input[]) => {
+    let a = inputs[0] as Conditional;
+    return not(a.left);
+  },
+};
+
+export const NegationElimination: InferenceRule = {
+  name: "Negation Elimination",
+  inputDescriptions: [
+    "Negation: A proposition from the bank of the form ¬(𝑃)",
+    "Consequent: Any proposition, 𝑄.",
+  ],
+  outputDescription: "(𝑃) → (𝑄)",
+  inputTypes: [InputType.BankProposition, InputType.AnyProposition],
+  doesApply: (inputs: Input[]) => {
+    if (inputs.length != 2) {
+      return "Can only be applied to two propositions at a time."
+    }
+    let a = inputs[0] as Proposition;
+    if (!PropositionHelpers.isNegation(a)) {
+      return "Chosen negation must start with \"¬(\"."
+    }
+    return "";
+  },
+  apply: (inputs: Input[]) => {
+    let a = inputs[0] as Negation;
+    let b = inputs[1] as Proposition;
+    return then(a.proposition, b);
+  },
+};
 
 export const DoubleNegationIntroduction: InferenceRule = {
   name: "Double Negation Introduction",
@@ -51,7 +111,7 @@ export const DoubleNegationIntroduction: InferenceRule = {
   inputTypes: [InputType.BankProposition],
   doesApply: (inputs: Input[]) => {
     if (inputs.length != 1) {
-      return "Can only be applied to a signle proposition at a time."
+      return "Can only be applied to a single proposition at a time."
     }
     return "";
   },
@@ -110,7 +170,7 @@ export const ConjunctionIntroduction: InferenceRule = {
 }
 
 export const ConjunctionElimination: InferenceRule = {
-  name: "Conjunction Elimination",
+  name: "Conjunction Elimination (Simplification)",
   inputDescriptions: [
     "Conjunction: A proposition from the bank of the form (𝐿) ∧ (𝑅)",
     "Side: A choice between \"Left\" and \"Right\".",
@@ -144,7 +204,7 @@ export const ConjunctionElimination: InferenceRule = {
 }
 
 export const DisjunctionIntroduction: InferenceRule = {
-  name: "Disjunction Introduction",
+  name: "Disjunction Introduction (Addition)",
   inputDescriptions: [
     "Known Proposition: Any proposition already in the bank,  𝐾",
     "Other Proposition: Any proposition, 𝑂.",
@@ -170,7 +230,7 @@ export const DisjunctionIntroduction: InferenceRule = {
 }
 
 export const DisjunctionElimination: InferenceRule = {
-  name: "Disjunction Elimination",
+  name: "Disjunction Elimination (Case Analysis)",
   inputDescriptions: [
     "Disjunction: A proposition from the bank of the form (𝐿) ∨ (𝑅).",
     "Left Conditional: A proposition from the bank of the form (𝐿) → (𝑄).",
@@ -212,7 +272,7 @@ export const DisjunctionElimination: InferenceRule = {
 }
 
 export const ConditionalIntroduction: InferenceRule = {
-  name: "Conditional Introduction",
+  name: "Conditional Introduction (Conditional Proof)",
   inputDescriptions: [
     "Antecedent: Any proposition, 𝑃.",
     "Consequent: Any proposition, 𝑄.",
@@ -236,7 +296,7 @@ export const ConditionalIntroduction: InferenceRule = {
 }
 
 export const ConditionalElimination: InferenceRule = {
-  name: "Conditional Elimination",
+  name: "Conditional Elimination (Modus Ponens)",
   inputDescriptions: [
     "Antecedent: Any proposition already in the bank, 𝑃.",
     "Conditional: A proposition from the bank of the form (𝑃) → (𝑄).",
@@ -260,5 +320,103 @@ export const ConditionalElimination: InferenceRule = {
   apply: (inputs: Input[]) => {
     const p = inputs[1] as Conditional;
     return p.right;
+  },
+}
+
+export const HypotheticalSyllogism: InferenceRule = {
+  name: "Hypothetical Syllogism",
+  inputDescriptions: [
+    "First Conditional: A proposition in the bank of the form  (𝑃) → (𝑄).",
+    "Second Conditional: A proposition from the bank of the form (𝑄) → (𝑅).",
+  ],
+  outputDescription: "(𝑃) → (𝑅)",
+  inputTypes: [InputType.BankProposition, InputType.BankProposition],
+  doesApply: (inputs: Input[]) => {
+    if (inputs.length != 2) {
+      return "Can only be applied to one proposition and one side at a time.";
+    }
+    const p1 = inputs[0] as Proposition;
+    const p2 = inputs[1] as Proposition;
+    if (!PropositionHelpers.isConditional(p1)) {
+      return "Chosen first conditional must have a \"→\" that isn't inside parentheses.";
+    }
+    if (!PropositionHelpers.isConditional(p2)) {
+      return "Chosen second conditional must have a \"→\" that isn't inside parentheses.";
+    }
+    if (!PropositionHelpers.areTheSame(p1.right, p2.left)) {
+      return "Right side of first conditional must match left side of second conditional.";
+    }
+    return "";
+  },
+  apply: (inputs: Input[]) => {
+    const p1 = inputs[0] as Conditional;
+    const p2 = inputs[1] as Conditional;
+    return then(p1.left, p2.right);
+  },
+}
+
+export const SelfConditional: InferenceRule = {
+  name: "Self Conditional",
+  inputDescriptions: [ "Any proposition, 𝑃."],
+  outputDescription: "(𝑃) → (𝑃)",
+  inputTypes: [InputType.AnyProposition],
+  doesApply: (inputs: Input[]) => {
+    if (inputs.length != 1) {
+      return "Can only be applied to one proposition and one side at a time.";
+    }
+    return "";
+  },
+  apply: (inputs: Input[]) => {
+    const p = inputs[0] as Proposition;
+    return then(p, p);
+  },
+}
+
+export const ConditionalFromConsequent: InferenceRule = {
+  name: "Conditional From Consequent",
+  inputDescriptions: [
+    "Antecedent: Any proposition, 𝑃.",
+    "Consequent: Any proposition already in the bank, 𝑄"
+  ],
+  outputDescription: "(𝑃) → (𝑄)",
+  inputTypes: [InputType.AnyProposition, InputType.BankProposition],
+  doesApply: (inputs: Input[]) => {
+    if (inputs.length != 2) {
+      return "Can only be applied to two propositions at a time.";
+    }
+    return "";
+  },
+  apply: (inputs: Input[]) => {
+    const p = inputs[0] as Proposition;
+    const q = inputs[1] as Proposition;
+    return then(p, q);
+  },
+}
+
+export const ModusTolens: InferenceRule = {
+  name: "Modus Tolens",
+  inputDescriptions: [
+    "Conditional: A proposition from the bank of the form (𝑃) → (𝑄).",
+    "Consequent Negation: Any proposition already in the bank of the form ¬(𝑄).",
+  ],
+  outputDescription: "¬(𝑃)",
+  inputTypes: [InputType.BankProposition, InputType.BankProposition],
+  doesApply: (inputs: Input[]) => {
+    if (inputs.length != 2) {
+      return "Can only be applied to one proposition and one side at a time.";
+    }
+    const c = inputs[0] as Proposition;
+    const q = inputs[1] as Proposition;
+    if (!PropositionHelpers.isConditional(c)) {
+      return "Chosen conditional must have a \"→\" that isn't inside parentheses.";
+    }
+    if (!PropositionHelpers.areTheSame(not(c.right), q)) {
+      return "Consequen negation must be the negation of chosen conditional's right side.";
+    }
+    return "";
+  },
+  apply: (inputs: Input[]) => {
+    const p = inputs[0] as Conditional;
+    return not(p.right);
   },
 }

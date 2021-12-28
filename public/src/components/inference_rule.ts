@@ -5,12 +5,13 @@ import FreePropositionPicker from './free_proposition_picker.js'
 import LevelComponent from './level.js'
 import Level from '../data/level.js'
 import InferenceRule, { Blank, Input, InputType } from '../data/inference_rule.js'
-import PropositionHelpers, { Proposition, then } from '../data/proposition.js'
+import PropositionHelpers, { Proposition, lit, then } from '../data/proposition.js'
 
 class InferenceRuleProps {
   readonly rule: InferenceRule = Blank;
   readonly allRules: InferenceRule[] = [];
   readonly propositions: Proposition[] = [];
+  readonly target: Proposition = lit("");
 }
 
 interface InferenceRuleData {
@@ -37,6 +38,8 @@ export default {
     function inputFromType(t: InputType, i: number): any {
       if (t == InputType.AnyProposition) {
         return Vue.h(FreePropositionPicker, {
+          bank: props.propositions,
+          target: props.target,
           onChange: onFreeChange(i),
           style: { 'margin': '8px' },
         });
@@ -77,13 +80,20 @@ export default {
           }
           lastProofKey = PropositionHelpers.toString(then(p, q))
           const sublevel: Level = {
-            name: `Sublevel: ${lastProofKey}`,
+            name: `Sublevel`,
             rules: props.allRules,
             propositions: props.propositions.concat([data.selectedPropositions[0] as Proposition]),
             target: data.selectedPropositions[1] as Proposition,
           };
           return Vue.h(LevelComponent, {
-            id: lastProofKey,
+            key: lastProofKey,
+            style: {
+              border: '1px solid',
+              'border-radius': '4px',
+              'padding-left': '16px',
+              'padding-right': '16px',
+              'margin-top': '4px',
+            },
             level: sublevel,
             isSublevel: true,
             onLevelClear: () => { data.selectedPropositions[2] = 'done'; },

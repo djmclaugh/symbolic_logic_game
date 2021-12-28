@@ -2,6 +2,7 @@ import Vue from '../vue.js'
 
 import InferenceRule, { Blank, Input, InputType } from '../data/inference_rule.js'
 import PropositionHelpers, {
+  lit,
   not,
   and,
   or,
@@ -16,6 +17,7 @@ import LiteralPropositionInput from './literal_proposition_input.js'
 
 class FreePropositionPickerProps {
   readonly bank: Proposition[] = [];
+  readonly target: Proposition = lit("");
 }
 
 interface FreePropositionPickerData {
@@ -28,6 +30,20 @@ const FreePropositionPicker = {
   props: Object.keys(new FreePropositionPickerProps()),
 
   setup(props: FreePropositionPickerProps, {attrs, slots, emit}: any) {
+
+    const allLiterals: string[] = [];
+    for (let p of props.bank) {
+      for (let l of PropositionHelpers.allLiterals(p)) {
+        if (allLiterals.indexOf(l) == -1) {
+          allLiterals.push(l);
+        }
+      }
+    }
+    for (let l of PropositionHelpers.allLiterals(props.target)) {
+      if (allLiterals.indexOf(l) == -1) {
+        allLiterals.push(l);
+      }
+    }
 
     const initialData: FreePropositionPickerData = {
       chosenType: PropositionType.LITERAL,
@@ -110,12 +126,14 @@ const FreePropositionPicker = {
       switch (data.chosenType) {
         case PropositionType.LITERAL:
           items.push(Vue.h(LiteralPropositionInput, {
+            allLiterals: allLiterals,
             onChange: onPropositionChange
           }));
           break;
         case PropositionType.NEGATION:
           items.push(Vue.h(FreePropositionPicker, {
             bank: props.bank,
+            target: props.target,
             onChange: onPropositionChange
           }));
           break;
@@ -133,6 +151,7 @@ const FreePropositionPicker = {
           const inner = [];
           inner.push(Vue.h(FreePropositionPicker, {
             bank: props.bank,
+            target: props.target,
             onChange: onPropositionChange1
           }));
           inner.push(Vue.h('span', {
@@ -142,6 +161,7 @@ const FreePropositionPicker = {
           }, word));
           inner.push(Vue.h(FreePropositionPicker, {
             bank: props.bank,
+            target: props.target,
             onChange: onPropositionChange2
           }));
           items.push(Vue.h('div', {}, inner));

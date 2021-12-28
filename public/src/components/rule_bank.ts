@@ -1,13 +1,14 @@
 import Vue from '../vue.js'
 
 import InferenceRule from '../data/inference_rule.js'
-import Proposition from '../data/proposition.js'
+import Proposition, { lit } from '../data/proposition.js'
 
 import InferenceRuleComponent from './inference_rule.js'
 
 class RuleBankProps {
-  propositions: Proposition[] = [];
-  rules: InferenceRule[] = [];
+  readonly propositions: Proposition[] = [];
+  readonly rules: InferenceRule[] = [];
+  readonly target: Proposition = lit("");
 }
 
 export default {
@@ -17,12 +18,13 @@ export default {
     return () => {
       let items = [];
 
-      items.push(Vue.h('h3', {}, 'Inference Rule Bank:'));
+      items.push(Vue.h('h3', {}, 'Inference Rules:'));
       for (const rule of props.rules) {
         items.push(Vue.h(InferenceRuleComponent, {
           rule: rule,
           allRules: props.rules,
           propositions: props.propositions,
+          target: props.target,
           onNewProposition: (p: Proposition) => { emit('newProposition', p); },
         }));
       }

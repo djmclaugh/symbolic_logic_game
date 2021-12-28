@@ -88,6 +88,17 @@ export default class PropositionHelpers {
     }
     throw new Error("Unknown proposition type: " + JSON.stringify(p));
   }
+
+  public static allLiterals(p: Proposition): string[] {
+    if (PropositionHelpers.isLiteral(p)) {
+      return [p.content];
+    } else if (PropositionHelpers.isNegation(p)) {
+      return PropositionHelpers.allLiterals(p.proposition);
+    } else if (PropositionHelpers.isConjunction(p) || PropositionHelpers.isDisjunction(p) || PropositionHelpers.isConditional(p)) {
+      return PropositionHelpers.allLiterals(p.left).concat(PropositionHelpers.allLiterals(p.right));
+    }
+    throw new Error("Unknown proposition type: " + JSON.stringify(p));
+  }
 }
 
 export interface Literal {
