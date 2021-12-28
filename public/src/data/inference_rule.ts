@@ -271,6 +271,29 @@ export const DisjunctionElimination: InferenceRule = {
   },
 }
 
+export const DisjunctionCommutation: InferenceRule = {
+  name: "Disjunction Commutation",
+  inputDescriptions: [
+    "Disjunction: A proposition from the bank of the form (𝐿) ∨ (𝑅).",
+  ],
+  outputDescription: "(𝑅) ∨ (𝐿)",
+  inputTypes: [InputType.BankProposition],
+  doesApply: (inputs: Input[]) => {
+    if (inputs.length != 1) {
+      return "Can only be applied to one proposition at a time.";
+    }
+    const d = inputs[0] as Proposition;
+    if (!PropositionHelpers.isDisjunction(d)) {
+      return "Chosen disjunction must have a \"∨\" that isn't inside parentheses.";
+    }
+    return "";
+  },
+  apply: (inputs: Input[]) => {
+    const p = inputs[0] as Disjunction;
+    return or(p.right, p.left);
+  },
+}
+
 export const ConditionalIntroduction: InferenceRule = {
   name: "Conditional Introduction (Conditional Proof)",
   inputDescriptions: [
@@ -411,13 +434,13 @@ export const ModusTolens: InferenceRule = {
       return "Chosen conditional must have a \"→\" that isn't inside parentheses.";
     }
     if (!PropositionHelpers.areTheSame(not(c.right), q)) {
-      return "Consequen negation must be the negation of chosen conditional's right side.";
+      return "Consequent negation must be the negation of chosen conditional's right side.";
     }
     return "";
   },
   apply: (inputs: Input[]) => {
     const p = inputs[0] as Conditional;
-    return not(p.right);
+    return not(p.left);
   },
 }
 
@@ -458,5 +481,58 @@ export const ConstructiveDelimma: InferenceRule = {
     const p = inputs[1] as Conditional;
     const q = inputs[2] as Conditional;
     return or(p.right, q.right);
+  },
+}
+
+export const LawOfExcludedMiddle: InferenceRule = {
+  name: "Law Of Excluded Middle",
+  inputDescriptions: [ "Any proposition, 𝑃."],
+  outputDescription: "(𝑃) ∨ ¬(𝑃)",
+  inputTypes: [InputType.AnyProposition],
+  doesApply: (inputs: Input[]) => {
+    if (inputs.length != 1) {
+      return "Can only be applied to one proposition and one side at a time.";
+    }
+    return "";
+  },
+  apply: (inputs: Input[]) => {
+    const p = inputs[0] as Proposition;
+    return or(p, not(p));
+  },
+}
+
+export const DisjunctiveSyllogism: InferenceRule = {
+  name: "Disjunctive Syllogism",
+  inputDescriptions: [
+    "Disjunction: A proposition from the bank of the form (𝐿) ∨ (𝑅).",
+    "Negation: Any proposition already in the bank of the form ¬(𝐿) or ¬(𝑅).",
+  ],
+  outputDescription: "𝑅 if the chosen negation was ¬(𝐿). 𝐿 if the chosen negation was ¬(𝑅)",
+  inputTypes: [InputType.BankProposition, InputType.BankProposition],
+  doesApply: (inputs: Input[]) => {
+    if (inputs.length != 2) {
+      return "Can only be applied to one proposition and one side at a time.";
+    }
+    const d = inputs[0] as Proposition;
+    const n = inputs[1] as Proposition;
+    if (!PropositionHelpers.isDisjunction(d)) {
+      return "Chosen disjunction must have a \"∨\" that isn't inside parentheses.";
+    }
+    if (!PropositionHelpers.isNegation(n)) {
+      return "Chosen negation must start with \"¬(\".";
+    }
+    if (!PropositionHelpers.areTheSame(d.left, n.proposition) && !PropositionHelpers.areTheSame(d.right, n.proposition)) {
+      return "Consequent negation must be the negation either left or right side of the disjunction.";
+    }
+    return "";
+  },
+  apply: (inputs: Input[]) => {
+    const d = inputs[0] as Disjunction;
+    const n = inputs[1] as Negation;
+    if (PropositionHelpers.areTheSame(d.left, n.proposition)) {
+      return d.right;
+    } else {
+      return d.left;
+    }
   },
 }

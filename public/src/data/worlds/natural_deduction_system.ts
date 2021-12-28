@@ -8,12 +8,16 @@ import {
   ConjunctionElimination,
   DisjunctionIntroduction,
   DisjunctionElimination,
+  DisjunctionCommutation,
   ConditionalIntroduction,
   ConditionalElimination,
   HypotheticalSyllogism,
   SelfConditional,
   ConditionalFromConsequent,
   ConstructiveDelimma,
+  LawOfExcludedMiddle,
+  DisjunctiveSyllogism,
+  ModusTolens,
 } from '../inference_rule.js'
 import { lit, not, and, or, then } from '../proposition.js'
 
@@ -358,6 +362,110 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     ],
     propositions: [],
     target: or(lit("I'm here"), not(lit("I'm here"))),
+  },
+
+  {
+    name: 'Prove Derived Rule: Material Implication (Conditional to Disjunction)',
+    description: [],
+    rules: [
+      ConditionalIntroduction,
+      DisjunctionCommutation,
+      ConstructiveDelimma,
+      LawOfExcludedMiddle,
+    ],
+    propositions: [
+      then(lit("It's raining"), lit("The ground is wet")),
+    ],
+    target: or(not(lit("It's raining")), lit("The ground is wet")),
+  },
+
+  {
+    name: 'Prove Derived Rule: Material Implication (Disjunction to Conditional)',
+    description: [],
+    rules: [
+      ConditionalIntroduction,
+      DisjunctiveSyllogism,
+      DoubleNegationIntroduction,
+    ],
+    propositions: [
+      or(not(lit("It's raining")), lit("The ground is wet")),
+    ],
+    target: then(lit("It's raining"), lit("The ground is wet")),
+  },
+
+  {
+    name: 'Prove Derived Rule: Transposition (Contrapositive)',
+    description: [],
+    rules: [
+      ConditionalIntroduction,
+      ModusTolens,
+    ],
+    propositions: [
+      then(lit("It's raining"), lit("The ground is wet")),
+    ],
+    target: then(not(lit("The ground is wet")), not(lit("It's raining"))),
+  },
+
+  {
+    name: 'Prove Derived Rule: De Morgan (Disjunction of Negations)',
+    description: [],
+    rules: [
+      ConjunctionElimination,
+      ConditionalIntroduction,
+      DisjunctionElimination,
+      ModusTolens,
+    ],
+    propositions: [
+      or(not(lit("I drink tea")), not(lit("I drink coffee"))),
+    ],
+    target: not(and(lit("I drink tea"), lit("I drink coffee"))),
+  },
+
+  {
+    name: 'Prove Derived Rule: De Morgan (Negation of Disjunction)',
+    description: [],
+    rules: [
+      ConjunctionIntroduction,
+      ConditionalIntroduction,
+      DisjunctionIntroduction,
+      NegationIntroduction,
+    ],
+    propositions: [
+      not(or(lit("I drink tea"), lit("I drink coffee"))),
+    ],
+    target: and(not(lit("I drink tea")), not(lit("I drink coffee"))),
+  },
+
+  {
+    name: 'Prove Derived Rule: De Morgan (Conjunction of Negations)',
+    description: [],
+    rules: [
+      ConjunctionElimination,
+      ConditionalIntroduction,
+      NegationIntroduction,
+      NegationElimination,
+      DisjunctiveSyllogism,
+    ],
+    propositions: [
+      and(not(lit("I drink tea")), not(lit("I drink coffee"))),
+    ],
+    target: not(or(lit("I drink tea"), lit("I drink coffee"))),
+  },
+
+  {
+    name: 'Prove Derived Rule: De Morgan (Negation of Conjunction)',
+    description: [],
+    rules: [
+      ConjunctionIntroduction,
+      ConditionalIntroduction,
+      ConstructiveDelimma,
+      ModusTolens,
+      LawOfExcludedMiddle
+    ],
+    propositions: [
+      not(and(lit("I drink tea"), lit("I drink coffee"))),
+    ],
+    target: or(not(lit("I drink tea")), not(lit("I drink coffee"))),
   },
 ];
 export default NATURAL_DEDUCTION_SYSTEM;
