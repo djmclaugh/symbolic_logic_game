@@ -1,7 +1,8 @@
 import Vue from '../vue.js'
 
-import InferenceRule from '../data/inference_rule.js'
-import Proposition, { lit } from '../data/proposition.js'
+import InferenceRule from '../data/inference_rules/inference_rule.js'
+import Proposition from '../data/propositions/proposition.js'
+import { PropositionType, lit } from '../data/propositions/propositions.js'
 
 import InferenceRuleComponent from './inference_rule.js'
 
@@ -9,6 +10,7 @@ class RuleBankProps {
   readonly propositions: Proposition[] = [];
   readonly rules: InferenceRule[] = [];
   readonly target: Proposition = lit("");
+  readonly allowedTypes: PropositionType[] =[];
 }
 
 export default {
@@ -25,6 +27,7 @@ export default {
           allRules: props.rules,
           propositions: props.propositions,
           target: props.target,
+          allowedTypes: props.allowedTypes,
           onNewProposition: (p: Proposition) => { emit('newProposition', p); },
         }));
       }

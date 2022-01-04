@@ -1,117 +1,176 @@
 import Vue from '../vue.js'
 
-import FreePropositionPicker from './free_proposition_picker.js'
+import AnyPropositionInput, { AnyPropositionInputProps } from './rule_inputs/any_proposition_input.js'
+import BankPropositionInput, { BankPropositionInputProps } from './rule_inputs/bank_proposition_input.js'
+import VariableInput, { VariableInputProps } from './rule_inputs/variable_input.js'
+import NewTermInput, { NewTermInputProps } from './rule_inputs/new_term_input.js'
+import FreeTermInput, { FreeTermInputProps } from './rule_inputs/free_term_input.js'
+import PropositionFreeTermInput, { PropositionFreeTermInputProps } from './rule_inputs/proposition_free_term_input.js'
+import ReplacementInput, { ReplacementInputProps } from './rule_inputs/replacement_input.js'
+import ProofInput, { ProofInputProps } from './rule_inputs/proof_input.js'
+import LeftRightInput from './rule_inputs/left_right_input.js'
 
 import LevelComponent from './level.js'
 import Level from '../data/level.js'
-import InferenceRule, { Blank, Input, InputType } from '../data/inference_rule.js'
-import PropositionHelpers, { Proposition, lit, then } from '../data/proposition.js'
+import InferenceRule, { Blank, Input, InputType } from '../data/inference_rules/inference_rule.js'
+
+import Proposition from '../data/propositions/proposition.js'
+import { PropositionType, lit } from '../data/propositions/propositions.js'
 
 class InferenceRuleProps {
   readonly rule: InferenceRule = Blank;
   readonly allRules: InferenceRule[] = [];
+  readonly allowedTypes: PropositionType[] =[];
   readonly propositions: Proposition[] = [];
   readonly target: Proposition = lit("");
 }
 
 interface InferenceRuleData {
-  selectedPropositions: (Input|null)[],
+  selectedInputs: (Input|null)[],
   errorMessage: string|null,
   producedProposition: Proposition|null,
   alreadyFound: boolean,
+  lastProofKey: string,
 }
 
 export default {
   props: Object.keys(new InferenceRuleProps()),
 
   setup(props: InferenceRuleProps, {attrs, slots, emit}: any) {
-
     const initialData: InferenceRuleData = {
-      selectedPropositions: new Array<Proposition|null>(props.rule.inputTypes.length).fill(null),
+      selectedInputs: new Array<Input|null>(props.rule.inputTypes.length).fill(null),
       errorMessage: null,
       producedProposition: null,
       alreadyFound: false,
+      lastProofKey: "",
     };
-    let lastProofKey = "";
+
     const data: InferenceRuleData = Vue.reactive(initialData);
 
-    function inputFromType(t: InputType, i: number): any {
-      if (t == InputType.AnyProposition) {
-        return Vue.h(FreePropositionPicker, {
-          bank: props.propositions,
-          target: props.target,
-          onChange: onFreeChange(i),
-          style: { 'margin': '8px' },
-        });
-      } else if (t == InputType.BankProposition) {
-        const options = [];
-        for (let i = 0; i < props.propositions.length; ++i) {
-          const p = props.propositions[i];
-          options.push(Vue.h('option', { value: i }, PropositionHelpers.toString(p)));
-        }
-        return Vue.h('select', {
-          onChange: onBankChange(i),
-          style: { 'margin': '8px' },
-        }, [
-          Vue.h('option', { value: -1 }, "Select a proposition"),
-        ].concat(options));
-      } else if (t ==  InputType.LeftRight) {
-        return Vue.h('select', {
-          style: { 'margin': '8px' },
-          onChange: onDirectionChange(i),
-        }, [
-          Vue.h('option', { value: "" }, "Select a side"),
-          Vue.h('option', { value: "left" }, "Left"),
-          Vue.h('option', { value: "right" }, "Right"),
-        ]);
-      } else if (t == InputType.Proof) {
-        if (data.selectedPropositions[0] == null || data.selectedPropositions[1] == null) {
-          return Vue.h('em', {
-            style: {
-              'display': 'inline-block',
-              'margin-top': '8px',
-            }
-          }, 'Antecedent and consequent must be chosen before working on proof.');
-        } else {
-          const p = data.selectedPropositions[0] as Proposition;
-          const q = data.selectedPropositions[1] as Proposition;
-          if (lastProofKey != PropositionHelpers.toString(then(p, q))) {
-            data.selectedPropositions[2] = 'not done';
+    function inputElement(r: InferenceRule, i: number): any {
+      const t = r.inputTypes[i];
+      const params = {
+        onChange: onInputChange(i),
+        style: {
+          'display': 'inline-block',
+          'margin': '8px'
+        },
+      }
+      switch(t) {
+        case InputType.AnyProposition: {
+          let p: AnyPropositionInputProps = {
+            bank: props.propositions,
+            target: props.target,
+            allowedTypes: props.allowedTypes,
+            extraTerms: r.anyPropositionInfo ? r.anyPropositionInfo(data.selectedInputs) : [],
           }
-          lastProofKey = PropositionHelpers.toString(then(p, q))
-          const sublevel: Level = {
-            name: `Sublevel`,
-            rules: props.allRules,
-            propositions: props.propositions.concat([data.selectedPropositions[0] as Proposition]),
-            target: data.selectedPropositions[1] as Proposition,
-          };
-          return Vue.h(LevelComponent, {
-            key: lastProofKey,
-            style: {
-              border: '1px solid',
-              'border-radius': '4px',
-              'padding-left': '16px',
-              'padding-right': '16px',
-              'margin-top': '4px',
-            },
-            level: sublevel,
-            isSublevel: true,
-            onLevelClear: () => { data.selectedPropositions[2] = 'done'; },
-            onRestart: () => { data.selectedPropositions[2] = 'not done'; },
-          })
+          return Vue.h(AnyPropositionInput, Object.assign(p, params));
         }
-      } else {
-        return Vue.h('span', {}, `Unknown input type: ${t}`);
+
+        case InputType.BankProposition: {
+          const p: BankPropositionInputProps = {
+            bank: props.propositions,
+          }
+          return Vue.h(BankPropositionInput, Object.assign(p, params));
+        }
+
+        case InputType.LeftRight: {
+          return Vue.h(LeftRightInput, params);
+        }
+
+        case InputType.Variable: {
+          if (!r.variableInfo) {
+            throw new Error("Rules with inputs of type Variable must populate the variableInfo field.");
+          }
+          const forProposition = r.variableInfo(data.selectedInputs);
+          if (typeof forProposition === 'string') {
+            return Vue.h('em', params, forProposition);
+          }
+          const p: VariableInputProps = {
+            bank: props.propositions,
+            target: props.target,
+            forProposition: forProposition,
+          }
+          return Vue.h(VariableInput, Object.assign(p, params));
+        }
+
+        case InputType.NewTerm: {
+          const p: NewTermInputProps = {
+            bank: props.propositions,
+            target: props.target,
+          }
+          return Vue.h(NewTermInput, Object.assign(p, params));
+        }
+
+        case InputType.FreeTerm: {
+          const p: FreeTermInputProps = {
+            bank: props.propositions,
+            target: props.target,
+            extraTerms: [],
+          }
+          return Vue.h(FreeTermInput, Object.assign(p, params));
+        }
+
+        case InputType.PropositionFreeTerm: {
+          if (!r.propositionFreeTermInfo) {
+            throw new Error("Rules with inputs of type PropositionFreeTerm must populate the propositionFreeTermInfo field.");
+          }
+          const proposition = r.propositionFreeTermInfo(data.selectedInputs);
+          if (typeof proposition === 'string') {
+            return Vue.h('em', params, proposition);
+          }
+          const p: PropositionFreeTermInputProps = {
+            proposition: proposition
+          }
+          return Vue.h(PropositionFreeTermInput, Object.assign(p, params));
+        }
+
+        case InputType.Replacement: {
+          if (!r.replacementInfo) {
+            throw new Error("Rules with inputs of type Replacement must populate the replacementInfo field.");
+          }
+          const info = r.replacementInfo(data.selectedInputs);
+          if (typeof info === 'string') {
+            return Vue.h('em', params, info);
+          }
+          const o = info[0].toString();
+          const toR = info[1];
+          const w = info[2];
+          const p: ReplacementInputProps = {
+            original: o,
+            toReplace: toR,
+            with: w,
+          }
+          return Vue.h(ReplacementInput, Object.assign(p, params, {key: o + toR + w},));
+        }
+
+        case InputType.Proof: {
+          if (!r.proofInfo) {
+            throw new Error("Rules with inputs of type Proof must populate the proofInfo field.");
+          }
+          const info = r.proofInfo(data.selectedInputs);
+          if (typeof info === 'string') {
+            return Vue.h('em', params, info);
+          }
+
+          const p: ProofInputProps = {
+            rules: props.allRules,
+            propositions: props.propositions.concat(info[0]),
+            target: info[1],
+            allowedTypes: props.allowedTypes,
+          }
+          return Vue.h(ProofInput, Object.assign(p, params, {key: data.lastProofKey}));
+        }
       }
     }
 
-    function onClick(e: MouseEvent) {
+    function onApplyClick() {
       data.errorMessage = null;
       data.producedProposition = null;
       const actualInput: Input[] = [];
-      for (const p of data.selectedPropositions) {
+      for (const p of data.selectedInputs) {
         if (p === null) {
-          data.errorMessage = "Not all input has been selected.";
+          data.errorMessage = "Not all inputs have been selected.";
           return;
         } else {
           actualInput.push(p);
@@ -121,10 +180,11 @@ export default {
       if (error.length > 0) {
         data.errorMessage = error;
       } else {
-        data.producedProposition = props.rule.apply(actualInput);
+        const newProposition = props.rule.apply(actualInput);
+        data.producedProposition = newProposition;
         data.alreadyFound = false;
         for (const p of props.propositions) {
-          if (PropositionHelpers.areTheSame(p, data.producedProposition)) {
+          if (p.equals(newProposition)) {
             data.alreadyFound = true;
             break;
           }
@@ -135,33 +195,16 @@ export default {
       }
     }
 
-    function onFreeChange(i: number) {
-      return (p: Proposition|null) => {
-        data.selectedPropositions[i] = p;
-      };
-    }
-
-    function onBankChange(i: number) {
-      return (e: InputEvent) => {
-        e.stopPropagation();
-        const target: HTMLSelectElement = e.target as HTMLSelectElement;
-        const v : number = parseInt(target.value);
-        if (v == -1) {
-          data.selectedPropositions[i] = null;
-        } else {
-          data.selectedPropositions[i] = props.propositions[v];
-        }
-      };
-    }
-
-    function onDirectionChange(i: number) {
-      return (e: InputEvent) => {
-        e.stopPropagation();
-        const target: HTMLSelectElement = e.target as HTMLSelectElement;
-        if (target.value == "") {
-          data.selectedPropositions[i] = null;
-        } else {
-          data.selectedPropositions[i] = target.value as "left"|"right";
+    function onInputChange(i: number) {
+      return (input: Input|null) => {
+        data.selectedInputs[i] = input;
+        if (props.rule.proofInfo) {
+          const info = props.rule.proofInfo(data.selectedInputs);
+          if (typeof info === 'string') {
+            data.lastProofKey = '';
+          } else {
+            data.lastProofKey = info[0].concat(info[1]).map(p => p.toString()).join("-");
+          }
         }
       };
     }
@@ -175,9 +218,8 @@ export default {
       }, 'Needs: '));
       if (props.rule.inputDescriptions.length == 1) {
         details.push(Vue.h('span', {}, props.rule.inputDescriptions[0]));
-        const t = props.rule.inputTypes[0];
         details.push(Vue.h('br'));
-        details.push(inputFromType(props.rule.inputTypes[0], 0));
+        details.push(inputElement(props.rule, 0));
         details.push(Vue.h('br'));
       } else {
         const list = [];
@@ -185,7 +227,7 @@ export default {
           list.push(Vue.h('li', {}, [
             props.rule.inputDescriptions[i],
             Vue.h('br'),
-            inputFromType(props.rule.inputTypes[i], i)
+            inputElement(props.rule, i),
           ]));
         }
         details.push(Vue.h('ul', {}, list));
@@ -202,7 +244,7 @@ export default {
       details.push(Vue.h('br'));
 
       details.push(Vue.h('button', {
-        onClick: onClick,
+        onClick: onApplyClick,
         style: { 'margin': '8px' },
       }, "Apply!"));
       if (data.errorMessage != null) {
@@ -211,7 +253,7 @@ export default {
         details.push(Vue.h('span', { class: 'error' }, data.errorMessage));
       }
       if (data.producedProposition != null) {
-        const p = PropositionHelpers.toString(data.producedProposition);
+        const p = data.producedProposition.toString();
         details.push(Vue.h('br'));
         details.push(Vue.h('br'));
         details.push(Vue.h('span', {}, `Proposition created: ${p}`));

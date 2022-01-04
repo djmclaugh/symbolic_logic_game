@@ -2,13 +2,20 @@ import Vue from '../vue.js'
 
 import RuleBankComponent from '../components/rule_bank.js'
 import PropositionBankComponent from '../components/proposition_bank.js'
-import Level, { LEVELS } from '../data/level.js'
+import Level from '../data/level.js'
 
-import PropositionHelpers, { Proposition } from '../data/proposition.js'
+import Proposition from '../data/propositions/proposition.js'
+import { PropositionType, lit } from '../data/propositions/propositions.js'
 
 class LevelProps {
-  readonly level: Level = LEVELS[0];
+  readonly level: Level = {
+    name: "Placeholder",
+    rules: [],
+    propositions: [],
+    target: lit(""),
+  };
   readonly isSublevel: boolean|undefined = false;
+  readonly allowedTypes: PropositionType[] =[];
 }
 
 interface LevelData {
@@ -27,7 +34,7 @@ export default {
 
     function didFindTarget(): boolean {
       for (let p of data.propositions) {
-        if (PropositionHelpers.areTheSame(p, props.level.target)) {
+        if (p.equals(props.level.target)) {
           return true;
         }
       }
@@ -68,19 +75,20 @@ export default {
         rules: props.level.rules,
         propositions: data.propositions,
         target: props.level.target,
+        allowedTypes: props.allowedTypes,
         onNewProposition: (p: Proposition) => {
           data.propositions.push(p);
-          if (PropositionHelpers.areTheSame(p, props.level.target)) {
+          if (p.equals(props.level.target)) {
             emit("levelClear");
           }
         },
       }));
-      items.push(Vue.h('h3', {}, 'Target: ' + PropositionHelpers.toString(props.level.target)));
+      items.push(Vue.h('h3', {}, 'Target: ' + props.level.target.toString()));
 
       if (didFindTarget()) {
         items.push(Vue.h('p', {}, 'Target proposition in bank - Level complete!'));
         if (props.isSublevel) {
-          items.push(Vue.h('p', {}, 'Proof completed - Ready to apply conditional introduction.'));
+          items.push(Vue.h('p', {}, 'Proof completed - Ready to apply inference rule.'));
         } else {
           items.push(Vue.h('p', {}, [
             'Next level unlocked.',

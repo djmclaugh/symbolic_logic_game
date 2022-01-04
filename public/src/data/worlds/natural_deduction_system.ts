@@ -1,6 +1,5 @@
 import Level from '../level.js'
 import {
-  DoubleNegationIntroduction,
   DoubleNegationElimination,
   NegationIntroduction,
   NegationElimination,
@@ -8,18 +7,21 @@ import {
   ConjunctionElimination,
   DisjunctionIntroduction,
   DisjunctionElimination,
-  DisjunctionCommutation,
   ConditionalIntroduction,
   ConditionalElimination,
+} from '../inference_rules/natural_deduction_system.js'
+
+import {
+  DoubleNegationIntroduction,
+  DisjunctionCommutation,
   HypotheticalSyllogism,
-  SelfConditional,
-  ConditionalFromConsequent,
   ConstructiveDelimma,
   LawOfExcludedMiddle,
   DisjunctiveSyllogism,
-  ModusTolens,
-} from '../inference_rule.js'
-import { lit, not, and, or, then } from '../proposition.js'
+  ModusTollens,
+} from '../inference_rules/propositional_logic_derived.js'
+
+import { lit, not, and, or, then } from '../propositions/propositions.js'
 
 const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   {
@@ -198,6 +200,11 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   {
     name: 'Prove Derived Rule: Disjunction Commutation',
     rules: [DisjunctionIntroduction, DisjunctionElimination, ConditionalIntroduction],
+    description: [
+      "Here we'll show that just like conjunctions, disjunctions are commutative. In other words, we'll show that the left and right side of a disjunction can be swapped.",
+      "Note: Working with disjunctions is tricker than working with conjuncitons.",
+      "Hint: It usually helps to try to work out the solutions backwards. In this case, which inference rule could give you the target proposition? What would that inference rule need in order to give you the target proposition?"
+    ],
     propositions: [
       or(lit("I like apples"), lit("I like oranges")),
     ],
@@ -220,6 +227,9 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
 
   {
     name: 'Prove Derived Rule: Disjunction Association',
+    description: [
+      "",
+    ],
     rules: [ConditionalIntroduction, ConditionalElimination, DisjunctionIntroduction, DisjunctionElimination],
     propositions: [
       or(lit("I like apples"), or(lit("I like bananas"), lit("I like oranges"))),
@@ -230,6 +240,9 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   {
     name: 'Prove Derived Rule: Conjunction Distribution',
     rules: [ConjunctionIntroduction, ConjunctionElimination, ConditionalIntroduction, ConstructiveDelimma],
+    description: [
+      "Hint: Whenever you have a conjunction, it's almost always a good idea to use conjunction elimination.",
+    ],
     propositions: [
       and(lit("I eat toast"), or(lit("I drink juice"), lit("I drink milk"))),
     ],
@@ -239,6 +252,9 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   {
     name: 'Prove Derived Rule: Disjunction Distribution',
     rules: [ConjunctionIntroduction, ConjunctionElimination, ConditionalIntroduction, DisjunctionIntroduction, DisjunctionElimination,],
+    description: [
+      "Hint: When the target is a conjunction, it's almost always a good idea to first get each side in the bank and then finish off with conjunction introduction.",
+    ],
     propositions: [
       or(lit("I'll have pasta"), and(lit("I'll have soup"), lit("I'll have salad"))),
     ],
@@ -248,9 +264,10 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   {
     name: 'Rule #7: Negation Introduction',
     description: [
-      "This rule says that if a proposition implies contradictory propositions, then the negation of the original proposition can be added to your proposition bank.",
+      "This rule says that if a proposition implies both a proposition and that same proposition but with a \"¬\" in front, then the original proposition can be added to your proposition bank with a \"¬\" in front.",
       "The behaviour of the \"¬\" symbol is inspired by the word \"not\". The idea is for \"¬(𝑃)\" to mean that 𝑃 is not true. But remember, we're doing symbolic logic; Any meaning we give to the symbols is only for our own intuition. At the end of the day, only the inference rule matters.",
-      "Note: You can use the hypothetical syllogism inference rule if you want instead of using conditional introduction and elimination."
+      "The idea behind negation introduction is that if you manage to prove contradictory results by assuming 𝑃, then you can assume that 𝑃 is not true.",
+      "Note: You can use the hypothetical syllogism inference rule that we derived earlier (it will take fewer steps than using conditional introduction and elimination from scratch)."
     ],
     rules: [ConditionalIntroduction, ConditionalElimination, NegationIntroduction, HypotheticalSyllogism],
     propositions: [
@@ -263,6 +280,11 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   {
     name: 'Prove Derived Rule: Modus Tollens',
     rules: [ConditionalIntroduction, NegationIntroduction],
+    description: [
+      "Modus tollens is very similar to modus ponens (conditional elimination).",
+      "With modus ponens, if you know that the antecedent is true, then you can infer that the consequent is also true.",
+      "With modus tollens, if you know that the consequent is not true, then you can infer that the antecedent is also not true."
+    ],
     propositions: [
       then(lit("I go to bed late"), lit("I wake up late")),
       not(lit("I wake up late")),
@@ -359,9 +381,24 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
       DisjunctionIntroduction,
       NegationIntroduction,
       DoubleNegationElimination,
+      ModusTollens,
     ],
     propositions: [],
     target: or(lit("I'm here"), not(lit("I'm here"))),
+  },
+
+  {
+    name: 'Prove Derived Rule: Material Implication (Disjunction to Conditional)',
+    description: [],
+    rules: [
+      ConditionalIntroduction,
+      DisjunctiveSyllogism,
+      DoubleNegationIntroduction,
+    ],
+    propositions: [
+      or(not(lit("It's raining")), lit("The ground is wet")),
+    ],
+    target: then(lit("It's raining"), lit("The ground is wet")),
   },
 
   {
@@ -380,25 +417,11 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   },
 
   {
-    name: 'Prove Derived Rule: Material Implication (Disjunction to Conditional)',
-    description: [],
-    rules: [
-      ConditionalIntroduction,
-      DisjunctiveSyllogism,
-      DoubleNegationIntroduction,
-    ],
-    propositions: [
-      or(not(lit("It's raining")), lit("The ground is wet")),
-    ],
-    target: then(lit("It's raining"), lit("The ground is wet")),
-  },
-
-  {
     name: 'Prove Derived Rule: Transposition (Contrapositive)',
     description: [],
     rules: [
       ConditionalIntroduction,
-      ModusTolens,
+      ModusTollens,
     ],
     propositions: [
       then(lit("It's raining"), lit("The ground is wet")),
@@ -413,7 +436,9 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
       ConjunctionElimination,
       ConditionalIntroduction,
       DisjunctionElimination,
-      ModusTolens,
+      NegationIntroduction,
+      NegationElimination,
+      ModusTollens,
     ],
     propositions: [
       or(not(lit("I drink tea")), not(lit("I drink coffee"))),
@@ -428,6 +453,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
       ConjunctionIntroduction,
       ConditionalIntroduction,
       DisjunctionIntroduction,
+      NegationElimination,
       NegationIntroduction,
     ],
     propositions: [
@@ -458,8 +484,11 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     rules: [
       ConjunctionIntroduction,
       ConditionalIntroduction,
+      NegationIntroduction,
+      NegationElimination,
+      DoubleNegationElimination,
       ConstructiveDelimma,
-      ModusTolens,
+      ModusTollens,
       LawOfExcludedMiddle
     ],
     propositions: [

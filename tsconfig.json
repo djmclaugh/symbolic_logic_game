@@ -5,7 +5,7 @@
   ],
   "compilerOptions": {
     "strict": true,
-    "target": "ES6",
+    "target": "esnext",
     "module": "ES6",
     "sourceMap": true,
     "baseUrl": "./public"

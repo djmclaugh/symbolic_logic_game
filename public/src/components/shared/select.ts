@@ -1,12 +1,14 @@
 import Vue from '../../vue.js'
 
 class SelectProps {
+  readonly selected: number = 0;
   readonly objectType: string = "";
   readonly options: string[] = [];
 }
 
 export default {
   props: Object.keys(new SelectProps()),
+  emits: ['change'],
 
   setup(props: SelectProps, {attrs, slots, emit}: any) {
     function onChange(e: InputEvent) {
@@ -22,9 +24,14 @@ export default {
 
     return () => {
       const options: any = [];
-      options.push(Vue.h('option', { value: "" }, `Select ${props.objectType}` ));
+      if (props.objectType && props.objectType.length > 0) {
+        options.push(Vue.h('option', { value: "" }, `Select ${props.objectType}` ));
+      }
       for (let i = 0; i < props.options.length; ++i) {
-        options.push(Vue.h('option', { value: i }, props.options[i]));
+        options.push(Vue.h('option', {
+          value: i,
+          selected: i == props.selected,
+        }, props.options[i]));
       }
       return Vue.h('select', { onChange: onChange }, options);
     }
