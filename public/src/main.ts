@@ -33,7 +33,7 @@ const App = {
       items.push(Vue.h('label', {}, 'World selection: '));
       items.push(Vue.h(SelectCompoenent, {
           selected: data.currentWorld,
-          options: ["Propositional Logic: Natural Deductive System", "First Order Logic"],
+          options: ["Propositional Logic: Natural Deductive System", "First-Order Logic"],
           onChange: (index: number|null) => {
             data.currentWorld = index || 0;
             data.currentLevel = 0;

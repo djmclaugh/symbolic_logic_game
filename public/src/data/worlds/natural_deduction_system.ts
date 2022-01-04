@@ -44,7 +44,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
       "For this level you are only given conjunction introduction. It says that you can take any two propositions from your bank and combine them by putting a \"∧\" in between.",
       "The behaviour of the \"∧\" symbol is inspired by the word \"and\". The idea is for \"(𝐿) ∧ (𝑅)\" to mean that both 𝐿 and 𝑅 are true. But remember, we're doing symbolic logic; Any meaning we give to the symbols is only for our own intuition. At the end of the day, only the inference rule matters.",
       "Note: This rule is one of the 9 rules taken for granted under the \"natural deduction\" way of defining propositional logic.",
-      "Note: Again, remember we're doing symbolic logic. You have to create the target proposition EXACTLY. It has to be the exact same sequence of symbols. You can use copy/paste and ctrl-f to convince yourself whether or not the target proposition is in the proposition bank.",
+      "Note: \"Propositional logic\", \"propositional calculus\", and \"zeroth-order logic\" are all synonyms.",
     ],
     rules: [ ConjunctionIntroduction ],
     propositions: [

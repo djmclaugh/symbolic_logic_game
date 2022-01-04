@@ -39,10 +39,10 @@ const FIRST_ORDER_LOGIC: Level[] = [
   //   target: then(lit("𝑥 is a multiple of 8"), lit("𝑥 is a multiple of 2")),
   // },
   {
-    name: "First Order Logic Introduction",
+    name: "First-Order Logic Introduction",
     description: [
       "Propositional logic is great, but it's not quite expressive enough for math. One important feature that propositional logic is missing is the concept of variables.",
-      "First order logic is built on top propositional logic. All inference rules from that world will be taken for granted, so it's recomended to complete that world first."
+      "First-order logic is built on top propositional logic. All inference rules from that world will be taken for granted, so it's recomended to complete that world first."
     ],
     rules: [
       HypotheticalSyllogism,
@@ -56,7 +56,7 @@ const FIRST_ORDER_LOGIC: Level[] = [
   {
     name: "Rule #1: Reflexivity",
     description: [
-      "Just like in propositional logic, there are some rules that are just taken for granted in first order logic.",
+      "Just like in propositional logic, there are some rules that are just taken for granted in first-order logic.",
       "The first one we'll is called reflexivity. It says that if a proposition consists of a term, the \"=\" symbol, and then the exact same term again, then you can add that proposition to your bank.",
       "The behaviour of the \"=\" symbol is inspired by the word \"equals\". The idea is for \"𝑥 = 𝘺\" to mean that 𝑥 and 𝘺 are exactly the same thing. But remember, we're doing symbolic logic; Any meaning we give to the symbols is only for our own intuition. At the end of the day, only the inference rule matters.",
       "The idea behind reflexivity is that anything is exactly the same as itself."
@@ -120,7 +120,7 @@ const FIRST_ORDER_LOGIC: Level[] = [
   {
     name: "Rule #3: Universal Elimination",
     description: [
-      "One important thing that differentiates first order logic over propositional logic is the concept of quantifiers.",
+      "One important thing that differentiates first-order logic over propositional logic is the concept of quantifiers.",
       "The behaviour of the \"∀\" symbol is inspired by the words \"for all\". The idea is for \"∀𝑥(𝑃)\" to mean that 𝑃 will remain true no matter what 𝑥 is. But remember, we're doing symbolic logic; Any meaning we give to the symbols is only for our own intuition. At the end of the day, only the inference rule matters.",
       "The idea behind universal elimination is that if something is true regardless of the value of 𝑥, then we can just plug in any specific term we want for 𝑥 and get rid of the ∀.",
     ],
