@@ -69,8 +69,15 @@ export default {
         }
       }
 
-      items.push(Vue.h(PropositionBankComponent, {propositions: data.propositions}));
-      items.push(Vue.h(RuleBankComponent, {
+      const banks = [];
+
+      banks.push(Vue.h('div', { class: 'target-bank' }, [
+        Vue.h('h3', {}, 'Target'),
+        Vue.h('p', {}, props.level.target.toString()),
+      ]));
+      banks.push(Vue.h(PropositionBankComponent, {propositions: data.propositions}));
+
+      banks.push(Vue.h(RuleBankComponent, {
         key: data.uuid,
         rules: props.level.rules,
         propositions: data.propositions,
@@ -83,7 +90,8 @@ export default {
           }
         },
       }));
-      items.push(Vue.h('h3', {}, 'Target: ' + props.level.target.toString()));
+
+      items.push(Vue.h('div', { class: 'banks' }, banks));
 
       if (didFindTarget()) {
         items.push(Vue.h('p', {}, 'Target proposition in bank - Level complete!'));
@@ -99,7 +107,12 @@ export default {
           ]));
         }
       }
-      return Vue.h('div', {}, items);
+      return Vue.h('div', {
+        class: {
+          'level': true,
+          'sublevel': props.isSublevel,
+        },
+      }, items);
     }
   }
 }

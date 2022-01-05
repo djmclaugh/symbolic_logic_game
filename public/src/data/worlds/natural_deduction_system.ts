@@ -12,7 +12,10 @@ import {
 } from '../inference_rules/natural_deduction_system.js'
 
 import {
+  SelfConditional,
   DoubleNegationIntroduction,
+  ConjunctionCommutation,
+  ConjunctionAssociation,
   DisjunctionCommutation,
   HypotheticalSyllogism,
   ConstructiveDelimma,
@@ -27,9 +30,11 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   {
     name: "Propositional Logic Introduction",
     description: [
-      "Each level starts with a list of assumptions that are added to your proposition bank, a list of inference rules (in this level however, the list is empty), and a target proposition.",
-      "The goal of each level is to have the target proposition inside of your proposition bank.",
-      "In this level, we already start with the target proposition in our bank, so we already won! Click the \"Go to next level\" button to proceed."
+      "In this game you'll learn propositional logic, the most common formal logic.",
+      "The goal of each level is to have an EXACT copy of the target proposition in your proposition bank.",
+      "For this first level, we already start with the target proposition in our bank, so we already won! Click the \"Go to next level\" button to proceed.",
+      "Note: \"Formal logic\" and \"symbolic logic\" are synonyms.",
+      "Note: \"Propositional logic\", \"propositional calculus\", and \"zeroth-order logic\" are all synonyms.",
     ],
     rules: [],
     propositions: [
@@ -40,11 +45,14 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   {
     name: "Rule #1: Conjunction Introduction",
     description: [
-      "The last level was too easy. From now on, you won't start with the target proposition already in your bank. You'll have to create the target proposition yourself by using the allowed inference rules.",
+      "The last level was too easy. From now on, you won't start with the target proposition already in your bank. You'll have to create the target proposition yourself.",
+      "You can create new propositions by using the inference rules provided to you. Each rule has specific requirements, make sure you read them carefully!",
       "For this level you are only given conjunction introduction. It says that you can take any two propositions from your bank and combine them by putting a \"∧\" in between.",
-      "The behaviour of the \"∧\" symbol is inspired by the word \"and\". The idea is for \"(𝐿) ∧ (𝑅)\" to mean that both 𝐿 and 𝑅 are true. But remember, we're doing symbolic logic; Any meaning we give to the symbols is only for our own intuition. At the end of the day, only the inference rule matters.",
-      "Note: This rule is one of the 9 rules taken for granted under the \"natural deduction\" way of defining propositional logic.",
-      "Note: \"Propositional logic\", \"propositional calculus\", and \"zeroth-order logic\" are all synonyms.",
+      "The behaviour of the conjunction symbol (∧) is inspired by the word \"and\". The idea is for \"(𝐿) ∧ (𝑅)\" to mean that both 𝐿 and 𝑅 are true.",
+      "Remember, we're doing symbolic logic. You need to make an EXACT copy of the target proposition. It has to be the EXACT same sequence of symbols.",
+      "\"1+2\" is not the same as \"2+1\"; The symbols are not in the same order.",
+      "\"hello\" is not the same as \"Hello\"; \"h\" is a different symbol than \"H\".",
+      "\"x = 2\" is not the same as \"𝑥 = 2\"; \"x\" is a different symbol than \"𝑥\".",
     ],
     rules: [ ConjunctionIntroduction ],
     propositions: [
@@ -57,9 +65,10 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   {
     name: "Rule #2: Conjunction Elimination",
     description: [
-      "For this level you are given \"conjunction elimination\" which is also called \"simplification\". It says that if you have the \"∧\" symbol in a proposition and that it's not within parentheses, then you can make the proposition that consists of just what's on the left or just what's on the right.",
-      "This rule is conjunction introduction's counterpart.",
-      "Note: This rule is also one of the 9 rules taken for granted.",
+      "For this level you are given conjunction elimination (conjunction introduction's counterpart).",
+      "This inference rule is also called \"simplification\".",
+      "It says that if you have the \"∧\" symbol in a proposition and that the \"∧\" is not within parentheses, then you can make the proposition that consists of just what's on the left or just what's on the right.",
+      "The idea behind conjunction elimination is that if the left and right sides of the \"∧\" are true together, then either should be true by itself.",
     ],
     rules: [ ConjunctionElimination ],
     propositions: [
@@ -71,6 +80,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     name: "Conjunction Test",
     description: [
       "Let's see if you can use the two conjunction rules to clear this level.",
+      "It's up to you to figure out how, in what order, and how many times to use each of the rules.",
     ],
     rules: [ ConjunctionIntroduction, ConjunctionElimination ],
     propositions: [
@@ -83,42 +93,103 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   {
     name: 'Prove Derived Rule: Conjunction Commutation',
     description: [
-      "From the rules that are taken for granted, we can derive new rules.",
+      "Conjunction introduction/elimination are 2 of the 9 rules taken for granted. They are the only rules about conjunctions.",
+      "However, from these 2 rules we can derive many other rules!",
       "Here we'll derive a rule that tells us that conjunction is commutative. In other words, that we can swap the left and right sides of a conjunction as we please.",
+      "Note: After beating this level, you'll have access to the conjunction commutation rule. Since it's a derived rule, you'll never *need* to use it, but it might be more practical than using the base rules in some situations."
     ],
     rules: [ConjunctionIntroduction, ConjunctionElimination],
     propositions: [
-      and(lit("I'll have toast"), lit("I'll have juice")),
+      and(lit("I like red"), lit("I like blue")),
     ],
-    target: and(lit("I'll have juice"), lit("I'll have toast")),
+    target: and(lit("I like blue"), lit("I like red")),
   },
 
   {
     name: 'Prove Derived Rule: Conjunction Association',
     description: [
-      "Here we'll derive a rule that tells us that conjunction is associative. In other words, it doesn't matter in what order we do the conjunction.",
-      "Note: Because conjunction is associative, in real life, people will write \"𝑃 ∧ 𝑄 ∧ 𝑅\" instead of \"(𝑃 ∧ 𝑄) ∧ 𝑅\" or \"𝑃 ∧ (𝑄 ∧ 𝑅)\", just like like people write \"2 × 3 × 4\" instead of \"(2 × 3) × 4\" or \"2 × (3 × 4)\"."
+      "Here we'll derive a rule that tells us that conjunction is associative. In other words, we can rearange how the conjunctions are grouped.",
+      "Note: Because conjunction is associative, in real life, people will write \"𝑃 ∧ 𝑄 ∧ 𝑅\" instead of \"(𝑃 ∧ 𝑄) ∧ 𝑅\" or \"𝑃 ∧ (𝑄 ∧ 𝑅)\", just like like people write \"2 × 3 × 4\" instead of \"(2 × 3) × 4\" or \"2 × (3 × 4)\".",
+      "It's not that \"(𝑃 ∧ 𝑄) ∧ 𝑅\" is the same thing as \"𝑃 ∧ (𝑄 ∧ 𝑅)\". Remember, we're doing symbolic logic. It's just that we can jump from one to the other as we please."
     ],
-    rules: [ConjunctionIntroduction, ConjunctionElimination],
+    rules: [ConjunctionIntroduction, ConjunctionElimination, ConjunctionCommutation],
     propositions: [
-      and(lit("I like apples"), and(lit("I like bananas"), lit("I like oranges"))),
+      and(lit("I like red"), and(lit("I like green"), lit("I like blue"))),
     ],
-    target: and(and(lit("I like apples"), lit("I like bananas")), lit("I like oranges")),
+    target: and(and(lit("I like red"), lit("I like green")), lit("I like blue")),
   },
 
   {
-    name: 'Rule #3: Conditional Introduction',
+    name: 'Conjunction Practice',
     description: [
-      "This rule is the most complicated but the most useful of the 9 rules taken for granted.",
-      "This rule says that if you can \"prove\" 𝑄 by assuming 𝑃, then you can add \"(𝑃) → (𝑄)\" to your proposition bank.",
-      "To \"prove\" 𝑄, all you have to do is beat the sublevel where the 𝑄 is the target proposition.",
-      "The behaviour of the \"→\" symbol is inspired by the word \"implies\". The idea is for \"(𝑃) → (𝑄)\" to mean that whenever 𝑃 is true, then 𝑄 must be true as well. But remember, we're doing symbolic logic; Any meaning we give to the symbols is only for our own intuition. At the end of the day, only the inference rules matter.",
+      "Note: If you feel comfortable with conjunctions, feel free to skip to the next level.",
+      "Note: If you feel that the derived rules aren't that practical, it's because they aren't. In this case, the base rules are usually more convenient. The future derived rules are going to be a lot more helpful.",
+      "Hint: If you ever have a conjunction in your proposition bank, it's usually a good idea to take it appart with conjunction elimination.",
+      "Hint: If you ever have a conjunction as your target, it's usually a good idea to work backwards and try to create each side one at a time (and then finish off the level with conjunction introduction).",
     ],
-    rules: [ConjunctionIntroduction, ConditionalIntroduction],
+    rules: [
+      ConjunctionIntroduction,
+      ConjunctionElimination,
+      ConjunctionCommutation,
+      ConjunctionAssociation,
+    ],
     propositions: [
-      lit("I like peanut butter"),
+      and(lit("I ate cereal"), lit("I drank coffee")),
+      and(and(lit("I ate soup"), lit("I ate salad")), lit("I drank water")),
     ],
-    target: then(lit("I like jam"), and(lit("I like peanut butter"), lit("I like jam"))),
+    target: and(and(lit("I drank coffee"), lit("I drank water")), and(lit("I ate cereal"), and(lit("I ate soup"), lit("I ate salad")))),
+  },
+
+  {
+    name: 'Rule #3: Conditional Elimination',
+    description: [
+      "Time for a new rule and a new logical symbol.",
+      "The behaviour of the conditional (→) symbol is inspired by the word \"implies\". The idea is for \"(𝑃) → (𝑄)\" to mean that whenever 𝑃 is true, then 𝑄 must be true as well.",
+      "The first rule about conditionals that we'll see is conditional elimination (also called modus ponens).",
+      "It says that if you have a conditional and you have it's left side (also called its antecedent), then you can have the conditional's right side (also called its consequent).",
+    ],
+    rules: [ConditionalElimination],
+    propositions: [
+      lit("Socrates is a man"),
+      then(lit("Socrates is a man"), lit("Socrates is mortal")),
+    ],
+    target: lit("Socrates is mortal"),
+  },
+
+  {
+    name: 'Conditional Elimination Practice',
+    description: [
+      "Let's mix in conditional elimination with the other rules we saw.",
+    ],
+    rules: [
+      ConjunctionIntroduction,
+      ConjunctionElimination,
+      ConjunctionCommutation,
+      ConjunctionAssociation,
+      ConditionalElimination
+    ],
+    propositions: [
+      then(and(lit("I ate well"), lit("I took the time to unwind")), lit("I will sleep well")),
+      lit("I took the time to unwind"),
+      and(lit("I ate soup"), lit("I ate salad")),
+      then(and(lit("I ate salad"), lit("I ate soup")), lit("I ate well")),
+    ],
+    target: lit("I will sleep well"),
+  },
+
+  {
+    name: 'Rule #4: Conditional Introduction',
+    description: [
+      "This rule is the most complicated but one of the most useful of the 9 base rules.",
+      "This rule says that if you can \"prove\" 𝑄 by assuming 𝑃, then you can add \"(𝑃) → (𝑄)\" to your proposition bank.",
+      "To \"prove\" 𝑄, all you have to do is beat the level where 𝑃 has been added to the proposition bank and where 𝑄 is the target proposition.",
+    ],
+    rules: [ConjunctionIntroduction, ConditionalIntroduction, ConditionalElimination],
+    propositions: [
+      lit("I'm a citizen"),
+      then(and(lit("I'm a citizen"), lit("I'm an adult")), lit("I can vote")),
+    ],
+    target: then(lit("I'm an adult"), lit("I can vote")),
   },
 
   {
@@ -132,19 +203,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     target: then(lit("I'm sleeping"), lit("I'm sleeping")),
   },
 
-  {
-    name: 'Rule #4: Conditional Elimination',
-    description: [
-      "Conditional elimination (also called modus ponens) is one of the 9 rules taken for granted. It's the counterpart of conditional introduction.",
-      "It says that if you have a conditional and you have it's left side (also called its antecedent), then you can have the conditional's right side (also called its consequent).",
-    ],
-    rules: [ConditionalElimination],
-    propositions: [
-      lit("Socrates is a man"),
-      then(lit("Socrates is a man"), lit("Socrates is mortal")),
-    ],
-    target: lit("Socrates is mortal"),
-  },
+
   {
     name: 'Conditional Test',
     description: [
@@ -291,6 +350,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     ],
     target: not(lit("I go to bed late")),
   },
+
   {
     name: 'Prove Derived Rule: Double Negation Introduction',
     rules: [ConditionalIntroduction, NegationIntroduction],
@@ -299,6 +359,19 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     ],
     target: not(not(lit("I like apples"))),
   },
+
+  {
+    name: 'Prove Derived Rule: Self Contradiction',
+    rules: [SelfConditional, NegationIntroduction],
+    description: [
+      "In this level we show that if something implies it's own negation, then we can assume it's negation.",
+    ],
+    propositions: [
+      then(lit("I'll go tomorrow"), not(lit("I'll go tomorrow"))),
+    ],
+    target: not(lit("I'll go tomorrow")),
+  },
+
   {
     name: 'Rule #8: Negation Elimination',
     description: [

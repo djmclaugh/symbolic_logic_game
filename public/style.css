@@ -1,7 +1,7 @@
 body {
   padding: 20px;
   font-family: sans-serif;
-  background-color: #f9f9f9;
+  background-color: #eaeaea;
 }
 
 .error {
@@ -13,12 +13,13 @@ body {
 }
 
 details {
-    width: auto;
+    background-color: #f0f0f0;
     border: 1px solid #a0a0a0;
     border-radius: 4px;
     padding: 4px;
     margin-top: 4px;
     margin-bottom: 4px;
+    box-shadow: 0px 4px 4px;
 }
 
 summary {
@@ -30,13 +31,13 @@ summary {
 }
 
 summary:hover {
-    background-color: #f0f0f0;
+    background-color: #d0d0d0;
 }
 
 details[open] > summary {
     border-bottom: 1px solid #a0a0a0;
     border-radius: 4px;
-
+    box-shadow: 0px 1px 4px 0px #00000070;
 }
 
 details > div {
@@ -44,9 +45,67 @@ details > div {
   padding: 12px;
 }
 
+.banks {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.rule-bank {
+  display: block;
+  min-width: 50%;
+  margin: 2px;
+}
+
+.target-bank {
+  background-color: #f0f0f0;
+  margin: 4px;
+  display: inline-flex;
+  width: auto;
+  align-items: center;
+  flex-direction: column;
+  border: 1px solid #a0a0a0;
+  border-radius: 4px;
+  box-shadow: 0px 4px 4px;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.target-bank p {
+  margin-top: 0px;
+}
+
+.proposition-bank {
+  background-color: #f0f0f0;
+  margin: 4px;
+  display: inline-flex;
+  width: auto;
+  flex-direction: column;
+  border: 1px solid #a0a0a0;
+  border-radius: 4px;
+  box-shadow: 0px 4px 4px;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.proposition-bank ul {
+  margin-top: 0px;
+  margin-bottom: 16px;
+}
+
 .free-proposition-picker {
   display: flex;
   align-items: flex-start;
   margin: 16px;
   flex-wrap: wrap;
+}
+
+.sublevel {
+  min-width: 80%;
+  border: 2px solid;
+  border-radius: 4px;
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-bottom: 16px;
+  box-shadow: 0px 6px 6px;
 }

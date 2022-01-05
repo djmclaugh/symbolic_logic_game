@@ -266,7 +266,7 @@ export default {
         }
       }
 
-      return Vue.h('details', {}, [
+      return Vue.h('details', { class: 'inference-rule' }, [
         Vue.h('summary', {}, props.rule.name),
         Vue.h('div', {}, details),
       ]);

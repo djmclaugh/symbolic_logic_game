@@ -2,10 +2,11 @@ import InferenceRule, {InputType, Input} from './inference_rule.js'
 import Proposition from '../propositions/proposition.js'
 import Negation from '../propositions/negation.js'
 import {
+  ConjunctionProposition as Conjunction,
   DisjunctionProposition as Disjunction,
   ConditionalProposition as Conditional,
 } from '../propositions/binary.js'
-import { not, or, then } from '../propositions/propositions.js'
+import { not, and, or, then } from '../propositions/propositions.js'
 
 export const DoubleNegationIntroduction: InferenceRule = {
   name: "Double Negation Introduction",
@@ -23,10 +24,60 @@ export const DoubleNegationIntroduction: InferenceRule = {
   },
 }
 
+export const ConjunctionCommutation: InferenceRule = {
+  name: "Conjunction Commutation",
+  inputDescriptions: [
+    "A proposition from the bank of the form (𝐿) ∧ (𝑅)",
+  ],
+  outputDescription: "(𝑅) ∧ (𝐿)",
+  inputTypes: [InputType.BankProposition],
+  doesApply: (inputs: Input[]) => {
+    if (inputs.length != 1) {
+      return "Can only be applied to one proposition at a time.";
+    }
+    const d = inputs[0] as Proposition;
+    if (!(d instanceof Conjunction)) {
+      return "Chosen conjunction must have a \"∧\" that isn't inside parentheses.";
+    }
+    return "";
+  },
+  apply: (inputs: Input[]) => {
+    const p = inputs[0] as Conjunction;
+    return and(p.r, p.l);
+  },
+}
+
+export const ConjunctionAssociation: InferenceRule = {
+  name: "Conjunction Association",
+  inputDescriptions: [
+    "Conjunction: A proposition from the bank of the form (𝐿) ∧ (𝑅)",
+    "Nested Conjunction Side: The side of the chosen conjunction that happens to also be a conjunction.",
+  ],
+  outputDescription: "(𝐿ₗ) ∧ ((𝐿ᵣ) ∧ (𝑅)) or ((𝐿) ∧ (𝑅ₗ)) ∧ (𝑅ᵣ) depending on which side is the nested conjunction.",
+  inputTypes: [InputType.BankProposition, InputType.LeftRight],
+  doesApply: (inputs: Input[]) => {
+    const c = inputs[0] as Proposition;
+    const s = inputs[1] as "Left"|"Right";
+    if (!(c instanceof Conjunction)) {
+      return "Chosen conjunction must have a \"∧\" that isn't inside parentheses.";
+    }
+    if ((s == "Left" && !(c.l instanceof Conjunction)) || (s == "Right" && !(c.r instanceof Conjunction))) {
+      return "Chosen side of chosen conjunction must also have a \"∧\" that's in only one pair of parentheses.";
+    }
+    return "";
+  },
+  apply: (inputs: Input[]) => {
+    const c = inputs[0] as Conjunction;
+    const s = inputs[1] as "Left"|"Right";
+    const n = (s == "Left" ? c.l : c.r) as Conjunction;
+    return s == "Left" ? and(n.l, and(n.r, c.r)) : and(and(c.l, n.l), n.r);
+  },
+}
+
 export const DisjunctionCommutation: InferenceRule = {
   name: "Disjunction Commutation",
   inputDescriptions: [
-    "Disjunction: A proposition from the bank of the form (𝐿) ∨ (𝑅)",
+    "A proposition from the bank of the form (𝐿) ∨ (𝑅)",
   ],
   outputDescription: "(𝑅) ∨ (𝐿)",
   inputTypes: [InputType.BankProposition],
@@ -79,7 +130,7 @@ export const HypotheticalSyllogism: InferenceRule = {
 }
 
 export const SelfConditional: InferenceRule = {
-  name: "Self Conditional",
+  name: "Conditional Tautology",
   inputDescriptions: [ "Any proposition, 𝑃"],
   outputDescription: "(𝑃) → (𝑃)",
   inputTypes: [InputType.AnyProposition],

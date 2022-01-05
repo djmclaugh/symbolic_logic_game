@@ -1,10 +1,15 @@
 import Level from '../level.js'
 
 import {
+  ConditionalIntroduction,
   ConditionalElimination,
+  NegationIntroduction,
+  NegationElimination,
+  DoubleNegationElimination,
 } from '../inference_rules/natural_deduction_system.js'
 
 import {
+  ModusTollens,
   HypotheticalSyllogism,
   LawOfExcludedMiddle
 } from '../inference_rules/propositional_logic_derived.js'
@@ -181,6 +186,21 @@ const FIRST_ORDER_LOGIC: Level[] = [
   },
 
   {
+    name: "Prove Derieved Rule: Universal Change Of Variable",
+    description: [
+      "Here we show that the variable that we use with the universal quantifier doesn't matter."
+    ],
+    rules: [
+      UniversalIntroduction,
+      UniversalElimination,
+    ],
+    propositions: [
+      forall("𝑥", lit("𝑥 is the same as 𝑥")),
+    ],
+    target: forall("𝑦", lit("𝑦 is the same as 𝑦")),
+  },
+
+  {
     name: "Rule #5: Existential Introduction",
     description: [
       "The behaviour of the \"∃\" symbol is inspired by the words \"there exists\". The idea is for \"∃𝑥(𝑃)\" to mean that theres exists a \"thing\" such that 𝑃 is true for that thing.",
@@ -212,6 +232,95 @@ const FIRST_ORDER_LOGIC: Level[] = [
       forall("𝑥", then(lit("𝑥 is a human"), lit("𝑥 is an animal"))),
     ],
     target: exists("𝑥", lit("𝑥 is an animal")),
+  },
+
+  {
+    name: "Prove Derieved Rule: Existential Change Of Variable",
+    description: [
+      "Here we show that the variable that we use with the existential quantifier doesn't matter."
+    ],
+    rules: [
+      ExistentialIntroduction,
+      ExistentialElimination,
+    ],
+    propositions: [
+      exists("𝑥", lit("𝑥 is a human")),
+    ],
+    target: exists("𝑦", lit("𝑦 is a human")),
+  },
+
+  {
+    name: "Prove Derieved Rule: De Morgan (Existential Negation)",
+    description: [],
+    rules: [
+      ConditionalIntroduction,
+      NegationIntroduction,
+      NegationElimination,
+      UniversalIntroduction,
+      UniversalElimination,
+      ExistentialIntroduction,
+      ExistentialElimination,
+    ],
+    propositions: [
+      exists("𝑥", not(lit("𝑥 is an elephant"))),
+    ],
+    target: not(forall("𝑥", lit("𝑥 is an elephant"))),
+  },
+
+  {
+    name: "Prove Derieved Rule: De Morgan (Negation of Existential)",
+    description: [],
+    rules: [
+      ConditionalIntroduction,
+      NegationIntroduction,
+      NegationElimination,
+      ModusTollens,
+      UniversalIntroduction,
+      UniversalElimination,
+      ExistentialIntroduction,
+      ExistentialElimination,
+    ],
+    propositions: [
+      not(exists("𝑥", lit("𝑥 is an immortal human"))),
+    ],
+    target: forall("𝑥", not(lit("𝑥 is an immortal human"))),
+  },
+
+  {
+    name: "Prove Derieved Rule: De Morgan (Universal Negation)",
+    description: [],
+    rules: [
+      ConditionalIntroduction,
+      NegationIntroduction,
+      NegationElimination,
+      UniversalIntroduction,
+      UniversalElimination,
+      ExistentialIntroduction,
+      ExistentialElimination,
+    ],
+    propositions: [
+      forall("𝑥", not(lit("𝑥 is an immortal human"))),
+    ],
+    target: not(exists("𝑥", lit("𝑥 is an immortal human"))),
+  },
+
+  {
+    name: "Prove Derieved Rule: De Morgan (Negation of Universal)",
+    description: [],
+    rules: [
+      ConditionalIntroduction,
+      NegationIntroduction,
+      NegationElimination,
+      DoubleNegationElimination,
+      UniversalIntroduction,
+      UniversalElimination,
+      ExistentialIntroduction,
+      ExistentialElimination,
+    ],
+    propositions: [
+      not(forall("𝑥", lit("𝑥 is an elephant"))),
+    ],
+    target: exists("𝑥", not(lit("𝑥 is an elephant"))),
   },
 ];
 export default FIRST_ORDER_LOGIC;

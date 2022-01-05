@@ -20,7 +20,6 @@ export default {
     return () => {
       let items = [];
 
-      items.push(Vue.h('h3', {}, 'Inference Rules:'));
       for (const rule of props.rules) {
         items.push(Vue.h(InferenceRuleComponent, {
           rule: rule,

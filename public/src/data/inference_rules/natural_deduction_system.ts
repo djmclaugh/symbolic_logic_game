@@ -90,7 +90,7 @@ export const DoubleNegationElimination: InferenceRule = {
 }
 
 export const ConjunctionIntroduction: InferenceRule = {
-  name: "Conjunction Introduction",
+  name: "Conjunction Introduction / ∧I",
   inputDescriptions: [
     "Left Proposition: Any proposition already in the bank, 𝐿",
     "Right Proposition: Any proposition already in the bank, 𝑅"
@@ -109,10 +109,10 @@ export const ConjunctionIntroduction: InferenceRule = {
 }
 
 export const ConjunctionElimination: InferenceRule = {
-  name: "Conjunction Elimination (Simplification)",
+  name: "Conjunction Elimination / ∧E / Simplification",
   inputDescriptions: [
     "Conjunction: A proposition from the bank of the form (𝐿) ∧ (𝑅)",
-    "Side: A choice between \"Left\" and \"Right\".",
+    "Side to Keep: A choice between \"Left\" and \"Right\".",
   ],
   outputDescription: "𝐿 if \"Left\" was chosen. 𝑅 if \"Right\" was chosen.",
   inputTypes: [InputType.BankProposition, InputType.LeftRight],

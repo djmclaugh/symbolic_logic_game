@@ -29,12 +29,6 @@ export default {
 
     return () => {
       return Vue.h(LevelComponent, {
-        style: {
-          'border': '1px solid',
-          'border-radius': '4px',
-          'padding-left': '16px',
-          'padding-right': '16px',
-        },
         level: sublevel,
         isSublevel: true,
         allowedTypes: props.allowedTypes,
