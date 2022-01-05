@@ -1,8 +1,10 @@
 import Vue from '../vue.js'
 
 import Proposition from '../data/propositions/proposition.js'
+import {lit} from '../data/propositions/propositions.js'
 
 class PropositionBankProps {
+  readonly target: Proposition = lit("");
   readonly propositions: Proposition[] = [];
 }
 
@@ -11,6 +13,9 @@ export default {
   setup(props: PropositionBankProps) {
     return () => {
       let items = [];
+
+      items.push(Vue.h('h3', { style: { 'display': 'inline' }}, 'Target: '));
+      items.push(Vue.h('span', {}, props.target.toString()));
 
       items.push(Vue.h('h3', {}, 'Proposition Bank'));
       let propositions = [];

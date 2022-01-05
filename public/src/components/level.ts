@@ -71,11 +71,10 @@ export default {
 
       const banks = [];
 
-      banks.push(Vue.h('div', { class: 'target-bank' }, [
-        Vue.h('h3', {}, 'Target'),
-        Vue.h('p', {}, props.level.target.toString()),
-      ]));
-      banks.push(Vue.h(PropositionBankComponent, {propositions: data.propositions}));
+      banks.push(Vue.h(PropositionBankComponent, {
+        target: props.level.target,
+        propositions: data.propositions
+      }));
 
       banks.push(Vue.h(RuleBankComponent, {
         key: data.uuid,
