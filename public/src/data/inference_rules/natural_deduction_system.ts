@@ -9,7 +9,7 @@ import {
 import { not, and, or, then } from '../propositions/propositions.js'
 
 export const NegationIntroduction: InferenceRule = {
-  name: "Negation Introduction",
+  name: "Negation (¬) Introduction",
   inputDescriptions: [
     "Conditional: A proposition from the bank of the form (𝑃) → (𝑄)",
     "Contradiction: A proposition from the bank of the form (𝑃) → (¬(𝑄))"
@@ -43,7 +43,7 @@ export const NegationIntroduction: InferenceRule = {
 };
 
 export const NegationElimination: InferenceRule = {
-  name: "Negation Elimination",
+  name: "Negation (¬) Elimination",
   inputDescriptions: [
     "Negation: A proposition from the bank of the form ¬(𝑃)",
     "Consequent: Any proposition, 𝑄.",
@@ -68,7 +68,7 @@ export const NegationElimination: InferenceRule = {
 };
 
 export const DoubleNegationElimination: InferenceRule = {
-  name: "Double Negation Elimination",
+  name: "Double Negation (¬) Elimination",
   inputDescriptions: ["A proposition from the bank of the form ¬(¬(𝑃))."],
   outputDescription: "𝑃",
   inputTypes: [InputType.BankProposition],
@@ -90,7 +90,7 @@ export const DoubleNegationElimination: InferenceRule = {
 }
 
 export const ConjunctionIntroduction: InferenceRule = {
-  name: "Conjunction Introduction / ∧I",
+  name: "Conjunction (∧) Introduction",
   inputDescriptions: [
     "Left Proposition: Any proposition already in the bank, 𝐿",
     "Right Proposition: Any proposition already in the bank, 𝑅"
@@ -109,7 +109,7 @@ export const ConjunctionIntroduction: InferenceRule = {
 }
 
 export const ConjunctionElimination: InferenceRule = {
-  name: "Conjunction Elimination / ∧E / Simplification",
+  name: "Conjunction (∧) Elimination",
   inputDescriptions: [
     "Conjunction: A proposition from the bank of the form (𝐿) ∧ (𝑅)",
     "Side to Keep: A choice between \"Left\" and \"Right\".",
@@ -143,7 +143,7 @@ export const ConjunctionElimination: InferenceRule = {
 }
 
 export const DisjunctionIntroduction: InferenceRule = {
-  name: "Disjunction Introduction (Addition)",
+  name: "Disjunction (∨) Introduction",
   inputDescriptions: [
     "Known Proposition: Any proposition already in the bank,  𝐾",
     "Other Proposition: Any proposition, 𝑂.",
@@ -169,7 +169,7 @@ export const DisjunctionIntroduction: InferenceRule = {
 }
 
 export const DisjunctionElimination: InferenceRule = {
-  name: "Disjunction Elimination (Case Analysis)",
+  name: "Disjunction (∨) Elimination",
   inputDescriptions: [
     "Disjunction: A proposition from the bank of the form (𝐿) ∨ (𝑅)",
     "Left Conditional: A proposition from the bank of the form (𝐿) → (𝑄)",
@@ -211,7 +211,7 @@ export const DisjunctionElimination: InferenceRule = {
 }
 
 export const ConditionalIntroduction: InferenceRule = {
-  name: "Conditional Introduction (Conditional Proof)",
+  name: "Conditional (→) Introduction",
   inputDescriptions: [
     "Antecedent: Any proposition, 𝑃",
     "Consequent: Any proposition, 𝑄",
@@ -242,10 +242,10 @@ export const ConditionalIntroduction: InferenceRule = {
 }
 
 export const ConditionalElimination: InferenceRule = {
-  name: "Conditional Elimination (Modus Ponens)",
+  name: "Conditional (→) Elimination",
   inputDescriptions: [
-    "Antecedent: Any proposition already in the bank, 𝑃",
     "Conditional: A proposition from the bank of the form (𝑃) → (𝑄)",
+    "Antecedent: Any proposition already in the bank, 𝑃",
   ],
   outputDescription: "𝑄",
   inputTypes: [InputType.BankProposition, InputType.BankProposition],
@@ -253,8 +253,8 @@ export const ConditionalElimination: InferenceRule = {
     if (inputs.length != 2) {
       return "Can only be applied to one proposition and one side at a time.";
     }
-    const a = inputs[0] as Proposition;
-    const p = inputs[1] as Proposition;
+    const a = inputs[1] as Proposition;
+    const p = inputs[0] as Proposition;
     if (!(p instanceof Conditional)) {
       return "Chosen conditional must have a \"→\" that isn't inside parentheses.";
     }
@@ -264,7 +264,7 @@ export const ConditionalElimination: InferenceRule = {
     return "";
   },
   apply: (inputs: Input[]) => {
-    const p = inputs[1] as Conditional;
+    const p = inputs[0] as Conditional;
     return p.r;
   },
 }

@@ -25,7 +25,7 @@ export const DoubleNegationIntroduction: InferenceRule = {
 }
 
 export const ConjunctionCommutation: InferenceRule = {
-  name: "Conjunction Commutation",
+  name: "Conjunction (∧) Commutation",
   inputDescriptions: [
     "A proposition from the bank of the form (𝐿) ∧ (𝑅)",
   ],
@@ -129,7 +129,7 @@ export const HypotheticalSyllogism: InferenceRule = {
   },
 }
 
-export const SelfConditional: InferenceRule = {
+export const ConditionalTautology: InferenceRule = {
   name: "Conditional Tautology",
   inputDescriptions: [ "Any proposition, 𝑃"],
   outputDescription: "(𝑃) → (𝑃)",

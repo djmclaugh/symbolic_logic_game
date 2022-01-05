@@ -79,20 +79,20 @@ export const FOL_PROPOSITION_TYPES = [
 export function propositionTypeToString(t: PropositionType) {
   switch(t) {
     case PropositionType.LITERAL:
-      return "Literal";
+      return "No Logical Symbols";
     case PropositionType.NEGATION:
-      return "Negation";
+      return "Negation (¬)";
     case PropositionType.CONJUNCTION:
-      return "Conjunction";
+      return "Conjunction (∧)";
     case PropositionType.DISJUNCTION:
-      return "Disjunction";
+      return "Disjunction (∨)";
     case PropositionType.CONDITIONAL:
-      return "Conditional";
+      return "Conditional (→)";
     case PropositionType.EQUALITY:
-      return "Equality";
+      return "Equality (=)";
     case PropositionType.UNIVERSAL:
-      return "Universal";
+      return "Universal (∀)";
     case PropositionType.EXISTENTIAL:
-      return "Existential";
+      return "Existential (∃)";
   }
 }

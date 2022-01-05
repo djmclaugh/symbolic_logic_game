@@ -12,11 +12,11 @@ import {
 } from '../inference_rules/natural_deduction_system.js'
 
 import {
-  SelfConditional,
   DoubleNegationIntroduction,
   ConjunctionCommutation,
   ConjunctionAssociation,
   DisjunctionCommutation,
+  ConditionalTautology,
   HypotheticalSyllogism,
   ConstructiveDelimma,
   LawOfExcludedMiddle,
@@ -24,7 +24,7 @@ import {
   ModusTollens,
 } from '../inference_rules/propositional_logic_derived.js'
 
-import { lit, not, and, or, then } from '../propositions/propositions.js'
+import { PropositionType, lit, not, and, or, then } from '../propositions/propositions.js'
 
 const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   {
@@ -96,7 +96,6 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
       "Conjunction introduction/elimination are 2 of the 9 rules taken for granted. They are the only rules about conjunctions.",
       "However, from these 2 rules we can derive many other rules!",
       "Here we'll derive a rule that tells us that conjunction is commutative. In other words, that we can swap the left and right sides of a conjunction as we please.",
-      "Note: After beating this level, you'll have access to the conjunction commutation rule. Since it's a derived rule, you'll never *need* to use it, but it might be more practical than using the base rules in some situations."
     ],
     rules: [ConjunctionIntroduction, ConjunctionElimination],
     propositions: [
@@ -112,7 +111,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
       "Note: Because conjunction is associative, in real life, people will write \"𝑃 ∧ 𝑄 ∧ 𝑅\" instead of \"(𝑃 ∧ 𝑄) ∧ 𝑅\" or \"𝑃 ∧ (𝑄 ∧ 𝑅)\", just like like people write \"2 × 3 × 4\" instead of \"(2 × 3) × 4\" or \"2 × (3 × 4)\".",
       "It's not that \"(𝑃 ∧ 𝑄) ∧ 𝑅\" is the same thing as \"𝑃 ∧ (𝑄 ∧ 𝑅)\". Remember, we're doing symbolic logic. It's just that we can jump from one to the other as we please."
     ],
-    rules: [ConjunctionIntroduction, ConjunctionElimination, ConjunctionCommutation],
+    rules: [ConjunctionIntroduction, ConjunctionElimination],
     propositions: [
       and(lit("I like red"), and(lit("I like green"), lit("I like blue"))),
     ],
@@ -123,15 +122,12 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     name: 'Conjunction Practice',
     description: [
       "Note: If you feel comfortable with conjunctions, feel free to skip to the next level.",
-      "Note: If you feel that the derived rules aren't that practical, it's because they aren't. In this case, the base rules are usually more convenient. The future derived rules are going to be a lot more helpful.",
       "Hint: If you ever have a conjunction in your proposition bank, it's usually a good idea to take it appart with conjunction elimination.",
       "Hint: If you ever have a conjunction as your target, it's usually a good idea to work backwards and try to create each side one at a time (and then finish off the level with conjunction introduction).",
     ],
     rules: [
       ConjunctionIntroduction,
       ConjunctionElimination,
-      ConjunctionCommutation,
-      ConjunctionAssociation,
     ],
     propositions: [
       and(lit("I ate cereal"), lit("I drank coffee")),
@@ -145,8 +141,8 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     description: [
       "Time for a new rule and a new logical symbol.",
       "The behaviour of the conditional (→) symbol is inspired by the word \"implies\". The idea is for \"(𝑃) → (𝑄)\" to mean that whenever 𝑃 is true, then 𝑄 must be true as well.",
-      "The first rule about conditionals that we'll see is conditional elimination (also called modus ponens).",
-      "It says that if you have a conditional and you have it's left side (also called its antecedent), then you can have the conditional's right side (also called its consequent).",
+      "The first rule we'll see about conditionals is conditional elimination (also called modus ponens).",
+      "It says that if you have a conditional and that you also have its left side (also called its antecedent), then you can have the conditional's right side (also called its consequent).",
     ],
     rules: [ConditionalElimination],
     propositions: [
@@ -159,13 +155,12 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   {
     name: 'Conditional Elimination Practice',
     description: [
-      "Let's mix in conditional elimination with the other rules we saw.",
+      "Let's mix in conditional elimination with conjunctions.",
     ],
     rules: [
       ConjunctionIntroduction,
       ConjunctionElimination,
       ConjunctionCommutation,
-      ConjunctionAssociation,
       ConditionalElimination
     ],
     propositions: [
@@ -183,6 +178,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
       "This rule is the most complicated but one of the most useful of the 9 base rules.",
       "This rule says that if you can \"prove\" 𝑄 by assuming 𝑃, then you can add \"(𝑃) → (𝑄)\" to your proposition bank.",
       "To \"prove\" 𝑄, all you have to do is beat the level where 𝑃 has been added to the proposition bank and where 𝑄 is the target proposition.",
+      "Note: Conditional introduction can use ANY proposition you can think of. The chosen propositions do not need to already be in the bank."
     ],
     rules: [ConjunctionIntroduction, ConditionalIntroduction, ConditionalElimination],
     propositions: [
@@ -190,32 +186,25 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
       then(and(lit("I'm a citizen"), lit("I'm an adult")), lit("I can vote")),
     ],
     target: then(lit("I'm an adult"), lit("I can vote")),
+    allowedPropositionTypes: [
+      PropositionType.LITERAL,
+      PropositionType.CONJUNCTION,
+    ],
   },
 
   {
     name: 'Conditional Tautology',
     description: [
-      "Using conditional introduction, we can prove our first tautology.",
-      "A tautology is just a proposition that can be created with an empty proposition bank.",
+      "Using conditional introduction, we can actually add statements to an empty proposition bank.",
     ],
     rules: [ConditionalIntroduction],
     propositions: [],
     target: then(lit("I'm sleeping"), lit("I'm sleeping")),
+    allowedPropositionTypes: [
+      PropositionType.LITERAL,
+    ],
   },
 
-
-  {
-    name: 'Conditional Test',
-    description: [
-      "Let's see if you can use the rules you learned so far to clear this level.",
-    ],
-    rules: [ConjunctionIntroduction, ConjunctionElimination, ConditionalIntroduction, ConditionalElimination],
-    propositions: [
-      lit("It is Sunday"),
-      then(and(lit("It's breakfast time"), lit("It is Sunday")), lit("I drink coffee")),
-    ],
-    target: then(lit("It's breakfast time"), lit("I drink coffee")),
-  },
   {
     name: 'Prove Derived Rule: Hypothetical Syllogism',
     description: [
@@ -227,12 +216,50 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
       then(lit("I wake up late"), lit("I get to work late")),
     ],
     target: then(lit("I go to bed late"), lit("I get to work late")),
+    allowedPropositionTypes: [
+      PropositionType.LITERAL,
+    ],
   },
+
+  {
+    name: 'Conditional Practice',
+    description: [
+      "Note: If you feel comfortable with conditionals, feel free to skip to the next level.",
+      "Hint: If you ever have a conditional as your target, it's usually a good idea to use conditional introduction and chose the 𝑃 and 𝑄 to match the left and right side of the target.",
+      "Note: You have access to the hypothetical syllogism rule if you want, but this level can be cleared as easily without it."
+    ],
+    rules: [
+      ConjunctionIntroduction,
+      ConjunctionElimination,
+      ConditionalIntroduction,
+      ConditionalElimination,
+      HypotheticalSyllogism,
+    ],
+    propositions: [
+      then(lit("It's morning"), lit("I'll have coffee")),
+      then(lit("It's evening"), lit("I'll have water")),
+      then(lit("I'll have coffee"), and(lit("I'll have milk"), lit("I'll have sugar"))),
+      then(and(lit("I'll have water"), lit("I'm out of water")), lit("I need to go to the store")),
+      then(and(lit("I'll have coffee"), lit("I'm out of coffee")), lit("I need to go to the store")),
+      then(and(lit("I'll have milk"), lit("I'm out of milk")), lit("I need to go to the store")),
+      then(and(lit("I'll have sugar"), lit("I'm out of sugar")), lit("I need to go to the store")),
+      then(lit("I made cookies yesterday"), lit("I'm out of sugar")),
+    ],
+    target: then(and(lit("It's morning"), lit("I made cookies yesterday")), lit("I need to go to the store")),
+    allowedPropositionTypes: [
+      PropositionType.LITERAL,
+      PropositionType.CONJUNCTION,
+    ],
+  },
+
   {
     name: "Rule #5: Disjunction Introduction",
     description: [
-      "For this level you are only given disjunction introduction (also called addition). It says that you can add a proposition from your bank with any proposition whatsoever (even if they are unrelated) by putting a \"∨\" in between.",
-      "The behaviour of the \"∨\" symbol is inspired by the word \"or\". The idea is for \"(𝐿) ∨ (𝑅)\" to mean that at least one of 𝐿 or 𝑅 are true. But remember, we're doing symbolic logic; Any meaning we give to the symbols is only for our own intuition. At the end of the day, only the inference rule matters.",
+      "New logical symbol: Disjunction (∨)",
+      "The behaviour of the disjunction (∨) symbol is inspired by the word \"or\". The idea is for \"(𝐿) ∨ (𝑅)\" to mean that at least one of 𝐿 or 𝑅 are true.",
+      "Note: The conjunction (∧) and disjunction (∨) symbols are very similar. Be careful not to confuse them!",
+      "The first rule we'll see about disjunctions is disjunction introduction (also called addition). It says that you can add a proposition from your bank with any proposition whatsoever (even not in then bank and even if it's unrelated) by putting a \"∨\" in between.",
+      "Note: Creating a disjunction is much easier than creating a conjunction since you only need one of the two sides already in the bank.",
     ],
     rules: [ DisjunctionIntroduction ],
     propositions: [
@@ -240,11 +267,13 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     ],
     target: or(lit("It's Sunday"), lit("I like apples")),
   },
+
   {
     name: "Rule #6: Disjunction Elimination",
     description: [
-      "This rule is the counterpart of disjunction introduction. It says that if both sides of a disjunction imply the same thing, then that thing can be added to your proposition bank.",
-      "This rule is also called \"case analysis\" because the intuition behind it is that we look at both cases."
+      "Creating a disjunction is much easier than creating a conjunction, but getting rid of a disjunction is much harder than getting rid of a conjunction.",
+      "The other rule about disjunctions is disjunction elimination. It says that if both sides of a disjunction both imply the same thing, then that thing can be added to your proposition bank.",
+      "This rule is also called \"case analysis\" because the intuition behind it is that we look at both cases. We look at one case and it leads to some outcome and we look at the other case and it also leads to the exact same outcome. Therefore, we are going to end up with that outcome either way."
     ],
     rules: [ DisjunctionElimination ],
     propositions: [
@@ -257,23 +286,27 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   },
 
   {
-    name: 'Prove Derived Rule: Disjunction Commutation',
-    rules: [DisjunctionIntroduction, DisjunctionElimination, ConditionalIntroduction],
+    name: 'Prove Derived Rule: Disjunction Tautology',
     description: [
-      "Here we'll show that just like conjunctions, disjunctions are commutative. In other words, we'll show that the left and right side of a disjunction can be swapped.",
-      "Note: Working with disjunctions is tricker than working with conjuncitons.",
-      "Hint: It usually helps to try to work out the solutions backwards. In this case, which inference rule could give you the target proposition? What would that inference rule need in order to give you the target proposition?"
+      "Using the base rules, we can derive other rules that intuitively should also work.",
+      "Here we show that if both sides of a conjunction are the same proposition, then we can add that proposition to the bank.",
     ],
+    rules: [ConditionalTautology, DisjunctionElimination],
     propositions: [
-      or(lit("I like apples"), lit("I like oranges")),
+      or(lit("I like red"), lit("I like red")),
     ],
-    target: or(lit("I like oranges"), lit("I like apples")),
+    target: lit("I like red"),
+    allowedPropositionTypes: [
+      PropositionType.LITERAL,
+      PropositionType.DISJUNCTION,
+    ]
   },
 
   {
     name: 'Prove Derived Rule: Constructive Dilemma',
     description: [
-      "",
+      "From disjunction elimination, we can also derive the rule called constructive dilemma.",
+      "Constructive delimma is very similar to disjunction elimination, but it's more general purpose since you don't need the consequents to match.",
     ],
     rules: [ConditionalIntroduction, ConditionalElimination, DisjunctionIntroduction, DisjunctionElimination],
     propositions: [
@@ -282,51 +315,42 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
       or(lit("It's breakfast"), lit("It's lunch")),
     ],
     target: or(lit("I drink coffee"), lit("I drink water")),
+    allowedPropositionTypes: [
+      PropositionType.LITERAL,
+      PropositionType.DISJUNCTION,
+    ]
   },
 
-  {
-    name: 'Prove Derived Rule: Disjunction Association',
-    description: [
-      "",
-    ],
-    rules: [ConditionalIntroduction, ConditionalElimination, DisjunctionIntroduction, DisjunctionElimination],
-    propositions: [
-      or(lit("I like apples"), or(lit("I like bananas"), lit("I like oranges"))),
-    ],
-    target: or(or(lit("I like apples"), lit("I like bananas")), lit("I like oranges")),
-  },
-
-  {
-    name: 'Prove Derived Rule: Conjunction Distribution',
-    rules: [ConjunctionIntroduction, ConjunctionElimination, ConditionalIntroduction, ConstructiveDelimma],
-    description: [
-      "Hint: Whenever you have a conjunction, it's almost always a good idea to use conjunction elimination.",
-    ],
-    propositions: [
-      and(lit("I eat toast"), or(lit("I drink juice"), lit("I drink milk"))),
-    ],
-    target: or(and(lit("I eat toast"), lit("I drink juice")), and(lit("I eat toast"), lit("I drink milk"))),
-  },
-
-  {
-    name: 'Prove Derived Rule: Disjunction Distribution',
-    rules: [ConjunctionIntroduction, ConjunctionElimination, ConditionalIntroduction, DisjunctionIntroduction, DisjunctionElimination,],
-    description: [
-      "Hint: When the target is a conjunction, it's almost always a good idea to first get each side in the bank and then finish off with conjunction introduction.",
-    ],
-    propositions: [
-      or(lit("I'll have pasta"), and(lit("I'll have soup"), lit("I'll have salad"))),
-    ],
-    target: and(or(lit("I'll have pasta"), lit("I'll have soup")), or(lit("I'll have pasta"), lit("I'll have salad"))),
-  },
+  // Figure out!
+  // {
+  //   name: 'Disjunction Practice',
+  //   description: [],
+  //   rules: [
+  //     ConjunctionIntroduction,
+  //     ConjunctionElimination,
+  //     ConditionalIntroduction,
+  //     ConditionalElimination,
+  //     DisjunctionIntroduction,
+  //     DisjunctionElimination,
+  //     HypotheticalSyllogism,
+  //     ConstructiveDelimma,
+  //   ],
+  //   propositions: [],
+  //   target: lit("I should buy chocolate"),
+  //   allowedPropositionTypes: [
+  //     PropositionType.LITERAL,
+  //     PropositionType.CONJUNCTION,
+  //     PropositionType.DISJUNCTION,
+  //   ]
+  // },
 
   {
     name: 'Rule #7: Negation Introduction',
     description: [
-      "This rule says that if a proposition implies both a proposition and that same proposition but with a \"¬\" in front, then the original proposition can be added to your proposition bank with a \"¬\" in front.",
-      "The behaviour of the \"¬\" symbol is inspired by the word \"not\". The idea is for \"¬(𝑃)\" to mean that 𝑃 is not true. But remember, we're doing symbolic logic; Any meaning we give to the symbols is only for our own intuition. At the end of the day, only the inference rule matters.",
+      "Last symbol: negation (¬)",
+      "The behaviour of the negation (¬) symbol is inspired by the word \"not\". The idea is for \"¬(𝑃)\" to mean that 𝑃 is not true.",
+      "The first rule we'll see about negation is negation introduction. It says that if a proposition implies both a proposition and that same proposition but with a \"¬\" in front, then the original proposition can be added to your proposition bank with a \"¬\" in front.",
       "The idea behind negation introduction is that if you manage to prove contradictory results by assuming 𝑃, then you can assume that 𝑃 is not true.",
-      "Note: You can use the hypothetical syllogism inference rule that we derived earlier (it will take fewer steps than using conditional introduction and elimination from scratch)."
     ],
     rules: [ConditionalIntroduction, ConditionalElimination, NegationIntroduction, HypotheticalSyllogism],
     propositions: [
@@ -336,6 +360,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     ],
     target: not(lit('Socrates is an immortal man')),
   },
+
   {
     name: 'Prove Derived Rule: Modus Tollens',
     rules: [ConditionalIntroduction, NegationIntroduction],
@@ -354,6 +379,9 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   {
     name: 'Prove Derived Rule: Double Negation Introduction',
     rules: [ConditionalIntroduction, NegationIntroduction],
+    description: [
+      "If something is true, then it's not true that it's not true."
+    ],
     propositions: [
       lit("I like apples"),
     ],
@@ -362,14 +390,14 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
 
   {
     name: 'Prove Derived Rule: Self Contradiction',
-    rules: [SelfConditional, NegationIntroduction],
+    rules: [ConditionalTautology, NegationIntroduction],
     description: [
       "In this level we show that if something implies it's own negation, then we can assume it's negation.",
     ],
     propositions: [
-      then(lit("I'll go tomorrow"), not(lit("I'll go tomorrow"))),
+      then(lit("This sentence is a lie"), not(lit("This sentence is a lie"))),
     ],
-    target: not(lit("I'll go tomorrow")),
+    target: not(lit("This sentence is a lie")),
   },
 
   {
@@ -382,25 +410,28 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     propositions: [
       not(lit('Pigs fly')),
     ],
-    target: then(lit('Pigs fly'), lit('Hell freezes over')),
+    target: then(lit('Pigs fly'), lit('Hell will freeze over')),
   },
+
   {
     name: 'Prove Derived Rule: Disjunctive Syllogism',
     description: [
       "Note: This rule is sometimes taken for granted instead of negation elimination. But from either you can prove the other, so it ends up not mattering which of the two you take for granted.",
     ],
-    rules: [ConditionalIntroduction, DisjunctionElimination, NegationElimination],
+    rules: [ConditionalTautology, DisjunctionElimination, NegationElimination],
     propositions: [
       or(lit("I like apples"), lit("I like oranges")),
       not(lit("I like apples")),
     ],
     target: lit("I like oranges"),
   },
+
   {
     name: 'Rule #9: Double Negation Elimination',
     description: [
-      "This is the last of the rules taken for granted.",
-      "Note: We were able to prove double negation introduction from the other rules, but we can't prove double negation elimination! We have to take it for granted if we want to use it.",
+      "Negation has a thrid rule: double negation elemination.",
+      "This rules says that if you have the negation of a negation in your bank, then you can remove both negations at once.",
+      "Note: We were able to prove double negation introduction from the other rules, but surprisingly, it's impossible to prove double negation elimination from the 8 other base rules! We have to take it for granted if we want to use it.",
     ],
     rules: [DoubleNegationElimination],
     propositions: [
@@ -408,6 +439,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     ],
     target: lit('I like apples'),
   },
+
   {
     name: 'Impossible: Double Negation Elimination From Other Base Rules',
     description: [
@@ -430,10 +462,13 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     ],
     target: lit('I like apples'),
   },
+
   {
     name: 'Prove Tautology: Law Of Noncontradiction',
     description: [
-      "A thing cannot be true and false at the same time."
+      "Congratulations! You now know all of the rules of propositional logic!",
+      "In remaining levels, we'll derive fundamental rules that are often taken for granted even though they are technically not base rules.",
+      "Law of noncontradiction: A thing cannot be true and false at the same time."
     ],
     rules: [
       ConjunctionElimination,
@@ -443,10 +478,11 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     propositions: [],
     target: not(and(lit("I'm here"), not(lit("I'm here")))),
   },
+
   {
     name: 'Prove Tautology: Law Of Excluded Middle',
     description: [
-      "A thing HAS to be either true or false.",
+      "Law of exclude middle: A thing HAS to be either true or false (it can't be an intermediate middle value).",
       "Note: This law ends up being equivalent to double negation elimination. So we actually do not have this law in intuitionistic logic since that logic doesn't use double negation elimination.",
     ],
     rules: [
@@ -500,6 +536,60 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
       then(lit("It's raining"), lit("The ground is wet")),
     ],
     target: then(not(lit("The ground is wet")), not(lit("It's raining"))),
+  },
+
+  {
+    name: 'Prove Derived Rule: Disjunction Commutation',
+    rules: [
+      DisjunctionIntroduction,
+      DisjunctionElimination,
+      ConditionalIntroduction
+    ],
+    description: [
+      "Here we'll show that just like conjunctions, disjunctions are commutative. In other words, we'll show that the left and right side of a disjunction can be swapped.",
+      "Note: Working with disjunctions is tricker than working with conjuncitons.",
+      "Hint: It usually helps to try to work out the solutions backwards. In this case, which inference rule could give you the target proposition? What would that inference rule need in order to give you the target proposition?"
+    ],
+    propositions: [
+      or(lit("I like apples"), lit("I like oranges")),
+    ],
+    target: or(lit("I like oranges"), lit("I like apples")),
+  },
+
+  {
+    name: 'Prove Derived Rule: Disjunction Association',
+    description: [
+      "",
+    ],
+    rules: [ConditionalIntroduction, ConditionalElimination, DisjunctionIntroduction, DisjunctionElimination],
+    propositions: [
+      or(lit("I like apples"), or(lit("I like bananas"), lit("I like oranges"))),
+    ],
+    target: or(or(lit("I like apples"), lit("I like bananas")), lit("I like oranges")),
+  },
+
+  {
+    name: 'Prove Derived Rule: Conjunction Distribution',
+    rules: [ConjunctionIntroduction, ConjunctionElimination, ConditionalIntroduction, ConstructiveDelimma],
+    description: [
+      "Hint: Whenever you have a conjunction, it's almost always a good idea to use conjunction elimination.",
+    ],
+    propositions: [
+      and(lit("I eat toast"), or(lit("I drink juice"), lit("I drink milk"))),
+    ],
+    target: or(and(lit("I eat toast"), lit("I drink juice")), and(lit("I eat toast"), lit("I drink milk"))),
+  },
+
+  {
+    name: 'Prove Derived Rule: Disjunction Distribution',
+    rules: [ConjunctionIntroduction, ConjunctionElimination, ConditionalIntroduction, DisjunctionIntroduction, DisjunctionElimination,],
+    description: [
+      "Hint: When the target is a conjunction, it's almost always a good idea to first get each side in the bank and then finish off with conjunction introduction.",
+    ],
+    propositions: [
+      or(lit("I'll have pasta"), and(lit("I'll have soup"), lit("I'll have salad"))),
+    ],
+    target: and(or(lit("I'll have pasta"), lit("I'll have soup")), or(lit("I'll have pasta"), lit("I'll have salad"))),
   },
 
   {

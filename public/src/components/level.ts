@@ -82,7 +82,7 @@ export default {
         rules: props.level.rules,
         propositions: data.propositions,
         target: props.level.target,
-        allowedTypes: props.allowedTypes,
+        allowedTypes: props.level.allowedPropositionTypes || props.allowedTypes,
         onNewProposition: (p: Proposition) => {
           data.propositions.push(p);
           if (p.equals(props.level.target)) {
