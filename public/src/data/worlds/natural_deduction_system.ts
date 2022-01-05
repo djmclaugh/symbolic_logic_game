@@ -257,8 +257,8 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     description: [
       "New logical symbol: Disjunction (∨)",
       "The behaviour of the disjunction (∨) symbol is inspired by the word \"or\". The idea is for \"(𝐿) ∨ (𝑅)\" to mean that at least one of 𝐿 or 𝑅 are true.",
-      "Note: The conjunction (∧) and disjunction (∨) symbols are very similar. Be careful not to confuse them!",
-      "The first rule we'll see about disjunctions is disjunction introduction (also called addition). It says that you can add a proposition from your bank with any proposition whatsoever (even not in then bank and even if it's unrelated) by putting a \"∨\" in between.",
+      "Note: The conjunction (∧) and disjunction (∨) symbols are very similar. Be careful not to mix them up!",
+      "The first rule we'll see about disjunctions is disjunction introduction (also called addition). It says that you can combine a proposition from your bank with any proposition whatsoever (regardless of whether it's in the bank or not, regardless of whether it's even related or not) by putting a \"∨\" in between.",
       "Note: Creating a disjunction is much easier than creating a conjunction since you only need one of the two sides already in the bank.",
     ],
     rules: [ DisjunctionIntroduction ],
@@ -289,7 +289,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     name: 'Prove Derived Rule: Disjunction Tautology',
     description: [
       "Using the base rules, we can derive other rules that intuitively should also work.",
-      "Here we show that if both sides of a conjunction are the same proposition, then we can add that proposition to the bank.",
+      "Here we show that if both sides of a disjunction are the same proposition, then we can add that proposition to the bank.",
     ],
     rules: [ConditionalTautology, DisjunctionElimination],
     propositions: [
@@ -308,7 +308,13 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
       "From disjunction elimination, we can also derive the rule called constructive dilemma.",
       "Constructive delimma is very similar to disjunction elimination, but it's more general purpose since you don't need the consequents to match.",
     ],
-    rules: [ConditionalIntroduction, ConditionalElimination, DisjunctionIntroduction, DisjunctionElimination],
+    rules: [
+      ConditionalIntroduction,
+      ConditionalElimination,
+      HypotheticalSyllogism,
+      DisjunctionIntroduction,
+      DisjunctionElimination
+    ],
     propositions: [
       then(lit("It's breakfast"), lit("I drink coffee")),
       then(lit("It's lunch"), lit("I drink water")),
@@ -392,7 +398,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     name: 'Prove Derived Rule: Self Contradiction',
     rules: [ConditionalTautology, NegationIntroduction],
     description: [
-      "In this level we show that if something implies it's own negation, then we can assume it's negation.",
+      "In this level we show that if something implies its own negation, then we can assume its negation.",
     ],
     propositions: [
       then(lit("This sentence is a lie"), not(lit("This sentence is a lie"))),
