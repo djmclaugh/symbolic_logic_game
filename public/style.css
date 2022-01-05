@@ -55,8 +55,8 @@ details > div {
 .rule-bank {
   display: block;
   min-width: 50%;
-  max-width: 100%;
   margin: 2px;
+  padding: 1px;
 }
 
 .proposition-bank {
@@ -71,7 +71,7 @@ details > div {
 }
 
 .proposition-bank ul {
-  margin-top: 0px;
+  margin-top: -8px;
   margin-bottom: 16px;
 }
 
