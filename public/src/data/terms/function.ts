@@ -94,7 +94,6 @@ export default class FunctionTerm extends Term {
   }
 
   public setTerm(t: Term, index: SlotIndex): Term {
-    console.log(index)
     const newSlots = this.slots.concat();
     if (index.length == 1) {
       newSlots[index[0]] = t;

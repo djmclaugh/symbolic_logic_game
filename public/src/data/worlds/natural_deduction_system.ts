@@ -191,7 +191,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
       "New logical symbol: → (Conditional)",
       "The behaviour of the conditional symbol (→) is inspired by the word \"implies\".\nThe idea is for \"(𝑃) → (𝑄)\" to mean that whenever 𝑃 is true, then 𝑄 must be true as well.",
       "A statement of the form \"(𝑃) → (𝑄)\" is called a conditional statement.\nThe left side is called the antecedent.\nThe right side is called the consequent.",
-      "The first rule we'll see about conditionals is conditional elimination.\nIf you have a conditional statement and you also have its antecedent, then it lets you add consequent to your bank.",
+      "The first rule we'll see about conditionals is conditional elimination.\nIf you have a conditional statement and you also have its antecedent, then it lets you add the consequent to your bank.",
       "Note: Conditional elimination is also called modus ponens",
     ],
     rules: [ConditionalElimination],
@@ -253,7 +253,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
       "This rule is the most complicated, but one of the most useful out of the nine base rules.",
       "This rule says that if you can \"prove\" 𝑄 by assuming 𝑃, then you can add \"(𝑃) → (𝑄)\" to your proposition bank.",
       "To \"prove\" 𝑄, you have to beat the sublevel where 𝑃 has been added to the proposition bank and where 𝑄 is the target proposition.",
-      "Note: Conditional introduction can use ANY propositions you can think of. The chosen propositions don't need to already be in the bank.",
+      "Note: Conditional introduction can use ANY propositions you can think of.\nThe chosen propositions don't need to already be in the bank.",
     ],
     hints: [
       "Your target proposition is \"(I like meatballs) → ((I like spaghetti) ∧ (I like meatballs))\".\nSo you should set the antecedent to \"I like meatballs\".\nAnd you should set the consequent to \"(I like spaghetti) ∧ (I like meatballs)\"."
@@ -540,7 +540,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   {
     name: 'Prove Derived Rule: Disjunctive Syllogism',
     description: [
-      "Note: This rule is sometimes taken for granted instead of negation elimination. From either you can prove the other, so it ends up not mattering which of the two you take for granted.",
+      "Note: This rule is sometimes taken for granted instead of negation elimination.\nFrom either you can prove the other, so it ends up not mattering which of the two you take for granted.",
     ],
     rules: [ConditionalTautology, DisjunctionElimination, NegationElimination],
     propositions: [
@@ -555,7 +555,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     description: [
       "Negation has a thrid rule: double negation elemination.",
       "This rules says that if you have the negation of a negation in your bank, then you can remove both negations at once.",
-      "Note: We were able to prove double negation introduction from the other rules, but surprisingly (at least for me), it's impossible to prove double negation elimination from the 8 other base rules! We have to take it for granted if we want to use it.",
+      "Note: We were able to prove double negation introduction from the other rules, but surprisingly (at least for me), it's impossible to prove double negation elimination from the 8 other base rules!\nWe have to take it for granted if we want to use it.",
     ],
     rules: [DoubleNegationElimination],
     propositions: [

@@ -188,7 +188,7 @@ FIRST_ORDER_LOGIC.push({
     "The term that comes right after the ∃ symbol is called a variable and doesn't need to be in your term bank.\nIn fact, in this game, to avoid edge cases, I require that the variable does NOT appear in the term bank and that it is NOT already a variable in 𝑃.",
     "By convention, we use italic letters for variables.",
     "The existential introduction rule lets you take a proposition you already have in your bank and add an existential version of it to your bank.\nAll you have to do is specify which term you want replaced and which variable you want to use.",
-    "The idea behind existential introduction is that if you know that 𝑃 is true for a specific thing, then you know that there exists at least one thing for that makes 𝑃 true.",
+    "The idea behind existential introduction is that if you know that 𝑃 is true for a specific thing, then you know that there exists at least one thing that makes 𝑃 true.",
     "Note: Existential introduction is also called existential generalization.",
   ],
   rules: [
@@ -265,7 +265,7 @@ FIRST_ORDER_LOGIC.push({
   name: "Universal Elimination Practice",
   description: [
     "It's very rare that a predicate is unconditionally true for all terms.",
-    "Most universals youll encount will be universals of conditionals: Propositions of the form ∀𝑥 ((𝑃) → (𝑄)).",
+    "Most universals you'll encount will be universals of conditionals: Propositions of the form ∀𝑥 ((𝑃) → (𝑄)).",
   ],
   rules: [
     ConditionalElimination,
@@ -352,7 +352,6 @@ FIRST_ORDER_LOGIC.push({
 FIRST_ORDER_LOGIC.push({
   name: "Rule #4: Universal Introduction",
   description: [
-    "Propositions that start with \"∀\" are very useful when given, but they are very hard to add to your bank by yourself.",
     "Universal introduction is a bit different form the other rules.\nBefore you can use it, you first have to create a completely new term.\nAfter that, whatever propositions you manage to prove with this new term can be transformed into a universal statement.",
     "The idea behind universal introduction is that if you can prove a proposition about something you know nothing about, then you could have proven that proposition about anything.",
     "In this game, to make sure the term hasn't been used before, we'll use fraktur letters only for universal terms.",
