@@ -1,33 +1,42 @@
 import Vue from '../vue.js'
 
 import InferenceRule from '../data/inference_rules/inference_rule.js'
-import Proposition from '../data/propositions/proposition.js'
-import { PropositionType, lit } from '../data/propositions/propositions.js'
+import Term from '../data/terms/term.js'
+import Predicate from '../data/predicates/predicate.js'
+import {lit} from '../data/predicates/literal.js'
+import { PropositionType } from '../data/propositions/propositions.js'
 
-import InferenceRuleComponent from './inference_rule.js'
+import { makeInferenceRule } from './inference_rule.js'
 
 class RuleBankProps {
-  readonly propositions: Proposition[] = [];
+  readonly propositions: Predicate[] = [];
+  readonly termBank: Term[] = [];
+  readonly existentialBank: Term[] = [];
+  readonly universalBank: Term[] = [];
   readonly rules: InferenceRule[] = [];
-  readonly target: Proposition = lit("");
+  readonly target: Predicate = lit("");
   readonly allowedTypes: PropositionType[] =[];
 }
 
 export default {
   props: Object.keys(new RuleBankProps()),
 
-  setup(props: RuleBankProps,{attrs, slots, emit}: any) {
+  setup(props: RuleBankProps,{emit}: any) {
     return () => {
       let items = [];
 
       for (const rule of props.rules) {
-        items.push(Vue.h(InferenceRuleComponent, {
+        items.push(makeInferenceRule({
           rule: rule,
           allRules: props.rules,
           propositions: props.propositions,
+          termBank: props.termBank,
+          existentialBank: props.existentialBank,
+          universalBank: props.universalBank,
           target: props.target,
           allowedTypes: props.allowedTypes,
-          onNewProposition: (p: Proposition) => { emit('newProposition', p); },
+        }, {
+          onNewProposition: (p: Predicate) => { emit('newProposition', p); }
         }));
       }
 

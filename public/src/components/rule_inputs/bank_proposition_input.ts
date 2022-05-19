@@ -2,22 +2,18 @@ import Vue from '../../vue.js'
 
 import Select from '../shared/select.js'
 
-import Proposition from '../../data/propositions/proposition.js'
+import Predicate from '../../data/predicates/predicate.js'
 
 export class BankPropositionInputProps {
-  readonly bank: Proposition[] = [];
+  readonly bank: Predicate[] = [];
 }
 
-interface BankPropositionInputData {}
 
-export default {
+const BankPropositionInputComponent = {
   props: Object.keys(new BankPropositionInputProps()),
   emits: [ 'change' ],
 
-  setup(props: BankPropositionInputProps, {attrs, slots, emit}: any) {
-    const initialData: BankPropositionInputData = {};
-    const data: BankPropositionInputData = Vue.reactive(initialData);
-
+  setup(props: BankPropositionInputProps, {emit}: any) {
     return () => {
       return Vue.h(Select, {
         objectType: "a proposition",
@@ -32,4 +28,8 @@ export default {
       });
     }
   }
+}
+
+export function makeBankPropositionInput(p: BankPropositionInputProps, extra: any = {}) {
+  return Vue.h(BankPropositionInputComponent, Object.assign(p, extra));
 }

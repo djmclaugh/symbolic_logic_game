@@ -5,12 +5,16 @@ import LevelComponent from './components/level.js'
 import SelectCompoenent from './components/shared/select.js'
 
 import NDS from './data/worlds/natural_deduction_system.js'
+import PROPOSITIONAL_LOGIC_DEMORGAN from './data/worlds/propositional_logic_demorgan.js'
 import FOL from './data/worlds/first_order_logic.js'
+import FOL_WITH_EQ from './data/worlds/first_order_logic_with_equality.js'
 import { PROPOSITION_TYPES, FOL_PROPOSITION_TYPES } from './data/propositions/propositions.js'
 
 const worlds = [
   NDS,
+  PROPOSITIONAL_LOGIC_DEMORGAN,
   FOL,
+  FOL_WITH_EQ,
 ]
 
 interface AppData {
@@ -22,8 +26,8 @@ interface AppData {
 const App = {
   setup(): any {
     const initialData: AppData = {
-      currentWorld: 0,
-      currentLevel: 0,
+      currentWorld: 2,
+      currentLevel: 1,
       unlockedLevels: NDS.length,
     };
     const data: AppData = Vue.reactive(initialData);
@@ -33,7 +37,12 @@ const App = {
       items.push(Vue.h('label', {}, 'World selection: '));
       items.push(Vue.h(SelectCompoenent, {
           selected: data.currentWorld,
-          options: ["Propositional Logic: Natural Deductive System", "First-Order Logic"],
+          options: [
+            "Propositional Logic",
+            "Propositional Logic: De Morgan's Laws",
+            "First-Order Logic",
+            "First-Order Logic With Equality",
+          ],
           onChange: (index: number|null) => {
             data.currentWorld = index || 0;
             data.currentLevel = 0;

@@ -1,51 +1,58 @@
 import Vue from '../vue.js'
 
 import AnyPropositionInput, { AnyPropositionInputProps } from './rule_inputs/any_proposition_input.js'
-import BankPropositionInput, { BankPropositionInputProps } from './rule_inputs/bank_proposition_input.js'
-import VariableInput, { VariableInputProps } from './rule_inputs/variable_input.js'
-import NewTermInput, { NewTermInputProps } from './rule_inputs/new_term_input.js'
-import FreeTermInput, { FreeTermInputProps } from './rule_inputs/free_term_input.js'
-import PropositionFreeTermInput, { PropositionFreeTermInputProps } from './rule_inputs/proposition_free_term_input.js'
-import ReplacementInput, { ReplacementInputProps } from './rule_inputs/replacement_input.js'
-import ProofInput, { ProofInputProps } from './rule_inputs/proof_input.js'
-import LeftRightInput from './rule_inputs/left_right_input.js'
+import { BankPropositionInputProps, makeBankPropositionInput } from './rule_inputs/bank_proposition_input.js'
+import { VariableInputProps, makeVariableInput } from './rule_inputs/variable_input.js'
+import { FreeTermInputProps, makeFreeTermInput } from './rule_inputs/free_term_input.js'
+import { PropositionFreeTermInputProps, makePropositionFreeTermInput } from './rule_inputs/proposition_free_term_input.js'
+import { ReplacementInputProps, makeReplacementInput } from './rule_inputs/replacement_input.js'
+import { ProofInputProps, makeProofInput } from './rule_inputs/proof_input.js'
+import { makeLeftRightInput } from './rule_inputs/left_right_input.js'
 
-import LevelComponent from './level.js'
-import Level from '../data/level.js'
 import InferenceRule, { Blank, Input, InputType } from '../data/inference_rules/inference_rule.js'
 
-import Proposition from '../data/propositions/proposition.js'
-import { PropositionType, lit } from '../data/propositions/propositions.js'
+import Term from '../data/terms/term.js'
+import { litTerm } from '../data/terms/literal.js'
+import Predicate, {allFunctions} from '../data/predicates/predicate.js'
+import {lit} from '../data/predicates/literal.js'
+import { PropositionType } from '../data/propositions/propositions.js'
 
 class InferenceRuleProps {
   readonly rule: InferenceRule = Blank;
   readonly allRules: InferenceRule[] = [];
   readonly allowedTypes: PropositionType[] =[];
-  readonly propositions: Proposition[] = [];
-  readonly target: Proposition = lit("");
+  readonly propositions: Predicate[] = [];
+  readonly termBank: Term[] = [];
+  readonly existentialBank: Term[] = [];
+  readonly universalBank: Term[] = [];
+  readonly target: Predicate = lit("");
 }
 
 interface InferenceRuleData {
   selectedInputs: (Input|null)[],
   errorMessage: string|null,
-  producedProposition: Proposition|null,
+  producedProposition: Predicate|null,
   alreadyFound: boolean,
   lastProofKey: string,
+  open: boolean,
 }
 
-export default {
+const InferenceRuleComponent = {
   props: Object.keys(new InferenceRuleProps()),
 
-  setup(props: InferenceRuleProps, {attrs, slots, emit}: any) {
-    const initialData: InferenceRuleData = {
+  setup(props: InferenceRuleProps, {emit}: any) {
+      const initialData: InferenceRuleData = {
       selectedInputs: new Array<Input|null>(props.rule.inputTypes.length).fill(null),
       errorMessage: null,
       producedProposition: null,
       alreadyFound: false,
       lastProofKey: "",
+      open: false,
     };
 
     const data: InferenceRuleData = Vue.reactive(initialData);
+
+    const functions = allFunctions(props.propositions.concat([props.target]));
 
     function inputElement(r: InferenceRule, i: number): any {
       const t = r.inputTypes[i];
@@ -60,6 +67,7 @@ export default {
         case InputType.AnyProposition: {
           let p: AnyPropositionInputProps = {
             bank: props.propositions,
+            termBank: props.termBank.concat(props.existentialBank).concat(props.universalBank),
             target: props.target,
             allowedTypes: props.allowedTypes,
             extraTerms: r.anyPropositionInfo ? r.anyPropositionInfo(data.selectedInputs) : [],
@@ -71,11 +79,11 @@ export default {
           const p: BankPropositionInputProps = {
             bank: props.propositions,
           }
-          return Vue.h(BankPropositionInput, Object.assign(p, params));
+          return makeBankPropositionInput(p, params);
         }
 
         case InputType.LeftRight: {
-          return Vue.h(LeftRightInput, params);
+          return makeLeftRightInput(params);
         }
 
         case InputType.Variable: {
@@ -91,24 +99,65 @@ export default {
             target: props.target,
             forProposition: forProposition,
           }
-          return Vue.h(VariableInput, Object.assign(p, params));
+          return makeVariableInput(p, params);
         }
 
-        case InputType.NewTerm: {
-          const p: NewTermInputProps = {
-            bank: props.propositions,
-            target: props.target,
+        case InputType.NewExistentialTerm: {
+          const bold = ["𝗮","𝗯","𝗰","𝗱","𝗲","𝗳","𝗴","𝗵","𝗶","𝗷","𝗸","𝗹","𝗺","𝗻","𝗼","𝗽","𝗾","𝗿","𝘀","𝘁","𝘂","𝘃","𝘄","𝘅","𝘆","𝘇","𝗔","𝗕","𝗖","𝗗","𝗘","𝗙","𝗚","𝗛","𝗜","𝗝","𝗞","𝗟","𝗠","𝗡","𝗢","𝗣","𝗤","𝗥","𝗦","𝗧","𝗨","𝗩","𝗪","𝗫","𝗬","𝗭"];
+          let length = 0;
+          let foundTerm = false;
+          while (!foundTerm) {
+            length += 1;
+            let counter = [];
+            for (let i = 0; i < length; ++i) {
+              counter.push(0);
+            }
+            let exaustedCounter = false;
+            while (!exaustedCounter) {
+              let t = litTerm(counter.map(i => bold[i]).join(""));
+              let isNew = true;
+              for (const alreadyThere of props.existentialBank) {
+                if (alreadyThere.equals(t)) {
+                  isNew = false;
+                  break;
+                }
+              }
+              if (isNew) {
+                params.onChange(t);
+                foundTerm = true;
+                break;
+              }
+              let index = length - 1;
+              counter[index] += 1;
+              while (counter[index] >= bold.length) {
+                counter[index] = 0;
+                index -= 1;
+                if (index < 0) {
+                  exaustedCounter = true;
+                  break;
+                } else {
+                  counter[index] += 1;
+                }
+              }
+            }
           }
-          return Vue.h(NewTermInput, Object.assign(p, params));
+          return null;
+        }
+
+        case InputType.UniversalTerm: {
+          const p: FreeTermInputProps = {
+            termBank: props.universalBank,
+            functionBank: []
+          }
+          return makeFreeTermInput(p, params);
         }
 
         case InputType.FreeTerm: {
           const p: FreeTermInputProps = {
-            bank: props.propositions,
-            target: props.target,
-            extraTerms: [],
+            termBank: props.termBank.concat(props.existentialBank).concat(props.universalBank),
+            functionBank: functions
           }
-          return Vue.h(FreeTermInput, Object.assign(p, params));
+          return makeFreeTermInput(p, params);
         }
 
         case InputType.PropositionFreeTerm: {
@@ -122,7 +171,7 @@ export default {
           const p: PropositionFreeTermInputProps = {
             proposition: proposition
           }
-          return Vue.h(PropositionFreeTermInput, Object.assign(p, params));
+          return makePropositionFreeTermInput(p, params);
         }
 
         case InputType.Replacement: {
@@ -134,14 +183,14 @@ export default {
             return Vue.h('em', params, info);
           }
           const o = info[0].toString();
-          const toR = info[1];
-          const w = info[2];
+          const toR = info[1].toString();
+          const w = info[2].toString();
           const p: ReplacementInputProps = {
             original: o,
             toReplace: toR,
             with: w,
           }
-          return Vue.h(ReplacementInput, Object.assign(p, params, {key: o + toR + w},));
+          return makeReplacementInput(p, Object.assign(params, {key: o + toR + w}));
         }
 
         case InputType.Proof: {
@@ -153,13 +202,23 @@ export default {
             return Vue.h('em', params, info);
           }
 
+          let newProps = props.propositions.concat();
+          for (const p of info[0]) {
+            if (!newProps.some(existingProp => p.equals(existingProp))) {
+              newProps.unshift(p);
+            }
+          }
+
           const p: ProofInputProps = {
             rules: props.allRules,
-            propositions: props.propositions.concat(info[0]),
-            target: info[1],
+            propositions: newProps,
+            termBank: props.termBank,
+            existentialBank: props.existentialBank,
+            universalBank: props.universalBank,
+            target: info[2],
             allowedTypes: props.allowedTypes,
           }
-          return Vue.h(ProofInput, Object.assign(p, params, {key: data.lastProofKey}));
+          return makeProofInput(p, Object.assign(params, {key: data.lastProofKey}));
         }
       }
     }
@@ -180,7 +239,14 @@ export default {
       if (error.length > 0) {
         data.errorMessage = error;
       } else {
-        const newProposition = props.rule.apply(actualInput);
+        const result = props.rule.apply(actualInput);
+        const newProposition = Array.isArray(result) ? result[0] : result;
+        if (Array.isArray(result)) {
+          const t = result[1];
+          if (!props.existentialBank.some(term => term.equals(t))) {
+            props.existentialBank.push(t);
+          }
+        }
         data.producedProposition = newProposition;
         data.alreadyFound = false;
         for (const p of props.propositions) {
@@ -203,13 +269,13 @@ export default {
           if (typeof info === 'string') {
             data.lastProofKey = '';
           } else {
-            data.lastProofKey = info[0].concat(info[1]).map(p => p.toString()).join("-");
+            data.lastProofKey = info[0].map(p => p.toString()).join() + info[1].map(t => t.toString()).join() + info[2].toString();
           }
         }
       };
     }
 
-    return () => {
+    function makeDetails() {
       let details = [];
       details.push(Vue.h('span', {
         style: {
@@ -221,6 +287,9 @@ export default {
         details.push(Vue.h('br'));
         details.push(inputElement(props.rule, 0));
         details.push(Vue.h('br'));
+        if (props.rule.inputTypes.length > 1) {
+          inputElement(props.rule, 1);
+        }
       } else {
         const list = [];
         for (let i = 0; i < props.rule.inputTypes.length; ++i) {
@@ -266,10 +335,25 @@ export default {
         }
       }
 
-      return Vue.h('details', { class: 'inference-rule' }, [
-        Vue.h('summary', {}, props.rule.name),
-        Vue.h('div', {}, details),
-      ]);
+      return details;
+    }
+
+    return () => {
+      const items = [Vue.h('summary', {}, props.rule.name)];
+      if (data.open) {
+        items.push(Vue.h('div', {}, makeDetails()));
+      }
+      return Vue.h('details', {
+        class: 'inference-rule',
+        open: data.open,
+        onToggle: (e: Event) => {
+          data.open = (e.target as HTMLDetailsElement).open;
+        }
+      }, items);
     }
   }
+}
+
+export function makeInferenceRule(p: InferenceRuleProps, extra: any = {}) {
+  return Vue.h(InferenceRuleComponent, Object.assign(p, extra));
 }

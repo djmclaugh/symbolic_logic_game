@@ -2,11 +2,13 @@ import Vue from '../../vue.js'
 
 import Select from '../shared/select.js'
 
-import Proposition from '../../data/propositions/proposition.js'
-import { lit } from '../../data/propositions/propositions.js'
+import Term from '../../data/terms/term.js'
+
+import Predicate, { allTerms } from '../../data/predicates/predicate.js'
+import { lit } from '../../data/predicates/literal.js'
 
 export class PropositionFreeTermInputProps {
-  readonly proposition: Proposition = lit("");
+  readonly proposition: Predicate = lit("");
 }
 
 enum InputType {
@@ -33,11 +35,11 @@ interface PropositionFreeTermInputData {
   errorMessage: null|string,
 }
 
-export default {
+const PropositionFreeTermInputComponent = {
   props: Object.keys(new PropositionFreeTermInputProps()),
   emits: [ 'change' ],
 
-  setup(props: PropositionFreeTermInputProps, {attrs, slots, emit}: any) {
+  setup(props: PropositionFreeTermInputProps, {emit}: any) {
 
     const initialData: PropositionFreeTermInputData = {
       inputType: InputType.RECOMMENDED,
@@ -45,9 +47,9 @@ export default {
     };
     const data: PropositionFreeTermInputData = Vue.reactive(initialData);
 
-    const recommendations: string[] = [];
-    for (const t of props.proposition.allTerms()) {
-      if (recommendations.indexOf(t) == -1) {
+    const recommendations: Term[] = [];
+    for (const t of allTerms([props.proposition])) {
+      if (recommendations.some(r => r.equals(t))) {
         recommendations.push(t);
       }
     }
@@ -81,4 +83,8 @@ export default {
       return Vue.h('div', {}, items);
     }
   }
+}
+
+export function makePropositionFreeTermInput(p: PropositionFreeTermInputProps, extra: any = {}) {
+  return Vue.h(PropositionFreeTermInputComponent, Object.assign(p, extra));
 }

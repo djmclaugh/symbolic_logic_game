@@ -4,10 +4,10 @@ import Select from '../shared/select.js'
 
 const SIDES = ["Left", "Right"];
 
-export default {
+const LeftRightInputComponent = {
   emits: [ 'change' ],
 
-  setup(props: any, {attrs, slots, emit}: any) {
+  setup(props: any, {emit}: any) {
     return () => {
       return Vue.h(Select, {
         objectType: "a side",
@@ -22,4 +22,8 @@ export default {
       });
     }
   }
+}
+
+export function makeLeftRightInput(extra: any = {}) {
+  return Vue.h(LeftRightInputComponent, extra);
 }

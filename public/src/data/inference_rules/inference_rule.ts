@@ -1,20 +1,21 @@
-import { Term } from '../term.js'
-import Proposition from '../propositions/proposition.js'
-import { lit } from '../propositions/propositions.js'
+import Term from '../terms/term.js'
+import Predicate from '../predicates/predicate.js'
+import Literal from '../predicates/literal.js'
 
 // Returns a user-visible error message if the restriction is not satisfied.
 // Returns the empty string if the restriction is satisfied.
 export type Restriction = (inputs: Input[]) => string;
-export type Transformation = (inputs: Input[]) => Proposition;
+export type Transformation = (inputs: Input[]) => Predicate|[Predicate, Term];
 
-export type Input = Proposition|Term|number[]|"Left"|"Right"|"done"|"not done";
+export type Input = Predicate|Term|number[]|"Left"|"Right"|"done"|"not done";
 
 export enum InputType {
   AnyProposition, // optional anyPropositionInfo
   BankProposition,
   LeftRight,
   Variable, // needs variableInfo
-  NewTerm, // needs newTermInfo
+  NewExistentialTerm,
+  UniversalTerm,
   FreeTerm,
   PropositionFreeTerm, // needs propositionFreeTermInfo.
   Replacement, // needs replacementInfo.
@@ -28,12 +29,12 @@ export default interface InferenceRule {
     readonly inputTypes: InputType[],
     readonly doesApply: Restriction,
     readonly apply: Transformation,
-    readonly variableInfo?: (inputs: (Input|null)[]) => Proposition|string,
-    readonly newTermInfo?: (inputs: (Input|null)[]) => Proposition|string,
-    readonly anyPropositionInfo?: (inputs: (Input|null)[]) => string[],
-    readonly propositionFreeTermInfo?: (inputs: (Input|null)[]) => Proposition|string,
-    readonly replacementInfo?: (inputs: (Input|null)[]) => [Proposition, Term, Term]|string,
-    readonly proofInfo?: (inputs: (Input|null)[]) => [Proposition[], Proposition]|string,
+    readonly variableInfo?: (inputs: (Input|null)[]) => Predicate|string,
+    readonly anyPropositionInfo?: (inputs: (Input|null)[]) => Term[],
+    readonly propositionFreeTermInfo?: (inputs: (Input|null)[]) => Predicate|string,
+    readonly replacementInfo?: (inputs: (Input|null)[]) => [Predicate, Term, Term]|string,
+    // [What to add to proposition bank, what to add to term bank, new target]
+    readonly proofInfo?: (inputs: (Input|null)[]) => [Predicate[], Term[], Predicate]|string,
 
 }
 
@@ -44,6 +45,6 @@ export const Blank: InferenceRule = {
   inputTypes: [],
   doesApply: () => "",
   apply: () => {
-    return lit("");
+    return new Literal([""]);
   },
 };

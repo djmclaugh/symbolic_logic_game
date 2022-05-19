@@ -1,50 +1,59 @@
 import Vue from '../../vue.js'
 
-import { Term, Variable } from '../../data/term.js'
+import Term from '../../data/terms/term.js'
+import { litTerm } from '../../data/terms/literal.js'
 
-import Proposition, { Predicate } from '../../data/propositions/proposition.js'
-import {
-  lit, not, and, or, then, eq, forall, exists,
-  PropositionType, propositionTypeToString
-} from '../../data/propositions/propositions.js'
+import Predicate, {allFunctions} from '../../data/predicates/predicate.js'
+import { PropositionType, propositionTypeToString } from '../../data/propositions/propositions.js'
+import { lit } from '../../data/predicates/literal.js'
+import { not } from '../../data/predicates/negation.js'
+import { and } from '../../data/predicates/conjunction.js'
+import { or } from '../../data/predicates/disjunction.js'
+import { then } from '../../data/predicates/conditional.js'
+import { eq } from '../../data/predicates/equality.js'
+import { forAll } from '../../data/predicates/universal.js'
+import { exists } from '../../data/predicates/existential.js'
 
-import FreeTermInput from './free_term_input.js'
-import VariableInput from './variable_input.js'
-import LiteralPropositionInput from './literal_proposition_input.js'
-import Select from '../shared/select.js'
+import { makeFreeTermInput } from './free_term_input.js'
+import { makeVariableInput } from './variable_input.js'
+import { makeLiteralPropositionInput } from './literal_proposition_input.js'
 
 export class AnyPropositionInputProps {
-  readonly bank: Proposition[] = [];
-  readonly target: Proposition = lit("");
-  readonly extraTerms: string[] = [];
+  readonly bank: Predicate[] = [];
+  readonly termBank: Term[] = [];
+  readonly target: Predicate = lit("");
+  readonly extraTerms: Term[] = [];
   readonly allowedTypes: PropositionType[] = [];
 }
 
 interface AnyPropositionInputData {
   chosenType: PropositionType,
-  prop1: Proposition|null,
-  prop2: Proposition|null,
+  prop1: Predicate|null,
+  prop2: Predicate|null,
   term1: Term|null,
   term2: Term|null,
-  variable: Variable,
+  variable: Term,
 }
 
 const AnyPropositionInput = {
   props: Object.keys(new AnyPropositionInputProps()),
   emits: [ 'change' ],
 
-  setup(props: AnyPropositionInputProps, {attrs, slots, emit}: any) {
+  setup(props: AnyPropositionInputProps, {emit}: any) {
+
+    const functions = allFunctions(props.bank.concat([props.target]));
+
     const initialData: AnyPropositionInputData = {
-      chosenType: PropositionType.LITERAL,
+      chosenType: props.allowedTypes[0],
       prop1: null,
       prop2: null,
       term1: null,
       term2: null,
-      variable: "",
+      variable: litTerm(""),
     };
     const data: AnyPropositionInputData = Vue.reactive(initialData);
 
-    function onPropositionChange(p: Proposition|null) {
+    function onPropositionChange(p: Predicate|null) {
       data.prop1 = p;
       if (p == null) {
         emit('change', null);
@@ -58,7 +67,7 @@ const AnyPropositionInput = {
           emit('change', not(p));
           break;
         case PropositionType.UNIVERSAL:
-          emit('change', forall(data.variable, p));
+          emit('change', forAll(data.variable, p));
           break;
         case PropositionType.EXISTENTIAL:
           emit('change', exists(data.variable, p));
@@ -68,12 +77,12 @@ const AnyPropositionInput = {
       }
     }
 
-    function onPropositionChange1(p: Proposition|null) {
+    function onPropositionChange1(p: Predicate|null) {
       data.prop1 = p;
       onEitherPropositionChange();
     }
 
-    function onPropositionChange2(p: Proposition|null) {
+    function onPropositionChange2(p: Predicate|null) {
       data.prop2 = p;
       onEitherPropositionChange();
     }
@@ -98,12 +107,12 @@ const AnyPropositionInput = {
       }
     }
 
-    function onEqChange1(p: string|null) {
+    function onEqChange1(p: Term|null) {
       data.term1 = p;
       onEitherEqChange();
     }
 
-    function onEqChange2(p: string|null) {
+    function onEqChange2(p: Term|null) {
       data.term2 = p;
       onEitherEqChange();
     }
@@ -116,88 +125,41 @@ const AnyPropositionInput = {
       emit('change', eq(data.term1, data.term2));
     }
 
-    function onVariableChange(v: Variable) {
+    function onVariableChange(v: Term) {
       data.variable = v;
       onPropositionChange(data.prop1);
     }
 
     return () => {
-      const allLiterals: string[] = [];
-      for (let p of props.bank) {
-        for (let l of p.allLiterals()) {
-          if (allLiterals.indexOf(l) == -1) {
-            allLiterals.push(l);
-          }
-        }
-      }
-      for (let l of props.target.allLiterals()) {
-        if (allLiterals.indexOf(l) == -1) {
-          allLiterals.push(l);
-        }
-      }
+      let allTerms: Term[] = props.extraTerms.concat(props.termBank);
 
-      const allPredicates: Predicate[] = [];
-      for (let p of props.bank) {
-        for (let pred of p.allPredicates()) {
+      let allPredicates: Predicate[] = [];
+      for (const proposition of props.bank.concat([props.target])) {
+        for (const literal of proposition.getLiteralPredicates()) {
+          let emptyLiteral = literal.emptySlots();
           let alreadyIn = false;
-          for (let existingPred of allPredicates) {
-            if (pred.equals(existingPred)) {
+          for (let p of allPredicates) {
+            if (emptyLiteral.equals(p)) {
               alreadyIn = true;
               break;
             }
           }
           if (!alreadyIn) {
-            allPredicates.push(pred);
+            allPredicates.push(emptyLiteral);
           }
-        }
-      }
-
-      for (let pred of props.target.allPredicates()) {
-        let alreadyIn = false;
-        for (let existingPred of allPredicates) {
-          if (pred.equals(existingPred)) {
-            alreadyIn = true;
-            break;
-          }
-        }
-        if (!alreadyIn) {
-          allPredicates.push(pred);
-        }
-      }
-
-      let allTerms: Term[] = [];
-      allTerms = allTerms.concat(props.extraTerms);
-      for (let p of props.bank) {
-        for (let term of p.allTerms()) {
-          let alreadyIn = false;
-          for (let existingTerm of allTerms) {
-            if (term == existingTerm) {
-              alreadyIn = true;
-              break;
-            }
-          }
-          if (!alreadyIn) {
-            allTerms.push(term);
-          }
-        }
-      }
-      for (let term of props.target.allTerms()) {
-        let alreadyIn = false;
-        for (let existingTerm of allTerms) {
-          if (term == existingTerm) {
-            alreadyIn = true;
-            break;
-          }
-        }
-        if (!alreadyIn) {
-          allTerms.push(term);
         }
       }
 
       let items: any = [];
 
       const options = [];
+
       for (const propositionType of props.allowedTypes) {
+        if (propositionType == PropositionType.LITERAL) {
+          if (allPredicates.length == 0) {
+            continue
+          }
+        }
         options.push(Vue.h('option', {
           value: propositionType,
           selected: data.chosenType == propositionType,
@@ -219,16 +181,18 @@ const AnyPropositionInput = {
 
       switch (data.chosenType) {
         case PropositionType.LITERAL:
-          items.push(Vue.h(LiteralPropositionInput, {
-            allLiterals: allLiterals,
+          items.push(makeLiteralPropositionInput({
             allPredicates: allPredicates,
             allTerms: allTerms,
+            allFunctions: functions,
+          }, {
             onChange: onPropositionChange
           }));
           break;
         case PropositionType.NEGATION:
           items.push(Vue.h(AnyPropositionInput, {
             bank: props.bank,
+            termBank: props.termBank,
             target: props.target,
             allowedTypes: props.allowedTypes,
             extraTerms: props.extraTerms,
@@ -251,6 +215,7 @@ const AnyPropositionInput = {
           const inner = [];
           inner.push(Vue.h(AnyPropositionInput, {
             bank: props.bank,
+            termBank: props.termBank,
             target: props.target,
             allowedTypes: props.allowedTypes,
             extraTerms: props.extraTerms,
@@ -263,6 +228,7 @@ const AnyPropositionInput = {
           }, word));
           inner.push(Vue.h(AnyPropositionInput, {
             bank: props.bank,
+            termBank: props.termBank,
             target: props.target,
             allowedTypes: props.allowedTypes,
             extraTerms: props.extraTerms,
@@ -273,15 +239,25 @@ const AnyPropositionInput = {
         }
         case PropositionType.EQUALITY: {
           const inner = [];
-
-          inner.push(Vue.h(FreeTermInput, Object.assign({
-            onChange: onEqChange1,
-          }, props)));
-          inner.push(Vue.h('span', {}, " = "));
-          inner.push(Vue.h(FreeTermInput, Object.assign({
-            onChange: onEqChange2,
-          }, props)));
-          items.push(Vue.h('div', { style: {'display': 'inline-block'}}, inner));
+          inner.push(makeFreeTermInput(
+            {
+              termBank: allTerms,
+              functionBank: functions,
+            },
+            {onChange: onEqChange1}
+          ));
+          inner.push(Vue.h('div', {}, " = "));
+          inner.push(makeFreeTermInput(
+            {
+              termBank: allTerms,
+              functionBank: functions,
+            },
+            {onChange: onEqChange2}
+          ));
+          items.push(Vue.h('div', { style: {
+            'display': 'inline-flex',
+            'align-items': 'center',
+          }}, inner));
           break;
         }
         case PropositionType.UNIVERSAL:
@@ -293,20 +269,22 @@ const AnyPropositionInput = {
           } else if (data.chosenType == PropositionType.EXISTENTIAL) {
             inner.push(Vue.h('span', {}, "∃"));
           }
-          inner.push(Vue.h(VariableInput, {
-            onChange: onVariableChange,
+          inner.push(makeVariableInput({
             bank: props.bank.concat(props.extraTerms.map(t => eq(t, t))),
             target: props.target,
             forProposition: lit(""),
             simplified: true,
+          }, {
+            onChange: onVariableChange,
             style: {
               'display': 'inline-block',
-            },
+            }
           }));
           items.push(Vue.h('div', {style: {'display': 'inline-block'}}, inner));
           items.push(Vue.h(AnyPropositionInput, {
             onChange: onPropositionChange,
             bank: props.bank,
+            termBank: props.termBank,
             target: props.target,
             allowedTypes: props.allowedTypes,
             extraTerms: [data.variable].concat(props.extraTerms),

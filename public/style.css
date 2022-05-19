@@ -4,6 +4,27 @@ body {
   background-color: #eaeaea;
 }
 
+summary {
+  cursor: pointer;
+}
+
+p {
+  white-space: pre-wrap;
+}
+
+details {
+  white-space: pre-wrap;
+}
+
+.term {
+  display: inline-block;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 4px;
+  padding-right: 4px;
+  border: 1px solid #a0a0a0;
+}
+
 .error {
   display: inline-block;
   font-family: monospace;
@@ -12,7 +33,7 @@ body {
   background-color: #FF000040;
 }
 
-details {
+.inference-rule {
     background-color: #f0f0f0;
     border: 1px solid #a0a0a0;
     border-radius: 4px;
@@ -23,25 +44,24 @@ details {
     max-width: 100%;
 }
 
-summary {
+.inference-rule summary {
     font-weight: bold;
-    cursor: default;
     border-radius: 4px;
     margin: -4px;
     padding: 4px;
 }
 
-summary:hover {
+.inference-rule summary:hover {
     background-color: #d0d0d0;
 }
 
-details[open] > summary {
+.inference-rule[open] > summary {
     border-bottom: 1px solid #a0a0a0;
     border-radius: 4px;
     box-shadow: 0px 1px 4px 0px #00000070;
 }
 
-details > div {
+.inference-rule > div {
   display: inline-block;
   padding: 12px;
 }
@@ -80,6 +100,11 @@ details > div {
   align-items: flex-start;
   margin: 16px;
   flex-wrap: wrap;
+}
+
+.free-term-picker.free-term-picker {
+  display: inline-block;
+  vertical-align: top; 
 }
 
 .sublevel {

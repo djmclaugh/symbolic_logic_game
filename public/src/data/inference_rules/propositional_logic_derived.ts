@@ -1,12 +1,11 @@
 import InferenceRule, {InputType, Input} from './inference_rule.js'
-import Proposition from '../propositions/proposition.js'
-import Negation from '../propositions/negation.js'
-import {
-  ConjunctionProposition as Conjunction,
-  DisjunctionProposition as Disjunction,
-  ConditionalProposition as Conditional,
-} from '../propositions/binary.js'
-import { not, and, or, then } from '../propositions/propositions.js'
+import Predicate from '../predicates/predicate.js'
+import Negation, {not} from '../predicates/negation.js'
+import Conjunction, {and} from '../predicates/conjunction.js'
+import Disjunction, {or} from '../predicates/disjunction.js'
+import Conditional, {then} from '../predicates/conditional.js'
+import {lit} from '../predicates/literal.js'
+
 
 export const DoubleNegationIntroduction: InferenceRule = {
   name: "Double Negation Introduction",
@@ -20,7 +19,7 @@ export const DoubleNegationIntroduction: InferenceRule = {
     return "";
   },
   apply: (inputs: Input[]) => {
-    return not(not(inputs[0] as Proposition));
+    return not(not(inputs[0] as Predicate));
   },
 }
 
@@ -35,7 +34,7 @@ export const ConjunctionCommutation: InferenceRule = {
     if (inputs.length != 1) {
       return "Can only be applied to one proposition at a time.";
     }
-    const d = inputs[0] as Proposition;
+    const d = inputs[0] as Predicate;
     if (!(d instanceof Conjunction)) {
       return "Chosen conjunction must have a \"∧\" that isn't inside parentheses.";
     }
@@ -43,7 +42,7 @@ export const ConjunctionCommutation: InferenceRule = {
   },
   apply: (inputs: Input[]) => {
     const p = inputs[0] as Conjunction;
-    return and(p.r, p.l);
+    return and(p.right, p.left);
   },
 }
 
@@ -56,12 +55,12 @@ export const ConjunctionAssociation: InferenceRule = {
   outputDescription: "(𝐿ₗ) ∧ ((𝐿ᵣ) ∧ (𝑅)) or ((𝐿) ∧ (𝑅ₗ)) ∧ (𝑅ᵣ) depending on which side is the nested conjunction.",
   inputTypes: [InputType.BankProposition, InputType.LeftRight],
   doesApply: (inputs: Input[]) => {
-    const c = inputs[0] as Proposition;
+    const c = inputs[0] as Predicate;
     const s = inputs[1] as "Left"|"Right";
     if (!(c instanceof Conjunction)) {
       return "Chosen conjunction must have a \"∧\" that isn't inside parentheses.";
     }
-    if ((s == "Left" && !(c.l instanceof Conjunction)) || (s == "Right" && !(c.r instanceof Conjunction))) {
+    if ((s == "Left" && !(c.left instanceof Conjunction)) || (s == "Right" && !(c.right instanceof Conjunction))) {
       return "Chosen side of chosen conjunction must also have a \"∧\" that's in only one pair of parentheses.";
     }
     return "";
@@ -69,8 +68,8 @@ export const ConjunctionAssociation: InferenceRule = {
   apply: (inputs: Input[]) => {
     const c = inputs[0] as Conjunction;
     const s = inputs[1] as "Left"|"Right";
-    const n = (s == "Left" ? c.l : c.r) as Conjunction;
-    return s == "Left" ? and(n.l, and(n.r, c.r)) : and(and(c.l, n.l), n.r);
+    const n = (s == "Left" ? c.left : c.right) as Conjunction;
+    return s == "Left" ? and(n.left, and(n.right, c.right)) : and(and(c.left, n.left), n.right);
   },
 }
 
@@ -85,7 +84,7 @@ export const DisjunctionCommutation: InferenceRule = {
     if (inputs.length != 1) {
       return "Can only be applied to one proposition at a time.";
     }
-    const d = inputs[0] as Proposition;
+    const d = inputs[0] as Predicate;
     if (!(d instanceof Disjunction)) {
       return "Chosen disjunction must have a \"∨\" that isn't inside parentheses.";
     }
@@ -93,7 +92,7 @@ export const DisjunctionCommutation: InferenceRule = {
   },
   apply: (inputs: Input[]) => {
     const p = inputs[0] as Disjunction;
-    return or(p.r, p.l);
+    return or(p.right, p.left);
   },
 }
 
@@ -109,15 +108,15 @@ export const HypotheticalSyllogism: InferenceRule = {
     if (inputs.length != 2) {
       return "Can only be applied to one proposition and one side at a time.";
     }
-    const p1 = inputs[0] as Proposition;
-    const p2 = inputs[1] as Proposition;
+    const p1 = inputs[0] as Predicate;
+    const p2 = inputs[1] as Predicate;
     if (!(p1 instanceof Conditional)) {
       return "Chosen first conditional must have a \"→\" that isn't inside parentheses.";
     }
     if (!(p2 instanceof Conditional)) {
       return "Chosen second conditional must have a \"→\" that isn't inside parentheses.";
     }
-    if (!p1.r.equals(p2.l)) {
+    if (!p1.right.equals(p2.left)) {
       return "Right side of first conditional must match left side of second conditional.";
     }
     return "";
@@ -125,7 +124,7 @@ export const HypotheticalSyllogism: InferenceRule = {
   apply: (inputs: Input[]) => {
     const p1 = inputs[0] as Conditional;
     const p2 = inputs[1] as Conditional;
-    return then(p1.l, p2.r);
+    return then(p1.left, p2.right);
   },
 }
 
@@ -141,7 +140,7 @@ export const ConditionalTautology: InferenceRule = {
     return "";
   },
   apply: (inputs: Input[]) => {
-    const p = inputs[0] as Proposition;
+    const p = inputs[0] as Predicate;
     return then(p, p);
   },
 }
@@ -161,8 +160,8 @@ export const ConditionalFromConsequent: InferenceRule = {
     return "";
   },
   apply: (inputs: Input[]) => {
-    const p = inputs[0] as Proposition;
-    const q = inputs[1] as Proposition;
+    const p = inputs[0] as Predicate;
+    const q = inputs[1] as Predicate;
     return then(p, q);
   },
 }
@@ -179,19 +178,19 @@ export const ModusTollens: InferenceRule = {
     if (inputs.length != 2) {
       return "Can only be applied to one proposition and one side at a time.";
     }
-    const c = inputs[0] as Proposition;
-    const q = inputs[1] as Proposition;
+    const c = inputs[0] as Predicate;
+    const q = inputs[1] as Predicate;
     if (!(c instanceof Conditional)) {
       return "Chosen conditional must have a \"→\" that isn't inside parentheses.";
     }
-    if (!not(c.r).equals(q)) {
+    if (!not(c.right).equals(q)) {
       return "Consequent negation must be the negation of chosen conditional's right side.";
     }
     return "";
   },
   apply: (inputs: Input[]) => {
     const p = inputs[0] as Conditional;
-    return not(p.l);
+    return not(p.left);
   },
 }
 
@@ -208,22 +207,22 @@ export const ConstructiveDelimma: InferenceRule = {
     if (inputs.length != 3) {
       return "Can only be applied to three propositions at a time.";
     }
-    const d = inputs[0] as Proposition;
+    const d = inputs[0] as Predicate;
     if (!(d instanceof Disjunction)) {
       return "Chosen disjunction must have a \"∨\" that isn't inside parentheses.";
     }
-    const l = inputs[1] as Proposition;
+    const l = inputs[1] as Predicate;
     if (!(l instanceof Conditional)) {
       return "Chosen left conditional must have a \"→\" that isn't inside parentheses.";
     }
-    if (!d.l.equals(l.l)) {
+    if (!d.left.equals(l.left)) {
       return "Left side of disjunction must be identical to antecedent of left conditional.";
     }
-    const r = inputs[2] as Proposition;
+    const r = inputs[2] as Predicate;
     if (!(r instanceof Conditional)) {
       return "Chosen right conditional must have a \"→\" that isn't inside parentheses.";
     }
-    if (!d.r.equals(r.l)) {
+    if (!d.right.equals(r.left)) {
       return "Right side of disjunction must be identical to antecedent of right conditional.";
     }
     return "";
@@ -231,7 +230,7 @@ export const ConstructiveDelimma: InferenceRule = {
   apply: (inputs: Input[]) => {
     const p = inputs[1] as Conditional;
     const q = inputs[2] as Conditional;
-    return or(p.r, q.r);
+    return or(p.right, q.right);
   },
 }
 
@@ -247,8 +246,71 @@ export const LawOfExcludedMiddle: InferenceRule = {
     return "";
   },
   apply: (inputs: Input[]) => {
-    const p = inputs[0] as Proposition;
+    const p = inputs[0] as Predicate;
     return or(p, not(p));
+  },
+}
+
+export const Contradiction: InferenceRule = {
+  name: "Contradiction",
+  inputDescriptions: [
+    "Proposition: A proposition from the bank, 𝑃.",
+    "Negation: A proposition from the bank of the form ¬(𝑃).",
+  ],
+  outputDescription: "⊥",
+  inputTypes: [InputType.BankProposition, InputType.BankProposition],
+  doesApply: (inputs: Input[]) => {
+    const a = inputs[0] as Predicate;
+    const b = inputs[1] as Negation;
+    if (!b.subPredicate.equals(a)) {
+      return "Chosen negation must be negation of chosen proposition.";
+    }
+    return "";
+  },
+  apply: (inputs: Input[]) => {
+    return lit("⊥");
+  },
+}
+
+export const ProofOfNegation: InferenceRule = {
+  name: "Proof Of Negation",
+  inputDescriptions: [
+    "Proposition: A proposition from the bank, 𝑃.",
+    "Proof: Win a modified version of this level where 𝑃 is added to the bank and where the target is ⊥",
+  ],
+  outputDescription: "¬(𝑃)",
+  inputTypes: [InputType.AnyProposition, InputType.Proof],
+  proofInfo: (inputs: (Input|null)[]) => {
+    if (inputs[0] === null) {
+      return "Proposition must be chosen before working on proof.";
+    } else {
+      return [[inputs[0] as Predicate], [], lit("⊥")];
+    }
+  },
+  doesApply: (inputs: Input[]) => { return ""; },
+  apply: (inputs: Input[]) => {
+    return not(inputs[0] as Predicate);
+  },
+}
+
+export const ProofByContradiction: InferenceRule = {
+  name: "Proof By Contradiction",
+  inputDescriptions: [
+    "Proposition: A proposition from the bank, 𝑃.",
+    "Proof: Win a modified version of this level where ¬(𝑃) is added to the bank and where the target is ⊥",
+  ],
+  outputDescription: "𝑃",
+  inputTypes: [InputType.AnyProposition, InputType.Proof],
+  proofInfo: (inputs: (Input|null)[]) => {
+    if (inputs[0] === null) {
+      return "Proposition must be chosen before working on proof.";
+    } else {
+      return [[not(inputs[0] as Predicate)], [], lit("⊥")];
+    }
+  },
+  doesApply: (inputs: Input[]) => { return ""; },
+  apply: (inputs: Input[]) => {
+    return inputs[0] as Predicate;
   },
 }
 
@@ -264,15 +326,15 @@ export const DisjunctiveSyllogism: InferenceRule = {
     if (inputs.length != 2) {
       return "Can only be applied to one proposition and one side at a time.";
     }
-    const d = inputs[0] as Proposition;
-    const n = inputs[1] as Proposition;
+    const d = inputs[0] as Predicate;
+    const n = inputs[1] as Predicate;
     if (!(d  instanceof Disjunction)) {
       return "Chosen disjunction must have a \"∨\" that isn't inside parentheses.";
     }
     if (!(n  instanceof Negation)) {
       return "Chosen negation must start with \"¬(\".";
     }
-    if (!d.l.equals(n.subProp) && !d.r.equals(n.subProp)) {
+    if (!d.left.equals(n.subPredicate) && !d.right.equals(n.subPredicate)) {
       return "Consequent negation must be the negation either left or right side of the disjunction.";
     }
     return "";
@@ -280,6 +342,6 @@ export const DisjunctiveSyllogism: InferenceRule = {
   apply: (inputs: Input[]) => {
     const d = inputs[0] as Disjunction;
     const n = inputs[1] as Negation;
-    return d.l.equals(n.subProp) ? d.r : d.l;
+    return d.left.equals(n.subPredicate) ? d.right : d.left;
   },
 }

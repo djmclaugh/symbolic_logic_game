@@ -1,57 +1,89 @@
 import Vue from '../../vue.js'
-
 import Select from '../shared/select.js'
+import Term from '../../data/terms/term.js'
 
-import Proposition from '../../data/propositions/proposition.js'
-import { lit } from '../../data/propositions/propositions.js'
+import { emptySlot } from '../../data/predicates/util.js'
+import FunctionTerm from '../../data/terms/function.js'
 
 export class FreeTermInputProps {
-  readonly bank: Proposition[] = [];
-  readonly target: Proposition = lit("");
-  readonly extraTerms: string[] = [];
+  readonly termBank: Term[] = [];
+  readonly functionBank: FunctionTerm[] = [];
 }
 
 interface FreeTermInputData {
-  errorMessage: null|string,
+  chosenTerm: Term,
+  subTerms: Term[],
 }
 
-export default {
+const FreeTermInputComponent = {
   props: Object.keys(new FreeTermInputProps()),
   emits: [ 'change' ],
 
-  setup(props: FreeTermInputProps, {attrs, slots, emit}: any) {
+  setup(props: FreeTermInputProps, {emit}: any) {
 
     const initialData: FreeTermInputData = {
-      errorMessage: null,
+      chosenTerm: props.termBank[0],
+      subTerms: [],
     };
     const data: FreeTermInputData = Vue.reactive(initialData);
 
-    const recommendations: string[] = [];
-    for (const t of props.extraTerms) {
-      recommendations.push(t);
-    }
-    for (const p of props.bank) {
-      for (const t of p.allTerms()) {
-        if (recommendations.indexOf(t) == -1) {
-          recommendations.push(t);
-        }
-      }
-    }
-    for (const t of props.target.allTerms()) {
-      if (recommendations.indexOf(t) == -1) {
-        recommendations.push(t);
+    function emitChange() {
+      if (data.chosenTerm instanceof FunctionTerm) {
+        emit('change', data.chosenTerm.withSlots(data.subTerms));
+      } else {
+        emit('change', data.chosenTerm);
       }
     }
 
-    emit('change', recommendations[0]);
+    emitChange();
 
     return () => {
-      return Vue.h(Select, {
-        options: recommendations,
-        onChange: (i: number) => {
-          emit('change', recommendations[i])
-        },
-      });
+      let main = null;
+      if (props.termBank.length > 0) {
+        main = Vue.h(Select, {
+          options: props.termBank.concat(props.functionBank).map(t => t.toString()),
+          onChange: (i: number) => {
+            if (i < props.termBank.length) {
+              data.chosenTerm = props.termBank[i];
+              data.subTerms = [];
+            } else {
+              const f = props.functionBank[i - props.termBank.length];
+              data.chosenTerm = f;
+              data.subTerms = [];
+              for (let index = 0; index < f.numSlots; ++index) {
+                data.subTerms.push(props.termBank[0]);
+              }
+            }
+            emitChange();
+          },
+        });
+      } else {
+        return Vue.h('em', {}, "No terms to chose from...");
+      }
+      const items = [];
+      for (let i = 0; i < data.subTerms.length; ++i) {
+        items.push(Vue.h('div', {
+          style: {
+            display: 'flex',
+            'margin-top': '2px',
+          }}, [
+          Vue.h('span', {style: {'margin-top': '2px'}}, `${emptySlot(i + 1)}: `),
+          makeFreeTermInput({
+            termBank: props.termBank,
+            functionBank: props.functionBank,
+          }, {
+            onChange: (t: Term) => {
+              data.subTerms[i] = t;
+              emitChange();
+            },
+          }),
+        ]))
+      }
+      return Vue.h('div', { class: "free-term-picker" }, [main].concat(items));
     }
   }
+}
+
+export function makeFreeTermInput(p: FreeTermInputProps, extra: any = {}) {
+  return Vue.h(FreeTermInputComponent, Object.assign(p, extra));
 }

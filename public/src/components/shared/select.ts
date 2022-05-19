@@ -10,7 +10,7 @@ export default {
   props: Object.keys(new SelectProps()),
   emits: ['change'],
 
-  setup(props: SelectProps, {attrs, slots, emit}: any) {
+  setup(props: SelectProps, {emit}: any) {
     function onChange(e: InputEvent) {
       e.stopImmediatePropagation();
 

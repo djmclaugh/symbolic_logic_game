@@ -12,11 +12,11 @@ interface ReplacementInputData {
   switches: boolean[]
 }
 
-export default {
+const ReplacementInputComponent = {
   props: Object.keys(new ReplacementInputProps()),
   emits: [ 'change' ],
 
-  setup(props: ReplacementInputProps, {attrs, slots, emit}: any) {
+  setup(props: ReplacementInputProps, {emit}: any) {
     const parts: string[] = props.original.split(props.toReplace);
     const initialData: ReplacementInputData = {
       switches: new Array<boolean>(parts.length).fill(false),
@@ -56,4 +56,8 @@ export default {
       return Vue.h('div', {}, items);
     }
   }
+}
+
+export function makeReplacementInput(p: ReplacementInputProps, extra: any = {}) {
+  return Vue.h(ReplacementInputComponent, Object.assign(p, extra));
 }

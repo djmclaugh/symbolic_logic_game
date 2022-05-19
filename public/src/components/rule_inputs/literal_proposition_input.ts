@@ -1,44 +1,41 @@
 import Vue from '../../vue.js'
 
 import Select from '../shared/select.js'
+import { makeFreeTermInput } from './free_term_input.js'
 
-import { Term } from '../../data/term.js'
-import Proposition, { Predicate } from '../../data/propositions/proposition.js'
-import { lit } from '../../data/propositions/propositions.js'
+import FunctionTerm from '../../data/terms/function.js'
+import Term from '../../data/terms/term.js'
+import { emptySlot } from '../../data/predicates/util.js'
+import Predicate from '../../data/predicates/predicate.js'
 
 class LiteralPropositionInputProps {
-  readonly allLiterals: string[] = [];
   readonly allPredicates: Predicate[] = [];
   readonly allTerms: Term[] = []
+  readonly allFunctions: FunctionTerm[] = []
 }
 
 interface LiteralPropositionInputData {
   choice: number|null,
-  termChoices: number[],
+  termChoices: Term[],
 }
 
-export default {
+const LiteralPropositionsInputComponent = {
   props: Object.keys(new LiteralPropositionInputProps()),
   emits: ['change'],
 
-  setup(props: LiteralPropositionInputProps, {attrs, slots, emit}: any) {
-    const numLit = props.allLiterals.length;
+  setup(props: LiteralPropositionInputProps, {emit}: any) {
     const initialData: LiteralPropositionInputData = {
       choice: null,
       termChoices: [],
     };
     const data: LiteralPropositionInputData = Vue.reactive(initialData);
 
-    function chosenProposition(): Proposition|null {
+    function chosenProposition(): Predicate|null {
       if (data.choice === null) {
         return null;
       }
-      if (data.choice < props.allLiterals.length) {
-        return lit(props.allLiterals[data.choice]);
-      } else {
-        const pred = props.allPredicates[data.choice - props.allLiterals.length];
-        return pred.apply(data.termChoices.map(i => props.allTerms[i]));
-      }
+      const pred = props.allPredicates[data.choice];
+      return pred.withSlots(data.termChoices);
     }
 
     emit('change', chosenProposition());
@@ -47,33 +44,41 @@ export default {
       const items = [];
       items.push(Vue.h(Select, {
         objectType: 'a proposition',
-        options: props.allLiterals.concat(props.allPredicates.map(p => p.toString())),
+        options: props.allPredicates.map(p => p.toString()),
         onChange: (index: number|null) => {
           data.choice = index;
           if (index === null) {
             // Do nothing
-          } else if (index < numLit) {
-            data.termChoices = []
           } else {
-            data.termChoices = Array<number>(props.allPredicates[index - numLit].v.length).fill(0);
+            data.termChoices = Array<Term>(props.allPredicates[index].slots.length).fill(props.allTerms[0]);
           }
           emit('change', chosenProposition());
         },
       }));
 
-      if (data.choice !== null && data.choice >= numLit) {
-        for (let i = 0; i < props.allPredicates[data.choice - numLit].v.length; ++i) {
-          items.push(Vue.h(Select, {
-            options: props.allTerms,
-            onChange: (index: number) => {
-              data.termChoices[i] = index;
+      if (data.choice !== null) {
+        for (let i = 0; i < props.allPredicates[data.choice].slots.length; ++i) {
+          const termInput = makeFreeTermInput({
+            termBank: props.allTerms,
+            functionBank: props.allFunctions,
+          }, {
+            onChange: (t: Term) => {
+              data.termChoices[i] = t;
               emit('change', chosenProposition());
             },
-          }));
+          });
+          items.push(Vue.h('div', { style: {
+            'display': 'inline',
+            'margin-left': '8px',
+          }}, [emptySlot(i + 1) + ": ", termInput]))
         }
       }
 
       return Vue.h('div', { style: { 'display': 'inline-block'}}, items);
     }
   }
+}
+
+export function makeLiteralPropositionInput(p: LiteralPropositionInputProps, extra: any = {}) {
+  return Vue.h(LiteralPropositionsInputComponent, Object.assign(p, extra));
 }
