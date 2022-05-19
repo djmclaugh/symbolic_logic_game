@@ -619,7 +619,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   },
 
   {
-    name: 'Prove Derived Rule: Material Implication (Disjunction to Conditional)',
+    name: 'Material Implication (Disjunction to Conditional)',
     description: [],
     rules: [
       ConditionalIntroduction,
@@ -633,7 +633,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   },
 
   {
-    name: 'Prove Derived Rule: Material Implication (Conditional to Disjunction)',
+    name: 'Material Implication (Conditional to Disjunction)',
     description: [],
     rules: [
       ConditionalTautology,
@@ -652,7 +652,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   },
 
   {
-    name: 'Prove Derived Rule: Transposition (Contrapositive)',
+    name: 'Transposition (Contrapositive)',
     description: [],
     rules: [
       ConditionalIntroduction,
@@ -669,7 +669,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   },
 
   {
-    name: 'Prove Derived Rule: Disjunction Commutation',
+    name: 'Disjunction Commutation',
     rules: [
       DisjunctionIntroduction,
       DisjunctionElimination,
@@ -690,7 +690,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   },
 
   {
-    name: 'Prove Derived Rule: Disjunction Association',
+    name: 'Disjunction Association',
     description: [
       "",
     ],
@@ -702,7 +702,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   },
 
   {
-    name: 'Prove Derived Rule: Conjunction Distribution',
+    name: 'Conjunction Distribution',
     rules: [ConjunctionIntroduction, ConjunctionElimination, ConditionalIntroduction, ConstructiveDelimma],
     description: [
       "Hint: Whenever you have a conjunction, it's almost always a good idea to use conjunction elimination.",
@@ -714,7 +714,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   },
 
   {
-    name: 'Prove Derived Rule: Disjunction Distribution',
+    name: 'Disjunction Distribution',
     rules: [ConjunctionIntroduction, ConjunctionElimination, ConditionalIntroduction, DisjunctionIntroduction, DisjunctionElimination,],
     description: [
       "Hint: When the target is a conjunction, it's almost always a good idea to first get each side in the bank and then finish off with conjunction introduction.",
