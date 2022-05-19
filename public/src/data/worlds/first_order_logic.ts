@@ -121,7 +121,6 @@ FIRST_ORDER_LOGIC.push({
   description: [
     "First-order logic also adds the concept of functions.",
     "A function is just a term with a number of holes in it.\nYou can make a term by taking a function and filling in the holes with terms.\nIn this level we have one function: _____'s daughter.",
-    "Note: It's possible that functions create \"nonsensical\" terms.\nAlice might not have a daughter, in which case \"Alice's daughter\" doesn't refer to anything.\nAlice might have multiple daughters, in which case \"Alice's daughter\" is ambiguous.\nThere's MANY philosophical positions as to when a term is \"nonsensical\", if propositions with \"nonsensical\" terms should be allowed, and what such propositions mean.\nThese are interesting questions, but they're questions about semantics which falls outside the scope of symbolic logic.\nIf you want to end up with sensical conclusions, it's up to you to only start with propositions you've determined to be sensical.",
   ],
   rules: [
     ConditionalIntroduction,
@@ -148,7 +147,7 @@ FIRST_ORDER_LOGIC.push({
     "It's also possible that predicates create \"nonsensical\" propositions.",
     "For example, consider the terms \"red\" and \"blue\" and the predicate \"____ is taller than ____\".\nColours don't have height, so it's not clear what the meaning of \"red is taller than blue\" is (if it has one at all).",
     "But since symbolic logic only deals with the symbols of sentences and not the sense of sentences, whether a term/proposition is sensical or not doesn't matter.",
-    "There are MANY philosophical positions as to when a term/proposition is \"nonsensical\".\nThese is a very interesting topic, but but it deals with semantics which falls outside the scope of symbolic logic.\nIf you want to end up with sensical conclusions, it's up to you to only start with propositions you've determined to be sensical.",
+    "There are MANY philosophical positions regarding when a term/proposition is \"nonsensical\".\nThis is a very interesting topic, but but it deals with semantics which falls outside the scope of symbolic logic.\nIf you want to end up with sensical conclusions, it's up to you to only start with propositions you've determined to be sensical.",
   ],
   rules: [
     ConditionalIntroduction,
