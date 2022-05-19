@@ -26,8 +26,8 @@ interface AppData {
 const App = {
   setup(): any {
     const initialData: AppData = {
-      currentWorld: 2,
-      currentLevel: 1,
+      currentWorld: 0,
+      currentLevel: 0,
       unlockedLevels: NDS.length,
     };
     const data: AppData = Vue.reactive(initialData);
