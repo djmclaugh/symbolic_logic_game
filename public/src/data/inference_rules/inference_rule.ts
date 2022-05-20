@@ -20,6 +20,7 @@ export enum InputType {
   PropositionFreeTerm, // needs propositionFreeTermInfo.
   Replacement, // needs replacementInfo.
   Proof, // needs proofInfo.
+  Axiom,
 }
 
 export default interface InferenceRule {
@@ -35,6 +36,7 @@ export default interface InferenceRule {
     readonly replacementInfo?: (inputs: (Input|null)[]) => [Predicate, Term, Term]|string,
     // [What to add to proposition bank, what to add to term bank, new target]
     readonly proofInfo?: (inputs: (Input|null)[]) => [Predicate[], Term[], Predicate]|string,
+    readonly axiomInfo?: (inputs: (Input|null)[]) => Predicate[],
 
 }
 

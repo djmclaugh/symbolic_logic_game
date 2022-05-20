@@ -9,6 +9,8 @@ import { ReplacementInputProps, makeReplacementInput } from './rule_inputs/repla
 import { ProofInputProps, makeProofInput } from './rule_inputs/proof_input.js'
 import { makeLeftRightInput } from './rule_inputs/left_right_input.js'
 
+import SelectComponent from './shared/select.js'
+
 import InferenceRule, { Blank, Input, InputType } from '../data/inference_rules/inference_rule.js'
 
 import Term from '../data/terms/term.js'
@@ -191,6 +193,23 @@ const InferenceRuleComponent = {
             with: w,
           }
           return makeReplacementInput(p, Object.assign(params, {key: o + toR + w}));
+        }
+
+        case InputType.Axiom: {
+          if (!r.axiomInfo) {
+            throw new Error("Rules with inputs of type Axiom must populate the axiomInfo field.");
+          }
+          const info = r.axiomInfo(data.selectedInputs);
+          if (typeof info === 'string') {
+            return Vue.h('em', params, info);
+          }
+          params.onChange(info[0]);
+          return Vue.h(SelectComponent, {
+            selected: 0,
+            options: info.map(p => p.toString()),
+            onChange: (i: number) => { params.onChange(info[i]) },
+            style: params.style,
+          });
         }
 
         case InputType.Proof: {

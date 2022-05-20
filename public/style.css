@@ -22,7 +22,7 @@ details {
   padding-bottom: 2px;
   padding-left: 4px;
   padding-right: 4px;
-  border: 1px solid #a0a0a0;
+  border: 1px solid #c0c0c0;
 }
 
 .error {
@@ -104,7 +104,7 @@ details {
 
 .free-term-picker.free-term-picker {
   display: inline-block;
-  vertical-align: top; 
+  vertical-align: top;
 }
 
 .sublevel {

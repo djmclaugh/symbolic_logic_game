@@ -8,6 +8,7 @@ import NDS from './data/worlds/natural_deduction_system.js'
 import PROPOSITIONAL_LOGIC_DEMORGAN from './data/worlds/propositional_logic_demorgan.js'
 import FOL from './data/worlds/first_order_logic.js'
 import FOL_WITH_EQ from './data/worlds/first_order_logic_with_equality.js'
+import ROB from './data/worlds/robinson_arithmetic.js'
 import { PROPOSITION_TYPES, FOL_PROPOSITION_TYPES } from './data/propositions/propositions.js'
 
 const worlds = [
@@ -15,6 +16,7 @@ const worlds = [
   PROPOSITIONAL_LOGIC_DEMORGAN,
   FOL,
   FOL_WITH_EQ,
+  ROB,
 ]
 
 interface AppData {
@@ -26,7 +28,7 @@ interface AppData {
 const App = {
   setup(): any {
     const initialData: AppData = {
-      currentWorld: 0,
+      currentWorld: 4,
       currentLevel: 0,
       unlockedLevels: NDS.length,
     };
@@ -42,6 +44,7 @@ const App = {
             "Propositional Logic: De Morgan's Laws",
             "First-Order Logic",
             "First-Order Logic With Equality",
+            "Robinson Arithmetic",
           ],
           onChange: (index: number|null) => {
             data.currentWorld = index || 0;

@@ -6,7 +6,7 @@ import Predicate, {isSameSlot} from '../predicates/predicate.js'
 import Term from '../terms/term.js'
 
 export const Reflexivity: InferenceRule = {
-  name: "Equality (=) Reflexivity",
+  name: "Reflexivity (=)",
   inputDescriptions: [
     "Any term, 𝑎",
   ],
@@ -20,7 +20,7 @@ export const Reflexivity: InferenceRule = {
 }
 
 export const Substitution: InferenceRule = {
-  name: "Substitution",
+  name: "Substitution (=)",
   inputDescriptions: [
     "Proposition: Any proposition already in the bank, 𝑃.",
     "Equality: A proposition already in the bank of the form 𝑎 = 𝑏.",
@@ -37,7 +37,7 @@ export const Substitution: InferenceRule = {
       if (!(e instanceof Equality)) {
         return "Chosen equality must have a \"=\" that isn't inside parentheses.";
       }
-      if (!p.occures(e.left!)) {
+      if (p.occuranceIndices(e.left!).length == 0) {
         return "Left term of chosen equality does not appear in chosen proposition."
       }
       return [inputs[0] as Predicate, e.left as Term, e.right as Term];
