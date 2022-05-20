@@ -28,7 +28,7 @@ interface AppData {
 const App = {
   setup(): any {
     const initialData: AppData = {
-      currentWorld: 4,
+      currentWorld: 0,
       currentLevel: 0,
       unlockedLevels: NDS.length,
     };
