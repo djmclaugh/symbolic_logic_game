@@ -29,14 +29,14 @@ export const Symmetry: InferenceRule = {
 export const EqualityNegationSymmetry: InferenceRule = {
   name: "Equality Negation Symmetry",
   inputDescriptions: [
-    "Equality Negation: A proposition already in the bank of the form ¬(𝑎 = 𝑏).",
+    "A proposition already in the bank of the form ¬(𝑎 = 𝑏).",
   ],
   outputDescription: "¬(𝑏 = 𝑎)",
   inputTypes: [ InputType.BankProposition ],
   doesApply: (inputs: Input[]) => {
     let p = inputs[0] as Negation;
     if (!(p instanceof Negation) || !(p.subPredicate instanceof Equality)) {
-      return "Chosen equation negation but be the negation of an equation.";
+      return "Chosen proposition must be the negation of an equality.";
     }
     return "";
   },

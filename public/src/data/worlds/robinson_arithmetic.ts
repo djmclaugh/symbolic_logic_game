@@ -129,7 +129,7 @@ ROB.push({
   name: "Axiom #2",
   description: [
     "The second axiom is ∀𝑥 (∀𝑦 ((S𝑥 = S𝑦) → (𝑥 = 𝑦))).\nThe idea behind this axiom is to say if the number that comes after 𝑥 is the same as the number that comes after 𝑦, then 𝑥 and 𝑦 must be the same number.",
-    "Use the first and second axioms to prove that 2 is not the same number a 1."
+    "Use the first and second axioms to prove that 2 is not the same number as 1."
   ],
   rules: [
     RobinsonAxioms,
