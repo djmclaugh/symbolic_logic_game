@@ -279,7 +279,7 @@ ROB.push({
   propositions: [
     eq(one, S.withSlots([zero]))
   ],
-  target: eq(times.withSlots([one, zero]), one),
+  target: eq(times.withSlots([one, zero]), zero),
 });
 
 ROB.push({
