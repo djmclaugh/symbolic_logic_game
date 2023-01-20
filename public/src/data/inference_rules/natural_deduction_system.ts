@@ -8,8 +8,8 @@ import Conditional, {then} from '../predicates/conditional.js'
 export const NegationIntroduction: InferenceRule = {
   name: "Negation (¬) Introduction",
   inputDescriptions: [
-    "Conditional: A proposition from the bank of the form (𝑃) → (𝑄)",
-    "Contradiction: A proposition from the bank of the form (𝑃) → (¬(𝑄))"
+    "Conditional: An assumed/known proposition of the form (𝑃) → (𝑄)",
+    "Contradiction: An assumed/known proposition of the form (𝑃) → (¬(𝑄))"
   ],
   outputDescription: "¬(𝑃)",
   inputTypes: [InputType.BankProposition, InputType.BankProposition],
@@ -42,8 +42,8 @@ export const NegationIntroduction: InferenceRule = {
 export const NegationElimination: InferenceRule = {
   name: "Negation (¬) Elimination",
   inputDescriptions: [
-    "Negation: A proposition from the bank of the form ¬(𝑃)",
-    "Consequent: Any proposition, 𝑄.",
+    "Negation: An assumed/deduced proposition of the form ¬(𝑃)",
+    "Consequent: Any proposition whatsoever",
   ],
   outputDescription: "(𝑃) → (𝑄)",
   inputTypes: [InputType.BankProposition, InputType.AnyProposition],
@@ -66,7 +66,9 @@ export const NegationElimination: InferenceRule = {
 
 export const DoubleNegationElimination: InferenceRule = {
   name: "Double Negation (¬) Elimination",
-  inputDescriptions: ["A proposition from the bank of the form ¬(¬(𝑃))."],
+  inputDescriptions: [
+    "Double Negation: An assumed/deduced proposition of the form ¬(¬(𝑃))"
+  ],
   outputDescription: "𝑃",
   inputTypes: [InputType.BankProposition],
   doesApply: (propositions: Input[]) => {
@@ -89,8 +91,8 @@ export const DoubleNegationElimination: InferenceRule = {
 export const ConjunctionIntroduction: InferenceRule = {
   name: "Conjunction (∧) Introduction",
   inputDescriptions: [
-    "Left Proposition: Any proposition already in the bank, 𝐿",
-    "Right Proposition: Any proposition already in the bank, 𝑅"
+    "Left Proposition: Any assumed/deduced proposition",
+    "Right Proposition: Any assumed/deduced proposition"
   ],
   outputDescription: "(𝐿) ∧ (𝑅)",
   inputTypes: [InputType.BankProposition, InputType.BankProposition],
@@ -108,8 +110,8 @@ export const ConjunctionIntroduction: InferenceRule = {
 export const ConjunctionElimination: InferenceRule = {
   name: "Conjunction (∧) Elimination",
   inputDescriptions: [
-    "Conjunction: A proposition from the bank of the form (𝐿) ∧ (𝑅)",
-    "Side to Keep: A choice between \"Left\" and \"Right\".",
+    "Conjunction: An assumed/deduced proposition of the form (𝐿) ∧ (𝑅)",
+    "Side to Keep: Left or Right.",
   ],
   outputDescription: "𝐿 if \"Left\" was chosen. 𝑅 if \"Right\" was chosen.",
   inputTypes: [InputType.BankProposition, InputType.LeftRight],
@@ -142,9 +144,9 @@ export const ConjunctionElimination: InferenceRule = {
 export const DisjunctionIntroduction: InferenceRule = {
   name: "Disjunction (∨) Introduction",
   inputDescriptions: [
-    "Known Proposition: Any proposition already in the bank,  𝐾",
-    "Other Proposition: Any proposition, 𝑂.",
-    "Side of known proposition: A choice between \"Left\" and \"Right\"."
+    "Known Proposition: Any assumed/deduced proposition",
+    "Other Proposition: Any proposition whatsoever",
+    "Side of known proposition: Left or Right",
   ],
   outputDescription: "(𝐾) ∨ (𝑂) if \"Left\" was chosen. (𝑂) ∨ (𝐾) if \"Right\" was chosen.",
   inputTypes: [InputType.BankProposition, InputType.AnyProposition, InputType.LeftRight],
@@ -168,9 +170,9 @@ export const DisjunctionIntroduction: InferenceRule = {
 export const DisjunctionElimination: InferenceRule = {
   name: "Disjunction (∨) Elimination",
   inputDescriptions: [
-    "Disjunction: A proposition from the bank of the form (𝐿) ∨ (𝑅)",
-    "Left Conditional: A proposition from the bank of the form (𝐿) → (𝑄)",
-    "Right Conditional: A proposition from the bank of the form (𝑅) → (𝑄)",
+    "Disjunction: An assumed/deduced proposition of the form (𝐿) ∨ (𝑅)",
+    "Left Conditional: An assumed/deduced proposition of the form (𝐿) → (𝑄)",
+    "Right Conditional: An assumed/deduced proposition of the form (𝑅) → (𝑄)",
   ],
   outputDescription: "𝑄",
   inputTypes: [InputType.BankProposition, InputType.BankProposition, InputType.BankProposition],
@@ -193,7 +195,7 @@ export const DisjunctionElimination: InferenceRule = {
     if (!(r instanceof Conditional)) {
       return "Chosen right conditional must have a \"→\" that isn't inside parentheses.";
     }
-    if (!d.left.equals(l.left)) {
+    if (!d.right.equals(r.left)) {
       return "Right side of disjunction must be identical to antecedent of right conditional.";
     }
     if (!l.right.equals(r.right)) {
@@ -210,9 +212,9 @@ export const DisjunctionElimination: InferenceRule = {
 export const ConditionalIntroduction: InferenceRule = {
   name: "Conditional (→) Introduction",
   inputDescriptions: [
-    "Antecedent: Any proposition, 𝑃",
-    "Consequent: Any proposition, 𝑄",
-    "Proof: Win a modified version of this level where 𝑃 is added to the bank and where the target is 𝑄"
+    "Antecedent: Any proposition whatsoever",
+    "Consequent: Any proposition whatsoever",
+    "Proof: Win the level with the antecedent added as an assumption and the consequent as the target"
   ],
   outputDescription: "(𝑃) → (𝑄)",
   inputTypes: [InputType.AnyProposition, InputType.AnyProposition, InputType.Proof],
@@ -228,7 +230,7 @@ export const ConditionalIntroduction: InferenceRule = {
       return "Can only be applied to two propositions and a proof at a time.";
     }
     if (inputs[2] != "done") {
-      return "Proof not yet completed. Chosen consequent must appear in the word bank.";
+      return "Proof not completed. Chosen consequent must be deduced in sublevel.";
     }
     return "";
   },
@@ -242,14 +244,14 @@ export const ConditionalIntroduction: InferenceRule = {
 export const ConditionalElimination: InferenceRule = {
   name: "Conditional (→) Elimination",
   inputDescriptions: [
-    "Conditional: A proposition from the bank of the form (𝑃) → (𝑄)",
-    "Antecedent: Any proposition already in the bank, 𝑃",
+    "Conditional: An assumed/deduced proposition of the form (𝑃) → (𝑄)",
+    "Antecedent: An assumed/deduced proposition of the form 𝑃",
   ],
   outputDescription: "𝑄",
   inputTypes: [InputType.BankProposition, InputType.BankProposition],
   doesApply: (inputs: Input[]) => {
     if (inputs.length != 2) {
-      return "Can only be applied to one proposition and one side at a time.";
+      return "Can only be applied to one conditional and one antecedent at a time.";
     }
     const a = inputs[1] as Predicate;
     const p = inputs[0] as Predicate;
@@ -257,7 +259,7 @@ export const ConditionalElimination: InferenceRule = {
       return "Chosen conditional must have a \"→\" that isn't inside parentheses.";
     }
     if (!a.equals(p.left)) {
-      return "Left side of chosen conditional must match chosen antecedent.";
+      return "Chosen antecedent must match left side of chosen conditional.";
     }
     return "";
   },

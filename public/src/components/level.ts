@@ -24,7 +24,7 @@ class LevelProps {
 }
 
 interface LevelData {
-  propositions: Predicate[];
+  deductions: Predicate[];
   terms: Term[];
   existentialTerms: Term[];
   universalTerms: Term[];
@@ -35,7 +35,7 @@ export default {
   props: Object.keys(new LevelProps()),
   setup(props: LevelProps, {emit}: any): any {
     const initialData: LevelData = {
-      propositions: props.level.propositions.concat(),
+      deductions: [],
       terms: props.level.terms ? props.level.terms.concat() : [],
       existentialTerms: props.existentialTerms ? props.existentialTerms.concat() : [],
       universalTerms: props.universalTerms ? props.universalTerms.concat() : [],
@@ -44,7 +44,7 @@ export default {
     const data: LevelData = Vue.reactive(initialData);
 
     function didFindTarget(): boolean {
-      for (let p of data.propositions) {
+      for (let p of data.deductions.concat(props.level.propositions)) {
         if (p.equals(props.level.target)) {
           return true;
         }
@@ -58,35 +58,20 @@ export default {
 
     return () => {
       let items = [];
+      let description = [];
 
-      items.push(Vue.h('h2', {}, [
-        props.level.name,
-        ' - ',
-        Vue.h('button', {
-          onClick: () => {
-            data.propositions = props.level.propositions.concat();
-            data.terms = props.level.terms ? props.level.terms.concat() : [];
-            data.existentialTerms = [];
-            data.universalTerms = [];
-            data.uuid += 1;
-            emit("restart");
-            if (didFindTarget()) {
-              emit("levelClear");
-            }
-          },
-        }, 'Restart'),
-      ]));
+      description.push(Vue.h('h2', {}, props.level.name));
 
       if (props.level.description) {
         for (const d of props.level.description) {
-            items.push(Vue.h('p', {}, d));
+            description.push(Vue.h('p', {}, d));
         }
       }
 
       if (props.level.hints) {
         let count = 1;
         for (const d of props.level.hints) {
-          items.push(Vue.h('details', {
+          description.push(Vue.h('details', {
             style: {display: 'inline-block'},
           }, [
             Vue.h('summary', {}, 'Hint ' + count),
@@ -98,56 +83,71 @@ export default {
               },
             }, d),
           ]));
-          items.push(Vue.h('br'));
+          description.push(Vue.h('br'));
           count += 1;
         }
-        items.push(Vue.h('br'));
+        description.push(Vue.h('br'));
+      }
+
+      if (!props.isSublevel) {
+	items.push(Vue.h('div', {class: 'level-description'}, description));
+      }
+
+      items.push(Vue.h('p', {class: 'target-p'}, [
+        Vue.h('h3', {style: {display: 'inline'}}, 'Target: '),
+	Vue.h('span', {innerHTML: props.level.target.toHTMLString()}),
+      ]));
+      if (didFindTarget()) {
+        if (props.isSublevel) {
+          items.push(Vue.h('em', {}, 'Target proposition deduced - Ready to apply inference rule.'));
+        } else {
+          items.push(Vue.h('em', {}, [
+            'Target proposition deduced - Next level unlocked - ',
+            Vue.h('button', {
+              onClick: () => { emit("nextLevel"); }
+            }, 'Go to next level')
+          ]));
+        }
+      } else {
+        if (props.isSublevel) {
+          items.push(Vue.h('em', {}, 'Create target proposition to complete this sublevel.'))
+	} else {
+          items.push(Vue.h('em', {}, 'Create target proposition to complete this level.'))
+	}
       }
 
       const banks = [];
 
       banks.push(makePropositionBank({
-        target: props.level.target,
-        propositions: data.propositions,
+        assumptions: props.level.propositions,
+        deductions: data.deductions,
         terms: data.terms,
         existentialTerms: data.existentialTerms,
         universalTerms: data.universalTerms,
         universalIntroductionPresent: props.level.rules.includes(UniversalIntroduction),
       }));
 
-      banks.push(Vue.h(RuleBankComponent, {
-        key: data.uuid,
-        rules: props.level.rules,
-        propositions: data.propositions,
-        termBank: data.terms,
-        existentialBank: data.existentialTerms,
-        universalBank: data.universalTerms,
-        target: props.level.target,
-        allowedTypes: props.level.allowedPropositionTypes || props.allowedTypes,
-        onNewProposition: (p: Predicate) => {
-          data.propositions.push(p);
-          if (p.equals(props.level.target)) {
-            emit("levelClear");
-          }
-        },
-      }));
+      if (props.level.rules.length > 0) {
+        banks.push(Vue.h(RuleBankComponent, {
+          key: data.uuid,
+          rules: props.level.rules,
+          propositions: props.level.propositions.concat(data.deductions),
+          termBank: data.terms,
+          existentialBank: data.existentialTerms,
+          universalBank: data.universalTerms,
+          target: props.level.target,
+          allowedTypes: props.level.allowedPropositionTypes || props.allowedTypes,
+          onNewProposition: (p: Predicate) => {
+            data.deductions.push(p);
+            if (p.equals(props.level.target)) {
+              emit("levelClear");
+            }
+          },
+        }));
+      }
 
       items.push(Vue.h('div', { class: 'banks' }, banks));
 
-      if (didFindTarget()) {
-        items.push(Vue.h('p', {}, 'Target proposition in bank - Level complete!'));
-        if (props.isSublevel) {
-          items.push(Vue.h('p', {}, 'Proof completed - Ready to apply inference rule.'));
-        } else {
-          items.push(Vue.h('p', {}, [
-            'Next level unlocked.',
-            ' ',
-            Vue.h('button', {
-              onClick: () => { emit("nextLevel"); }
-            }, 'Go to next level')
-          ]));
-        }
-      }
       return Vue.h('div', {
         class: {
           'level': true,

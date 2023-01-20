@@ -3,11 +3,10 @@ import Vue from '../vue.js'
 import Term from '../data/terms/term.js'
 import { litTerm } from '../data/terms/literal.js'
 import Predicate from '../data/predicates/predicate.js'
-import {lit} from '../data/predicates/literal.js'
 
 class PropositionBankProps {
-  readonly target: Predicate = lit("");
-  readonly propositions: Predicate[] = [];
+  readonly assumptions: Predicate[] = [];
+  readonly deductions: Predicate[] = [];
   readonly terms: Term[] = [];
   readonly existentialTerms: Term[] = [];
   readonly universalTerms: Term[] = [];
@@ -15,6 +14,13 @@ class PropositionBankProps {
 }
 
 const frak = ["𝔞","𝔟","𝔠","𝔡","𝔢","𝔣","𝔤","𝔥","𝔦","𝔧","𝔨","𝔩","𝔪","𝔫","𝔬","𝔭","𝔮","𝔯","𝔰","𝔱","𝔲","𝔳","𝔴","𝔵","𝔶","𝔷","𝔄","𝔅","ℭ","𝔇","𝔈","𝔉","𝔊","ℌ","ℑ","𝔍","𝔎","𝔏","𝔐","𝔑","𝔒","𝔓","𝔔","ℜ","𝔖","𝔗","𝔘","𝔙","𝔚","𝔛","𝔜","ℨ"];
+
+function predicateToLI(p: Predicate) {
+  return Vue.h("li", {
+    style: {'margin-top': '2px', 'margin-bottom': '2px'},
+    innerHTML: p.toHTMLString(),
+  });
+}
 
 const PropositionBankComponent = {
   props: Object.keys(new PropositionBankProps()),
@@ -59,23 +65,20 @@ const PropositionBankComponent = {
     return () => {
       let items = [];
 
-      items.push(Vue.h('h3', { style: { 'display': 'inline' }}, 'Target: '));
-      items.push(Vue.h('span', {innerHTML: props.target.toHTMLString()}));
-
-      items.push(Vue.h('h3', {}, 'Proposition Bank'));
-      let propositions = [];
-      for (const p of props.propositions) {
-        propositions.push(Vue.h('li', {
-          style: {'margin-top': '2px', 'margin-bottom': '2px'},
-          innerHTML: p.toHTMLString()
-        }));
+      if (props.assumptions.length > 0) {
+	items.push(Vue.h('h3', {}, 'Assumptions'));
+        items.push(Vue.h('ul', {}, props.assumptions.map(predicateToLI)));
       }
-      items.push(Vue.h('ul', {}, propositions))
+
+      if (props.deductions.length > 0) {
+        items.push(Vue.h('h3', {}, 'Deductions'));
+	items.push(Vue.h('ul', {}, props.deductions.map(predicateToLI)));
+      }
 
       if (props.terms.length > 0 || props.existentialTerms.length > 0 || props.universalTerms.length > 0 || props.universalIntroductionPresent) {
         if (props.universalIntroductionPresent) {
           items.push(Vue.h('h3', {}, [
-            'Term Bank - ',
+            'Terms - ',
             Vue.h('button', {
               onClick: () => {
                 props.universalTerms.push(nextUniversal());
@@ -83,7 +86,7 @@ const PropositionBankComponent = {
             }, 'Add Universal Term'),
           ]));
         } else {
-          items.push(Vue.h('h3', {}, 'Term Bank'));
+          items.push(Vue.h('h3', {}, 'Terms'));
         }
         const termsList = Vue.h('ul', {style: {display: 'inline-block'}}, props.terms.map(t => Vue.h('li', {}, t.toString())));
         const existentialList = Vue.h('ul', {style: {display: 'inline-block'}}, props.existentialTerms.map(t => Vue.h('li', {}, t.toString())));

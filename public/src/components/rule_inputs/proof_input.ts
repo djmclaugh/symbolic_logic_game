@@ -32,6 +32,8 @@ const ProofInputComponent = {
       target: props.target,
     };
 
+    emit('change', 'incomplete');
+
     return () => {
       return Vue.h(LevelComponent, {
         level: sublevel,

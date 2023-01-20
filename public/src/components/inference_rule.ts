@@ -34,6 +34,7 @@ interface InferenceRuleData {
   selectedInputs: (Input|null)[],
   errorMessage: string|null,
   producedProposition: Predicate|null,
+  producedTerm: Term|null,
   alreadyFound: boolean,
   lastProofKey: string,
   open: boolean,
@@ -47,12 +48,14 @@ const InferenceRuleComponent = {
       selectedInputs: new Array<Input|null>(props.rule.inputTypes.length).fill(null),
       errorMessage: null,
       producedProposition: null,
+      producedTerm: null,
       alreadyFound: false,
       lastProofKey: "",
       open: false,
     };
 
     const data: InferenceRuleData = Vue.reactive(initialData);
+    onInputChange(0)(data.selectedInputs[0]);
 
     const functions = allFunctions(props.propositions.concat([props.target]));
 
@@ -203,7 +206,6 @@ const InferenceRuleComponent = {
           if (typeof info === 'string') {
             return Vue.h('em', params, info);
           }
-          params.onChange(info[0]);
           return Vue.h(SelectComponent, {
             selected: 0,
             options: info.map(p => p.toString()),
@@ -243,40 +245,12 @@ const InferenceRuleComponent = {
     }
 
     function onApplyClick() {
-      data.errorMessage = null;
-      data.producedProposition = null;
-      const actualInput: Input[] = [];
-      for (const p of data.selectedInputs) {
-        if (p === null) {
-          data.errorMessage = "Not all inputs have been selected.";
-          return;
-        } else {
-          actualInput.push(p);
-        }
+      if (!data.alreadyFound) {
+        emit('newProposition', data.producedProposition);
+	data.alreadyFound = true;
       }
-      const error = props.rule.doesApply(actualInput);
-      if (error.length > 0) {
-        data.errorMessage = error;
-      } else {
-        const result = props.rule.apply(actualInput);
-        const newProposition = Array.isArray(result) ? result[0] : result;
-        if (Array.isArray(result)) {
-          const t = result[1];
-          if (!props.existentialBank.some(term => term.equals(t))) {
-            props.existentialBank.push(t);
-          }
-        }
-        data.producedProposition = newProposition;
-        data.alreadyFound = false;
-        for (const p of props.propositions) {
-          if (p.equals(newProposition)) {
-            data.alreadyFound = true;
-            break;
-          }
-        }
-        if (!data.alreadyFound) {
-          emit('newProposition', data.producedProposition);
-        }
+      if (data.producedTerm && !props.existentialBank.some(term => term.equals(data.producedTerm!))) {
+        props.existentialBank.push(data.producedTerm);
       }
     }
 
@@ -291,16 +265,40 @@ const InferenceRuleComponent = {
             data.lastProofKey = info[0].map(p => p.toString()).join() + info[1].map(t => t.toString()).join() + info[2].toString();
           }
         }
+        data.errorMessage = null;
+        data.producedProposition = null;
+	data.alreadyFound = false;
+        const actualInput: Input[] = [];
+        for (const p of data.selectedInputs) {
+          if (p === null) {
+            data.errorMessage = "Not all inputs have been selected.";
+            return;
+          } else {
+            actualInput.push(p);
+          }
+        }
+        const error = props.rule.doesApply(actualInput);
+	if (error.length > 0) {
+	  data.errorMessage = error;
+	  return;
+	}
+        const result = props.rule.apply(actualInput);
+        data.producedProposition = Array.isArray(result) ? result[0] : result;
+        if (Array.isArray(result)) {
+          data.producedTerm = result[1];
+        }
+        data.alreadyFound = false;
+        for (const p of props.propositions) {
+          if (p.equals(data.producedProposition)) {
+            data.alreadyFound = true;
+            break;
+          }
+        }
       };
     }
 
     function makeDetails() {
       let details = [];
-      details.push(Vue.h('span', {
-        style: {
-          "font-weight": "bold",
-        },
-      }, 'Needs: '));
       if (props.rule.inputDescriptions.length == 1) {
         details.push(Vue.h('span', {}, props.rule.inputDescriptions[0]));
         details.push(Vue.h('br'));
@@ -321,54 +319,32 @@ const InferenceRuleComponent = {
         details.push(Vue.h('ul', {}, list));
       }
 
-      details.push(Vue.h('br'));
-
       details.push(Vue.h('span', {
         style: {
           "font-weight": "bold",
         },
-      }, "Gives: "));
-      details.push(Vue.h('span', {}, props.rule.outputDescription));
+      }, "Result: "));
+      if (data.errorMessage) {
+	details.push(Vue.h('em', {}, data.errorMessage));
+      } else {
+	details.push(Vue.h('span', {}, data.producedProposition?.toString()));
+      }
       details.push(Vue.h('br'));
-
       details.push(Vue.h('button', {
         onClick: onApplyClick,
-        style: { 'margin': '8px' },
-      }, "Apply!"));
-      if (data.errorMessage != null) {
+	disabled: data.producedProposition === null || data.alreadyFound,
+        style: {},
+      }, "Add To Deductions"));
+      if (data.alreadyFound) {
         details.push(Vue.h('br'));
-        details.push(Vue.h('br'));
-        details.push(Vue.h('span', { class: 'error' }, data.errorMessage));
-      }
-      if (data.producedProposition != null) {
-        const p = data.producedProposition.toString();
-        details.push(Vue.h('br'));
-        details.push(Vue.h('br'));
-        details.push(Vue.h('span', {}, `Proposition created: ${p}`));
-        if (data.alreadyFound) {
-          details.push(Vue.h('br'));
-          details.push(Vue.h('span', {}, `Proposition already in proposition bank.`));
-        } else {
-          details.push(Vue.h('br'));
-          details.push(Vue.h('span', {}, `Proposition added to proposition bank.`));
-        }
+        details.push(Vue.h('em', {}, `Proposition already added.`));
       }
 
       return details;
     }
 
     return () => {
-      const items = [Vue.h('summary', {}, props.rule.name)];
-      if (data.open) {
-        items.push(Vue.h('div', {}, makeDetails()));
-      }
-      return Vue.h('details', {
-        class: 'inference-rule',
-        open: data.open,
-        onToggle: (e: Event) => {
-          data.open = (e.target as HTMLDetailsElement).open;
-        }
-      }, items);
+      return Vue.h('div', {}, makeDetails());
     }
   }
 }

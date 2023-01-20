@@ -38,24 +38,22 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   {
     name: "Propositional Logic Introduction",
     description: [
-      "In this world you'll learn propositional logic.",
       "The goal of each level is to have an EXACT copy of the target proposition in your proposition bank.",
       "For this first level, we already start with the target proposition in our bank, so we already won!\nClick the \"Go to next level\" button to proceed.",
       "Note: \"Propositional logic\", \"propositional calculus\", and \"zeroth-order logic\" are all synonyms.",
     ],
     rules: [],
     propositions: [
-      lit("Hello world!"),
+      lit("I like logic"),
     ],
-    target: lit("Hello world!"),
+    target: lit("I like logic"),
   },
   {
     name: "Rule #1: Conjunction Introduction",
     description: [
-      "You can create new propositions by using the inference rules provided to you.\nEach rule has specific requirements, make sure you read them carefully!",
-      "For this level, you're given conjunction introduction.\nIt lets you take any two propositions from your bank and combine them by putting a \"∧\" in between.",
+      "You can create new propositions by using inference rules.\nEach rule has specific requirements, make sure you read them carefully!",
+      "For this level, you're given \"conjunction introduction\".\nIt lets you take two propositions and combine them by putting a \"∧\" in between.",
       "The behaviour of the conjunction symbol (∧) is inspired by the word \"and\".\nThe idea is for \"(𝐿) ∧ (𝑅)\" to mean that both 𝐿 and 𝑅 are true.",
-      "Conjunction introduction is one of the nine rules that are taken for granted in propositional logic.",
       "Remember, we're doing symbolic logic.\nYou need to make an EXACT copy of the target proposition.\nIt has to be the EXACT same sequence of symbols.",
       "For example, \"1+2\" is not the same as \"2+1\"; The symbols are not in the same order.",
     ],
@@ -70,14 +68,14 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   {
     name: "Nested Conjunctions",
     description: [
-      "It's possible to have conjunctions inside conjunctions.",
+      "You can use inference rules on your deductions as well.\nIt's possible to have conjunctions inside conjunctions.",
       "Again, remember that we're doing symbolic logic.\nYou need to make an EXACT copy of the target proposition.\nIt has to be the EXACT same sequence of symbols.",
       "For example, \"(1+2)+3\" is not the same as \"1+(2+3)\"; The parentheses are not at the same positions.",
     ],
     hints: [
       "If ever you're stuck, it's generally a good idea to try and work backwards."
-      + "\nIn this case for example, we want \"(I like green) ∧ ((I like blue) ∧ (I like red))\"."
-      + "\nTo be able to create that, we need to already have both \"I like green\" and \"(I like blue) ∧ (I like red)\" in our bank."
+      + "\nIn this case, we want \"(I like green) ∧ ((I like blue) ∧ (I like red))\"."
+      + "\nTo be able to create that, we need to already have both \"I like green\" and \"(I like blue) ∧ (I like red)\"."
       + "\nSo that means that we need to create \"(I like blue) ∧ (I like red)\" first."
     ],
     rules: [ ConjunctionIntroduction ],
@@ -92,8 +90,8 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     name: "Rule #2: Conjunction Elimination",
     description: [
       "In this level you're given conjunction elimination (conjunction introduction's counterpart).",
-      "If you have a conjunction already in your bank, it lets you make the proposition that consists of just one side of the conjunction.",
-      "The idea behind conjunction elimination is that if the left and right sides of the \"∧\" are true together, then either should be true by itself.",
+      "If you already have a conjunction, it lets you extract either side of the conjunction.",
+      "The idea behind conjunction elimination is that if \"𝐿 and 𝑅\" is true as a whole, then both 𝐿 and 𝑅 must be true by themselves.",
       "Note: Conjunction elimination is also called \"simplification\".",
     ],
     rules: [ ConjunctionElimination ],
@@ -105,14 +103,15 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   {
     name: "Conjunction Practice",
     description: [
-      "Let's see if you can use the two conjunction rules to clear this level.",
+      "Let's see if you can use the two conjunction rules to clear this level.\nYou can choose which rule to use via the dropdown menu next to the \"Inference Rules\" header.",
       "It's up to you to figure out how, in what order, and how many times to use each of the rules.",
+      "Note: \"Conjunction introduction\" is called that way because it introduces/adds a conjunction symbol in the result.\n\"Conjunction elimination\" is called that way because it takes a proposition with a conjunction symbol and gives you a proposition with that conjunction symbol eliminated/removed.", 
     ],
     hints: [
       "Again, it's generally a good idea to try and work backwards."
       + "\nIn this case we want \"(Alice likes oranges) ∧ (Bob likes oranges)\"."
-      + "\nTo be able to create that, we need to already have both \"Alice likes oranges\" and \"Bob likes oranges\" in our bank."
-      + "\nWe can get those by using conjunction elimination."
+      + "\nTo be able to create that, we need to have both \"Alice likes oranges\" and \"Bob likes oranges\" already deduced."
+      + "\nWe can do that by using conjunction elimination on our assumptions."
     ],
     rules: [ ConjunctionIntroduction, ConjunctionElimination ],
     propositions: [
@@ -126,8 +125,8 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     name: "Note: Symbolic Logic and Nonsense",
     description: [
       "It's possible that some propositions are \"nonsensical\".",
-      "But since symbolic logic only deals with the symbols of sentences and not the sense of sentences, whether a proposition is sensical or not doesn't matter.",
-      "There are MANY philosophical positions about when a proposition is sensical or not.\nThis is a very interesting topic, but it deals with semantics which falls outside the scope of symbolic logic.\nIf you want to end up with sensical conclusions, it's up to you to only start with propositions you've determined to be sensical.",
+      "But since symbolic logic only deals with the symbols of propositions and not their meaning, whether a proposition is sensical or not doesn't matter for this game.",
+      "There are MANY philosophical positions about when a proposition is sensical or not.\nThis is a very interesting topic, but it deals with semantics which falls outside the scope of symbolic logic.\nIf you want to end up with a conclusion that's sensical to you, it's up to you to only use assumptions and inference rules you've determined to be sensical.",
     ],
     rules: [ ConjunctionIntroduction, ConjunctionElimination ],
     propositions: [
@@ -140,9 +139,9 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   {
     name: 'Prove Derived Rule: Conjunction Commutation',
     description: [
-      "Conjunction introduction/elimination are the only 2 rules taken for granted about conjunctions.",
-      "However, from these 2 rules we can derive many other rules!",
-      "Here we'll derive a rule that tells us that conjunction is commutative. In other words, that we can swap the left and right sides of a conjunction as we please.",
+      "Conjunction introduction/elimination are the only two rules taken for granted about conjunctions.",
+      "However, from just these two rules we can derive many other rules!",
+      "Here we'll derive a rule that tells us that conjunction is commutative.\nIn other words, that we can swap the left and right sides of a conjunction as we please.",
     ],
     rules: [ConjunctionIntroduction, ConjunctionElimination],
     propositions: [
@@ -154,8 +153,8 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   {
     name: 'Prove Derived Rule: Conjunction Association',
     description: [
-      "Here we'll derive a rule that tells us that conjunction is associative. In other words, we can rearange how the conjunctions are grouped.",
-      "Note: Because conjunction is associative, in real life, people will write \"𝑃 ∧ 𝑄 ∧ 𝑅\" instead of \"(𝑃 ∧ 𝑄) ∧ 𝑅\" or \"𝑃 ∧ (𝑄 ∧ 𝑅)\", just like like people write \"2 × 3 × 4\" instead of \"(2 × 3) × 4\" or \"2 × (3 × 4)\".",
+      "Here we'll derive a rule that tells us that conjunction is associative.\nIn other words, we can rearange how the conjunctions are grouped.",
+      "Note: Because conjunction is associative, people will use the shorthand \"𝑃 ∧ 𝑄 ∧ 𝑅\" instead of the formally correct \"(𝑃 ∧ 𝑄) ∧ 𝑅\" or \"𝑃 ∧ (𝑄 ∧ 𝑅)\", just like like people write \"2 × 3 × 4\" instead of \"(2 × 3) × 4\" or \"2 × (3 × 4)\".",
     ],
     rules: [ConjunctionIntroduction, ConjunctionElimination],
     propositions: [
@@ -165,33 +164,12 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   },
 
   {
-    name: 'Conjunction Extra Practice',
-    description: [
-      "Note: If you feel comfortable with conjunctions, feel free to skip to the next level.",
-
-    ],
-    hints: [
-      "If you ever have a conjunction in your proposition bank, it doesn't hurt to take it appart with conjunction elimination.",
-      "If you ever have a conjunction as your target, try to create each side one at a time.",
-    ],
-    rules: [
-      ConjunctionIntroduction,
-      ConjunctionElimination,
-    ],
-    propositions: [
-      and(lit("I ate cereal"), lit("I drank coffee")),
-      and(and(lit("I ate soup"), lit("I ate salad")), lit("I drank water")),
-    ],
-    target: and(and(lit("I drank coffee"), lit("I drank water")), and(lit("I ate cereal"), and(lit("I ate soup"), lit("I ate salad")))),
-  },
-
-  {
     name: 'Rule #3: Conditional Elimination',
     description: [
       "New logical symbol: → (Conditional)",
       "The behaviour of the conditional symbol (→) is inspired by the word \"implies\".\nThe idea is for \"(𝑃) → (𝑄)\" to mean that whenever 𝑃 is true, then 𝑄 must be true as well.",
       "A statement of the form \"(𝑃) → (𝑄)\" is called a conditional statement.\nThe left side is called the antecedent.\nThe right side is called the consequent.",
-      "The first rule we'll see about conditionals is conditional elimination.\nIf you have a conditional statement and you also have its antecedent, then it lets you add the consequent to your bank.",
+      "The first rule we'll see about conditionals is conditional elimination.\nIf you have a conditional statement and you also have its antecedent, then it lets you deduce its consequent.",
       "Note: Conditional elimination is also called modus ponens",
     ],
     rules: [ConditionalElimination],
@@ -204,7 +182,9 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
 
   {
     name: 'Conditional Elimination Chaining',
-    description: [],
+    description: [
+      "Make sure you have the antecedent before you try to use conditional eliminition.",
+    ],
     rules: [ConditionalElimination],
     propositions: [
       lit("I go to bed late"),
@@ -218,6 +198,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     name: 'Conditionals and Conjunctions #1',
     description: [
       "Let's mix in conditionals with conjunctions.",
+      "Again, you'll have to deduce the antecedent before you can use conditional eliminition.",
     ],
     rules: [
       ConjunctionIntroduction,
@@ -248,15 +229,31 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   },
 
   {
+    name: 'Conditionals and Conjunctions #3',
+    description: [
+      "One more time...",
+    ],
+    rules: [
+      ConjunctionElimination,
+      ConditionalElimination,
+    ],
+    propositions: [
+      and(lit('Socrates is a man'), then(lit('Socrates is a man'), lit('Socrates is mortal'))),
+    ],
+    target: lit('Socrates is mortal'),
+  },
+
+  {
     name: 'Rule #4: Conditional Introduction',
     description: [
-      "This rule is the most complicated, but one of the most useful out of the nine base rules.",
-      "This rule says that if you can \"prove\" 𝑄 by assuming 𝑃, then you can add \"(𝑃) → (𝑄)\" to your proposition bank.",
-      "To \"prove\" 𝑄, you have to beat the sublevel where 𝑃 has been added to the proposition bank and where 𝑄 is the target proposition.",
-      "Note: Conditional introduction can use ANY propositions you can think of.\nThe chosen propositions don't need to already be in the bank.",
+      "This rule is arguably the most complicated, but also one of the most useful.",
+      "This rule says that if you can \"prove\" 𝑄 by assuming 𝑃, then you can deduce the proposition \"(𝑃) → (𝑄)\".",
+      "To \"prove\" 𝑄, you have to beat the sublevel where 𝑃 has been added as an assumption and where 𝑄 is the target proposition.",
+      "Note: Conditional introduction can use ANY propositions you can think of.\nThe chosen antecedent and consequent don't need to already be assumed/deduced.\nBut be careful, even though you can chose any antecedent/consequent you like, you still have to end up proving the consequent before you can apply the rule.",
+      "In this level I'm telling you that I like spaghetti, but it's unknown whether I like meatballs or not.\nUsing that information, I want you to deduce that IF I were to like meatballs, THEN I would like spaghetti and meatballs.\nI want you to deduce a hypothetical statement.", 
     ],
     hints: [
-      "Your target proposition is \"(I like meatballs) → ((I like spaghetti) ∧ (I like meatballs))\".\nSo you should set the antecedent to \"I like meatballs\".\nAnd you should set the consequent to \"(I like spaghetti) ∧ (I like meatballs)\"."
+      "Your target proposition is \"(I like meatballs) → ((I like spaghetti) ∧ (I like meatballs))\".\nSo when using the conditional introduction rule, you should set the antecedent to \"I like meatballs\" and you should set the consequent to \"(I like spaghetti) ∧ (I like meatballs)\"."
     ],
     rules: [ConjunctionIntroduction, ConditionalIntroduction],
     propositions: [
@@ -271,7 +268,9 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
 
   {
     name: 'Conditional Introduction Practice',
-    description: [],
+    description: [
+      "Whenever your target is a conditional proposition, chances are that you'll have to use conditional introduction.",
+    ],
     rules: [ConjunctionIntroduction, ConditionalIntroduction, ConditionalElimination],
     propositions: [
       lit("I'm a citizen"),
@@ -287,7 +286,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   {
     name: 'Conditional Tautology',
     description: [
-      "A tautology is any statement you can get starting with an empty proposition bank.",
+      "A tautology is any statement you can deduce without using any assumptions (except for the inference rules of course).",
       "Using conditional introduction, we can get our first tautology!",
     ],
     rules: [ConditionalIntroduction],
@@ -370,8 +369,8 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
       "New logical symbol: ∨ (Disjunction)",
       "The behaviour of the disjunction symbol (∨) is inspired by the word \"or\".\nThe idea is for \"(𝐿) ∨ (𝑅)\" to mean that at least one of 𝐿 or 𝑅 are true.",
       "Note: The conjunction (∧) and disjunction (∨) symbols are very similar. Be careful not to mix them up!",
-      "Disjunction introduction let's you combine any proposition from your bank with any proposition whatsoever (regardless of whether it's in the bank or not) by putting a \"∨\" in between.",
-      "The idea behind this rule is that if you know something is true, then \"that thing\" or \"anything else\" must also be true.",
+      "Disjunction introduction let's you combine any assumed/deduced proposition any other proposition whatsoever (regardless of whether it's already assumed/deduced) by putting a \"∨\" in between.",
+      "The idea behind this rule is that if you know that something is true, then \"(that thing you know is true) or (anything else)\" must also be true as a whole.",
       "Note: Disjunction introduction is also called addition.",
     ],
     rules: [ DisjunctionIntroduction ],
@@ -385,10 +384,28 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   },
 
   {
+    name: 'Disjunction Introduction Practice',
+    description: [
+      "Disjunction introduction my seem pointless, we're taking a known proposition and deducing a less precise version of that known proposition.\nBut that's actually needed in some situations.",
+      "Even though \"it's lunch time\" is a stronger claim than \"it's lunch or dinner time\", I need to explicitly deduce that \"it's lunch or dinner time\" before I can use conditional elimination with the conditional statement in this level.",
+    ],
+    rules: [
+      ConditionalElimination,
+      DisjunctionIntroduction,
+    ],
+    propositions: [
+      then(or(lit("It's lunch"), lit("It's dinner")), lit("I drink water")),
+      lit("It's lunch"),
+    ],
+    target: lit("I drink water"),
+  },
+
+  {
     name: "Rule #6: Disjunction Elimination",
     description: [
-      "Creating a disjunction is much easier than creating a conjunction, but getting rid of a disjunction is much harder than getting rid of a conjunction.",
+      "Creating a disjunction is easier than creating a conjunction (you only need to know one of the sides), but getting rid of a disjunction is much harder than getting rid of a conjunction.",
       "If both sides of a disjunction both imply the same thing, then you can use disjunction elimination to add that thing to your bank.",
+      "For example in this level, I know that it's either lunch time or dinner time.\nI know that during lunch I drink water and I know that during dinner I drink water.\nSo even though I don't know which meal it is exactly, it doesn't matter. In either case, I drink water.",
       "Note: This rule is also called case analysis."
     ],
     rules: [ DisjunctionElimination ],
@@ -408,7 +425,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
       "Constructive delimma is very similar to disjunction elimination, but it's more general purpose since you don't need the consequents to match.",
     ],
     hints: [
-      "Try adding \"(I drink coffee) → ((I drink coffee) ∨ (I drink water))\" and \"(I drink water) → ((I drink coffee) ∨ (I drink water))\" to your proposition bank first.",
+      "Try deducing the propositions \"(I drink coffee) → ((I drink coffee) ∨ (I drink water))\" and \"(I drink water) → ((I drink coffee) ∨ (I drink water))\" first.",
     ],
     rules: [
       ConditionalIntroduction,
@@ -427,6 +444,30 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
       PropositionType.DISJUNCTION,
     ]
   },
+  
+  {
+    name: 'Disjunction Commutation',
+    rules: [
+      DisjunctionIntroduction,
+      DisjunctionElimination,
+      ConditionalIntroduction
+    ],
+    description: [
+      "Here we'll show that just like conjunctions, disjunctions are commutative.\nIn other words, we'll show that the left and right side of a disjunction can be swapped.",
+    ],
+    hints: [
+      "Try deducing the propositions \"(I like apples) → ((I like oranges) ∨ (I like apples))\" and \"(I like oranges) → ((I like oranges) ∨ (I like apples))\" first.",
+    ],
+    propositions: [
+      or(lit("I like apples"), lit("I like oranges")),
+    ],
+    target: or(lit("I like oranges"), lit("I like apples")),
+    allowedPropositionTypes: [
+      PropositionType.LITERAL,
+      PropositionType.DISJUNCTION,
+    ]
+  },
+
 
   // Figure out!
   // {
@@ -528,7 +569,8 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     name: 'Rule #8: Negation Elimination',
     description: [
       "This rule says that if you have the negation of a proposition, then this proposition implies anything.",
-      "This rule might seem weird, but the idea behind it is that if you know that 𝑃 is not true for sure, then whenever 𝑃 is true (which is never), anything is possible.",
+      "This rule might seem weird, but the idea behind it is that if you know that 𝑃 is not true for sure, then whenever 𝑃 is true (which is never), anything is vacuously true.",
+      "It's a bit like when people say something like \"when hell freezes over\" or \"when pigs fly\" to mean that something will never happen.\nThese expressions work because we know/assume that hell freezing over and pigs flying are impossible.",
     ],
     rules: [NegationElimination],
     propositions: [
@@ -555,7 +597,6 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     description: [
       "Negation has a thrid rule: double negation elemination.",
       "This rules says that if you have the negation of a negation in your bank, then you can remove both negations at once.",
-      "Note: We were able to prove double negation introduction from the other rules, but surprisingly (at least for me), it's impossible to prove double negation elimination from the 8 other base rules!\nWe have to take it for granted if we want to use it.",
     ],
     rules: [DoubleNegationElimination],
     propositions: [
@@ -665,27 +706,6 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     allowedPropositionTypes: [
       PropositionType.LITERAL,
       PropositionType.NEGATION,
-    ]
-  },
-
-  {
-    name: 'Disjunction Commutation',
-    rules: [
-      DisjunctionIntroduction,
-      DisjunctionElimination,
-      ConditionalIntroduction
-    ],
-    description: [
-      "Here we'll show that just like conjunctions, disjunctions are commutative. In other words, we'll show that the left and right side of a disjunction can be swapped.",
-      "Note: Working with disjunctions is tricker than working with conjuncitons.",
-    ],
-    propositions: [
-      or(lit("I like apples"), lit("I like oranges")),
-    ],
-    target: or(lit("I like oranges"), lit("I like apples")),
-    allowedPropositionTypes: [
-      PropositionType.LITERAL,
-      PropositionType.DISJUNCTION,
     ]
   },
 
