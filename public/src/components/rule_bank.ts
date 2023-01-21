@@ -38,7 +38,7 @@ export default {
       items.push(Vue.h('p', {class: 'inference-rules-p'}, [
       	Vue.h('h3', {style: {display: 'inline'}}, 'Inference Rules: '),
         Vue.h(SelectComponent, {
-          options: ["--- Chose the inference rule you would like to use ---"].concat(props.rules.map((r: InferenceRule) => r.name)),
+          options: ["Select an inference rule"].concat(props.rules.map((r: InferenceRule) => r.name)),
 	  onChange: (selected: number) => { data.selectedRule = selected; },
         }),
       ]));

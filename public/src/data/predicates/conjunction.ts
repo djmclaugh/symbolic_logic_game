@@ -12,7 +12,7 @@ export default class ConjunctionPredicate extends BinaryOperatorPredicate {
 
   public withSlots(newSlots: Slot[]): ConjunctionPredicate {
     const newLeft = this.left.withSlots(newSlots.slice(0, this.left.slots.length));
-    const newRight = this.right.withSlots(newSlots.slice(this.right.slots.length));
+    const newRight = this.right.withSlots(newSlots.slice(this.left.slots.length));
     return new ConjunctionPredicate(newLeft, newRight);
   }
 }

@@ -5,32 +5,22 @@ import {
   ConditionalIntroduction,
   ConditionalElimination,
   NegationIntroduction,
-  NegationElimination,
   DoubleNegationElimination,
 } from '../inference_rules/natural_deduction_system.js'
 
 import {
   ModusTollens,
-  DoubleNegationIntroduction,
-  HypotheticalSyllogism,
   LawOfExcludedMiddle,
-  DisjunctiveSyllogism,
   // Explosion,
 } from '../inference_rules/propositional_logic_derived.js'
 
 import {
-  Reflexivity,
-  Substitution,
   UniversalIntroduction,
   UniversalElimination,
   ExistentialIntroduction,
   ExistentialElimination,
 } from '../inference_rules/first_order_logic.js'
 
-import {
-  Symmetry,
-  EqualityNegationSymmetry,
-} from '../inference_rules/fol_derived.js'
 
 import { litTerm } from '../terms/literal.js'
 import { func } from '../terms/function.js'
@@ -40,7 +30,6 @@ import { not } from '../predicates/negation.js'
 import { and } from '../predicates/conjunction.js'
 import { or } from '../predicates/disjunction.js'
 import { then } from '../predicates/conditional.js'
-import { eq } from '../predicates/equality.js'
 import { forAll } from '../predicates/universal.js'
 import { exists } from '../predicates/existential.js'
 import { PropositionType } from '../propositions/propositions.js'
@@ -53,23 +42,11 @@ const FIRST_ORDER_LOGIC: Level[] = [];
 const alice = litTerm("Alice");
 const bob = litTerm("Bob");
 const carol = litTerm("Carol");
-const tallest = litTerm("tallest person");
-const shortest = litTerm("shortest person");
 const socrates = litTerm("Socrates");
-const paws = litTerm("Mr. Paws");
-const myDog = litTerm("my dog");
-const clark = litTerm("Clark Kent");
-const superman = litTerm("Superman");
 const isTaller = lit(["", " is taller than ", ""]);
-const isOlder = lit(["", " is older than ", ""]);
 const alice_mother = func(["", "'s mom"], [alice])
-const alice_gmother = func(["", "'s grandmother"], [alice])
-const alice_friend = func(["", "'s friend"], [alice])
 const alice_daughter = func(["", "'s daughter"], [alice])
 const bob_mother = func(["", "'s mom"], [bob])
-const myFavDrink = litTerm("my favourite drink");
-const water = litTerm("water");
-const h2o = litTerm("H₂O");
 
 FIRST_ORDER_LOGIC.push({
   name: "Propositional Logic Background",
@@ -128,12 +105,14 @@ FIRST_ORDER_LOGIC.push({
   ],
   terms: [
     alice,
+    bob,
+    carol,
   ],
   propositions: [
-    then(litWithTerms(["", " helps with the dishes"], [alice_daughter]), litWithTerms(["", " will have more free time"], [alice])),
-    then(litWithTerms(["", " will have more free time"], [alice]), litWithTerms(["", " will play with ", ""], [alice, alice_daughter])),
+    then(isTaller.withSlots([alice_daughter, alice]), isTaller.withSlots([alice_daughter, bob])),
+    then(isTaller.withSlots([alice_daughter, bob]), isTaller.withSlots([alice_daughter, carol])),
   ],
-  target: then(litWithTerms(["", " helps with the dishes"], [alice_daughter]), litWithTerms(["", " will play with ", ""], [alice, alice_daughter])),
+  target: then(isTaller.withSlots([alice_daughter, alice]), isTaller.withSlots([alice_daughter, carol])),
   allowedPropositionTypes: [
     PropositionType.LITERAL,
   ]

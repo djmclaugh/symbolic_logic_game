@@ -251,69 +251,6 @@ export const LawOfExcludedMiddle: InferenceRule = {
   },
 }
 
-export const Contradiction: InferenceRule = {
-  name: "Contradiction",
-  inputDescriptions: [
-    "Proposition: A proposition from the bank, 𝑃.",
-    "Negation: A proposition from the bank of the form ¬(𝑃).",
-  ],
-  outputDescription: "⊥",
-  inputTypes: [InputType.BankProposition, InputType.BankProposition],
-  doesApply: (inputs: Input[]) => {
-    const a = inputs[0] as Predicate;
-    const b = inputs[1] as Negation;
-    if (!b.subPredicate.equals(a)) {
-      return "Chosen negation must be negation of chosen proposition.";
-    }
-    return "";
-  },
-  apply: (inputs: Input[]) => {
-    return lit("⊥");
-  },
-}
-
-export const ProofOfNegation: InferenceRule = {
-  name: "Proof Of Negation",
-  inputDescriptions: [
-    "Proposition: A proposition from the bank, 𝑃.",
-    "Proof: Win a modified version of this level where 𝑃 is added to the bank and where the target is ⊥",
-  ],
-  outputDescription: "¬(𝑃)",
-  inputTypes: [InputType.AnyProposition, InputType.Proof],
-  proofInfo: (inputs: (Input|null)[]) => {
-    if (inputs[0] === null) {
-      return "Proposition must be chosen before working on proof.";
-    } else {
-      return [[inputs[0] as Predicate], [], lit("⊥")];
-    }
-  },
-  doesApply: (inputs: Input[]) => { return ""; },
-  apply: (inputs: Input[]) => {
-    return not(inputs[0] as Predicate);
-  },
-}
-
-export const ProofByContradiction: InferenceRule = {
-  name: "Proof By Contradiction",
-  inputDescriptions: [
-    "Proposition: A proposition from the bank, 𝑃.",
-    "Proof: Win a modified version of this level where ¬(𝑃) is added to the bank and where the target is ⊥",
-  ],
-  outputDescription: "𝑃",
-  inputTypes: [InputType.AnyProposition, InputType.Proof],
-  proofInfo: (inputs: (Input|null)[]) => {
-    if (inputs[0] === null) {
-      return "Proposition must be chosen before working on proof.";
-    } else {
-      return [[not(inputs[0] as Predicate)], [], lit("⊥")];
-    }
-  },
-  doesApply: (inputs: Input[]) => { return ""; },
-  apply: (inputs: Input[]) => {
-    return inputs[0] as Predicate;
-  },
-}
-
 export const DisjunctiveSyllogism: InferenceRule = {
   name: "Disjunctive Syllogism",
   inputDescriptions: [

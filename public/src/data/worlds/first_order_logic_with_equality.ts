@@ -2,6 +2,7 @@ import Level from '../level.js'
 
 import {
   ConjunctionIntroduction,
+  ConjunctionElimination,
   ConditionalIntroduction,
   ConditionalElimination,
   NegationIntroduction,
@@ -19,6 +20,11 @@ import {
 } from '../inference_rules/propositional_logic_derived.js'
 
 import {
+  DetectContradiction,
+  ProofOfNegation,
+} from '../inference_rules/propositional_logic_negation.js'
+
+import {
   Reflexivity,
   Substitution,
   UniversalIntroduction,
@@ -33,6 +39,7 @@ import {
 } from '../inference_rules/fol_derived.js'
 
 import { litTerm } from '../terms/literal.js'
+import FunctionTerm from '../terms/function.js'
 
 import { lit, litWithTerms } from '../predicates/literal.js'
 import { not } from '../predicates/negation.js'
@@ -46,6 +53,8 @@ import { PropositionType } from '../propositions/propositions.js'
 
 const x = litTerm("𝑥");
 const y = litTerm("𝑦");
+const m = litTerm("𝑚");
+const n = litTerm("𝑛");
 const alice = litTerm("Alice");
 const bob = litTerm("Bob");
 const carol = litTerm("Carol");
@@ -58,6 +67,17 @@ const superman = litTerm("Superman");
 const myFavDrink = litTerm("my favourite drink");
 const water = litTerm("water");
 const h2o = litTerm("H₂O");
+
+const isRational = lit(["", " is rational"]);
+const isIrrational = lit(["", " is irrational"]);
+const isWhole = lit(["", " is a whole number"]);
+const areCoPrime = lit(["", " is coprime with ", ""]);
+const doesDivide = lit(["", " divides ", ""]);
+const root = new FunctionTerm(["√", ""]);
+const square = new FunctionTerm(["(", ")²"]);
+const times = new FunctionTerm(["", "⋅", ""]);
+const div = new FunctionTerm(["", "/", ""]);
+
 
 const FIRST_ORDER_LOGIC: Level[] = [];
 
@@ -175,5 +195,38 @@ FIRST_ORDER_LOGIC.push({
     PropositionType.NEGATION,
   ]
 });
+
+/*
+FIRST_ORDER_LOGIC.push({
+  name: 'Prove √2 is irrational',
+  description: [
+    "Note: To simplify this already complicated proof, we'll assume that our universe of discourse are the positive numbers.\nThis is a reasonable assumption for this level multiplication, division, and powers of positive numbers are still positive.\nThis lets us assume universal propositions that are true for all positive numbes, but that that wouldn't be true if the variables were 0 or negative."
+  ],
+  rules: [
+    ConjunctionElimination,
+    ConditionalElimination,
+    UniversalElimination,
+    ExistentialElimination,
+    Reflexivity,
+    Substitution,
+    DetectContradiction,
+    ProofOfNegation,
+
+  ],
+  terms: [litTerm("2")],
+  propositions: [
+    isWhole.withSlots([litTerm("2")]),
+    forAll(x, then(not(isRational.withSlots([x])), isIrrational.withSlots([x]))),
+    forAll(x, then(isRational.withSlots([x]), exists(m, exists(n, and(eq(x, div.withSlots([m, n])), areCoPrime.withSlots([m, n])))))),
+    forAll(x, eq(square.withSlots([root.withSlots([x])]), x)),
+    forAll(x, forAll(y, eq(times.withSlots([div.withSlots([x, y]), y]), x))),
+    forAll(x, then(isWhole.withSlots([x]), isWhole.withSlots([square.withSlots([x])]))),
+    forAll(x, then(isEven.withSlots([x]), isWhole.withSlots([square.withSlots([x])]))),
+    forAll(m, forAll(n, eq(square.withSlots([div.withSlots([m, n])]), div.withSlots([square.withSlots([m]), square.withSlots([n])])))),
+    forAll(m, forAll(n, then(areCoPrime.withSlots([m, n]), and(and(isWhole.withSlots([m]), isWhole.withSlots([n])), forAll(x, then(and(doesDivide.withSlots([x, m]), doesDivide.withSlots([x, n])), eq(x, litTerm("1")))))))),
+  ],
+  target: isRational.withSlots([root.withSlots([litTerm("2")])]),
+});
+*/
 
 export default FIRST_ORDER_LOGIC;

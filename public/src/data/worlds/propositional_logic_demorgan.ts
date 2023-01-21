@@ -15,7 +15,6 @@ import { lit } from '../predicates/literal.js'
 import { not } from '../predicates/negation.js'
 import { and } from '../predicates/conjunction.js'
 import { or } from '../predicates/disjunction.js'
-import { then } from '../predicates/conditional.js'
 import { PropositionType } from '../propositions/propositions.js'
 
 const ALL_BASE_RULES = [
@@ -88,7 +87,7 @@ const PROPOSITIONAL_LOGIC_DEMORGAN: Level[] = [
     ],
     hints: [
       "First try to get (I like tea) ∨ (¬(I like tea)) in your bank.\nIf you forgot how to do that, retry the Law of Excluded Middle level in the first propositional logic world.",
-      "Try to get (I like tea) → ¬(I like coffee) in your bank.\nYou'll need to use the proposition you were given at the start of the level.",
+      "Try to deduce \"(I like tea) → ¬(I like coffee)\".",
     ],
     rules: ALL_BASE_RULES,
     propositions: [

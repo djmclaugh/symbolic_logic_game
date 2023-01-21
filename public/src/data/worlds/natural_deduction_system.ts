@@ -11,22 +11,6 @@ import {
   ConditionalElimination,
 } from '../inference_rules/natural_deduction_system.js'
 
-import {
-  DoubleNegationIntroduction,
-  ConjunctionCommutation,
-  ConjunctionAssociation,
-  DisjunctionCommutation,
-  ConditionalTautology,
-  HypotheticalSyllogism,
-  ConstructiveDelimma,
-  LawOfExcludedMiddle,
-  DisjunctiveSyllogism,
-  ModusTollens,
-  Contradiction,
-  ProofOfNegation,
-  ProofByContradiction,
-} from '../inference_rules/propositional_logic_derived.js'
-
 import { lit } from '../predicates/literal.js'
 import { not } from '../predicates/negation.js'
 import { and } from '../predicates/conjunction.js'
@@ -51,7 +35,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   {
     name: "Rule #1: Conjunction Introduction",
     description: [
-      "You can create new propositions by using inference rules.\nEach rule has specific requirements, make sure you read them carefully!",
+      "You can deduce new propositions by using inference rules.\nEach rule has specific requirements, make sure you read them carefully!",
       "For this level, you're given \"conjunction introduction\".\nIt lets you take two propositions and combine them by putting a \"∧\" in between.",
       "The behaviour of the conjunction symbol (∧) is inspired by the word \"and\".\nThe idea is for \"(𝐿) ∧ (𝑅)\" to mean that both 𝐿 and 𝑅 are true.",
       "Remember, we're doing symbolic logic.\nYou need to make an EXACT copy of the target proposition.\nIt has to be the EXACT same sequence of symbols.",
@@ -229,28 +213,12 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   },
 
   {
-    name: 'Conditionals and Conjunctions #3',
-    description: [
-      "One more time...",
-    ],
-    rules: [
-      ConjunctionElimination,
-      ConditionalElimination,
-    ],
-    propositions: [
-      and(lit('Socrates is a man'), then(lit('Socrates is a man'), lit('Socrates is mortal'))),
-    ],
-    target: lit('Socrates is mortal'),
-  },
-
-  {
     name: 'Rule #4: Conditional Introduction',
     description: [
       "This rule is arguably the most complicated, but also one of the most useful.",
       "This rule says that if you can \"prove\" 𝑄 by assuming 𝑃, then you can deduce the proposition \"(𝑃) → (𝑄)\".",
       "To \"prove\" 𝑄, you have to beat the sublevel where 𝑃 has been added as an assumption and where 𝑄 is the target proposition.",
       "Note: Conditional introduction can use ANY propositions you can think of.\nThe chosen antecedent and consequent don't need to already be assumed/deduced.\nBut be careful, even though you can chose any antecedent/consequent you like, you still have to end up proving the consequent before you can apply the rule.",
-      "In this level I'm telling you that I like spaghetti, but it's unknown whether I like meatballs or not.\nUsing that information, I want you to deduce that IF I were to like meatballs, THEN I would like spaghetti and meatballs.\nI want you to deduce a hypothetical statement.", 
     ],
     hints: [
       "Your target proposition is \"(I like meatballs) → ((I like spaghetti) ∧ (I like meatballs))\".\nSo when using the conditional introduction rule, you should set the antecedent to \"I like meatballs\" and you should set the consequent to \"(I like spaghetti) ∧ (I like meatballs)\"."
@@ -334,7 +302,6 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     name: 'Conditional Practice',
     description: [
       "Note: If you feel comfortable with conditionals, feel free to skip to the next level.",
-      "Note: You have access to the hypothetical syllogism rule if you want, but this level can be cleared as easily without it."
     ],
     hints: [
       "If you ever have a conditional as your target, it's usually a good idea to use conditional introduction and chose the 𝑃 and 𝑄 to match the left and right side of the target.",
@@ -344,7 +311,6 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
       ConjunctionElimination,
       ConditionalIntroduction,
       ConditionalElimination,
-      HypotheticalSyllogism,
     ],
     propositions: [
       then(lit("It's morning"), lit("I drink coffee")),
@@ -386,7 +352,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   {
     name: 'Disjunction Introduction Practice',
     description: [
-      "Disjunction introduction my seem pointless, we're taking a known proposition and deducing a less precise version of that known proposition.\nBut that's actually needed in some situations.",
+      "Disjunction introduction may seem pointless; We're taking a known proposition and deducing a less precise version of that known proposition.\nBut that's actually needed in some situations.",
       "Even though \"it's lunch time\" is a stronger claim than \"it's lunch or dinner time\", I need to explicitly deduce that \"it's lunch or dinner time\" before I can use conditional elimination with the conditional statement in this level.",
     ],
     rules: [
@@ -404,7 +370,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     name: "Rule #6: Disjunction Elimination",
     description: [
       "Creating a disjunction is easier than creating a conjunction (you only need to know one of the sides), but getting rid of a disjunction is much harder than getting rid of a conjunction.",
-      "If both sides of a disjunction both imply the same thing, then you can use disjunction elimination to add that thing to your bank.",
+      "If both sides of a disjunction both imply the same thing, then you can use disjunction elimination to add that thing to your deductions.",
       "For example in this level, I know that it's either lunch time or dinner time.\nI know that during lunch I drink water and I know that during dinner I drink water.\nSo even though I don't know which meal it is exactly, it doesn't matter. In either case, I drink water.",
       "Note: This rule is also called case analysis."
     ],
@@ -425,7 +391,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
       "Constructive delimma is very similar to disjunction elimination, but it's more general purpose since you don't need the consequents to match.",
     ],
     hints: [
-      "Try deducing the propositions \"(I drink coffee) → ((I drink coffee) ∨ (I drink water))\" and \"(I drink water) → ((I drink coffee) ∨ (I drink water))\" first.",
+      "Try deducing the propositions \"(It's breakfast) → ((I drink coffee) ∨ (I drink water))\" and \"(It's lunch) → ((I drink coffee) ∨ (I drink water))\" first.",
     ],
     rules: [
       ConditionalIntroduction,
@@ -446,7 +412,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   },
   
   {
-    name: 'Disjunction Commutation',
+    name: 'Proved Derived Rule: Disjunction Commutation',
     rules: [
       DisjunctionIntroduction,
       DisjunctionElimination,
@@ -467,7 +433,26 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
       PropositionType.DISJUNCTION,
     ]
   },
-
+  
+  {
+    name: 'Prove Derived Rule: Disjunction Association',
+    description: [
+      "Just like conjunctions, disjunctions are also associative.\nIn other words, we can rearange how disjunctions are grouped.",
+    ],
+    hints: [
+      "First try deducing the propositions \"(I like ____) → (((I like apples) ∨ (I like bananas)) ∨ (I like oranges))\" for each fruit.",
+      "Try deducing the proposition \"((I like bananas) ∨ (I like oranges)) → (((I like apples) ∨ (I like bananas)) ∨ (I like oranges))\" next.",
+    ],
+    rules: [ConditionalIntroduction, ConditionalElimination, DisjunctionIntroduction, DisjunctionElimination],
+    propositions: [
+      or(lit("I like apples"), or(lit("I like bananas"), lit("I like oranges"))),
+    ],
+    target: or(or(lit("I like apples"), lit("I like bananas")), lit("I like oranges")),
+    allowedPropositionTypes: [
+      PropositionType.LITERAL,
+      PropositionType.DISJUNCTION,
+    ],
+  },
 
   // Figure out!
   // {
@@ -501,37 +486,22 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
       "The idea behind negation introduction is that if you manage to prove contradictory results by assuming 𝑃, then you can assume that 𝑃 is not true.",
     ],
     hints: [
-      "Frist try adding both \"(Socrates is an immortal man) → (Socrates is mortal)\" and \"(Socrates is an immortal man) → (¬(Socrates is mortal))\" to your bank."
+      "Frist try deducing \"(Socrates is an immortal man) → (Socrates is mortal)\", then you'll be able to use negation introduction to finish the level."
     ],
     rules: [
-      ConjunctionElimination,
       ConditionalIntroduction,
       ConditionalElimination,
       NegationIntroduction,
     ],
     propositions: [
-      then(lit('Socrates is an immortal man'), and(not(lit('Socrates is mortal')), lit('Socrates is a man'))),
+      then(lit('Socrates is an immortal man'), not(lit('Socrates is mortal'))),
+      then(lit('Socrates is an immortal man'), lit('Socrates is a man')),
       then(lit('Socrates is a man'), lit('Socrates is mortal')),
     ],
     target: not(lit('Socrates is an immortal man')),
-  },
-
-  {
-    name: 'Prove Derived Rule: Modus Tollens',
-    rules: [ConditionalIntroduction, NegationIntroduction],
-    hints: [
-      "Try adding \"(I go to bed late) → ¬(I wake up late)\"."
+    allowedPropositionTypes: [
+      PropositionType.LITERAL,
     ],
-    description: [
-      "Modus tollens is very similar to modus ponens (conditional elimination).",
-      "With modus ponens, if you know that the antecedent is true, then you can infer that the consequent is also true.",
-      "With modus tollens, if you know that the consequent is not true, then you can infer that the antecedent is also not true."
-    ],
-    propositions: [
-      then(lit("I go to bed late"), lit("I wake up late")),
-      not(lit("I wake up late")),
-    ],
-    target: not(lit("I go to bed late")),
   },
 
   {
@@ -555,7 +525,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
 
   {
     name: 'Prove Derived Rule: Self Contradiction',
-    rules: [ConditionalTautology, NegationIntroduction],
+    rules: [ConditionalIntroduction, NegationIntroduction],
     description: [
       "If something implies its own negation, then we can assume it's not true.",
     ],
@@ -563,6 +533,47 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
       then(lit("This sentence is a lie"), not(lit("This sentence is a lie"))),
     ],
     target: not(lit("This sentence is a lie")),
+  },
+  
+  {
+    name: 'Prove Derived Rule: Modus Tollens',
+    rules: [ConditionalIntroduction, NegationIntroduction],
+    hints: [
+      "Try adding \"(I go to bed late) → ¬(I wake up late)\"."
+    ],
+    description: [
+      "Modus tollens is very similar to modus ponens (conditional elimination).",
+      "With modus ponens, if you know that the antecedent is true, then you can infer that the consequent is also true.",
+      "With modus tollens, if you know that the consequent is not true, then you can infer that the antecedent is also not true."
+    ],
+    propositions: [
+      then(lit("I go to bed late"), lit("I wake up late")),
+      not(lit("I wake up late")),
+    ],
+    target: not(lit("I go to bed late")),
+    allowedPropositionTypes: [
+      PropositionType.LITERAL,
+      PropositionType.NEGATION,
+    ],
+  },
+
+  {
+    name: 'Prove Derived Rule: Transposition (Contrapositive)',
+    description: [
+      "If you have a conditional proposition, you can flip it as long as you negate both sides.",
+    ],
+    rules: [
+      ConditionalIntroduction,
+      NegationIntroduction,
+    ],
+    propositions: [
+      then(lit("It's raining"), lit("The ground is wet")),
+    ],
+    target: then(not(lit("The ground is wet")), not(lit("It's raining"))),
+    allowedPropositionTypes: [
+      PropositionType.LITERAL,
+      PropositionType.NEGATION,
+    ]
   },
 
   {
@@ -584,7 +595,10 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     description: [
       "Note: This rule is sometimes taken for granted instead of negation elimination.\nFrom either you can prove the other, so it ends up not mattering which of the two you take for granted.",
     ],
-    rules: [ConditionalTautology, DisjunctionElimination, NegationElimination],
+    hints: [
+      "Try deducing \"(I like apples) → (I like oranges)\" and \"(I like oranges) → (I like oranges)\" first.",
+    ],
+    rules: [ConditionalIntroduction, DisjunctionElimination, NegationElimination],
     propositions: [
       or(lit("I like apples"), lit("I like oranges")),
       not(lit("I like apples")),
@@ -596,7 +610,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     name: 'Rule #9: Double Negation Elimination',
     description: [
       "Negation has a thrid rule: double negation elemination.",
-      "This rules says that if you have the negation of a negation in your bank, then you can remove both negations at once.",
+      "This rule says that if you have the negation of a negation, then you can remove both negations at once.",
     ],
     rules: [DoubleNegationElimination],
     propositions: [
@@ -609,7 +623,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     name: 'Prove Tautology: Law Of Noncontradiction',
     description: [
       "Congratulations! You now know all of the base rules of propositional logic!",
-      "In the remaining levels, we'll derive fundamental rules that are often taken for granted even though they are technically not base rules.",
+      "In the last two levels, we'll derive two fundamental tautologies that are often taken for granted even though they are technically not base rules.",
       "Law of noncontradiction: A thing cannot be true and not true at the same time."
     ],
     hints: [
@@ -635,14 +649,13 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     name: 'Prove Tautology: Law Of Excluded Middle',
     description: [
       "Law of exclude middle: A thing HAS to be either true or not true.",
-      "Note: This law ends up being equivalent to double negation elimination.\nSo we actually don't have this law in intuitionistic logic since that logic doesn't use double negation elimination.",
+      "As you can see by the number of hints, this is the trickiest level so far!",
     ],
     hints: [
-      "This one is the trickiest so far!"
-      + "\nTry to add ¬(¬((I like tea) ∨ (¬(I like tea)))) to your bank and then use double negation elimination on it.",
-      "To add ¬(¬((I like tea) ∨ (¬(I like tea)))), you need to be able to prove contradictory statments by assuming ¬((I like tea) ∨ (¬(I like tea))).",
-      "Try adding both ¬((I like tea) ∨ (¬(I like tea))) → ¬(I like tea) and ¬((I like tea) ∨ (¬(I like tea))) → ¬(¬(I like tea)).",
-      "Adding both (I like tea) → ((I like tea) ∨ (¬(I like tea)))) and (¬(I like tea)) → ((I like tea) ∨ (¬(I like tea)))) can help you."
+      "You won't be able to deduce \"(I like tea) ∨ (¬(I like tea))\" directly with disjunction introduction.\nInstead, you'll have to deduce \"¬(¬((I like tea) ∨ (¬(I like tea))))\" and then use double negation elimination.",
+      "To do that, you need to deduce contradictory conditionals with \"¬((I like tea) ∨ (¬(I like tea)))\" as the antecedent and then use negation introduction.\nIf it's not true that you like or dislike tea, what contradictory statements could you prove?",
+      "If it's not true that you like or dislike tea, then it's not true that you like tea.\nIf it's not true that you like or dislike tea, then it's not true that you dislike tea.\nTry deducing both \"(¬((I like tea) ∨ (¬(I like tea)))) → (¬(I like tea))\" and \"(¬((I like tea) ∨ (¬(I like tea)))) → (¬(¬((I like tea))))\"",
+      "To get \"(¬((I like tea) ∨ (¬(I like tea)))) → (¬(I like tea))\", first deduce \"(I like tea) → ((I like tea) ∨ (¬(I like tea)))\" and then deduce its transposition/contrapositive.\nYou can redo the level \"Prove Derived Rule: Transposition (Contrapositive)\" to practice just this part.\nYou can get \"(¬((I like tea) ∨ (¬(I like tea)))) → (¬(¬((I like tea)))\" in a similar way."
     ],
     rules: [
       ConditionalIntroduction,
@@ -659,90 +672,5 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     ]
   },
 
-  {
-    name: 'Material Implication (Disjunction to Conditional)',
-    description: [],
-    rules: [
-      ConditionalIntroduction,
-      DisjunctiveSyllogism,
-      DoubleNegationIntroduction,
-    ],
-    propositions: [
-      or(not(lit("It's raining")), lit("The ground is wet")),
-    ],
-    target: then(lit("It's raining"), lit("The ground is wet")),
-  },
-
-  {
-    name: 'Material Implication (Conditional to Disjunction)',
-    description: [],
-    rules: [
-      ConditionalTautology,
-      DisjunctionCommutation,
-      ConstructiveDelimma,
-      LawOfExcludedMiddle,
-    ],
-    propositions: [
-      then(lit("It's raining"), lit("The ground is wet")),
-    ],
-    target: or(not(lit("It's raining")), lit("The ground is wet")),
-    allowedPropositionTypes: [
-      PropositionType.LITERAL,
-      PropositionType.NEGATION,
-    ]
-  },
-
-  {
-    name: 'Transposition (Contrapositive)',
-    description: [],
-    rules: [
-      ConditionalIntroduction,
-      ModusTollens,
-    ],
-    propositions: [
-      then(lit("It's raining"), lit("The ground is wet")),
-    ],
-    target: then(not(lit("The ground is wet")), not(lit("It's raining"))),
-    allowedPropositionTypes: [
-      PropositionType.LITERAL,
-      PropositionType.NEGATION,
-    ]
-  },
-
-  {
-    name: 'Disjunction Association',
-    description: [
-      "",
-    ],
-    rules: [ConditionalIntroduction, ConditionalElimination, DisjunctionIntroduction, DisjunctionElimination],
-    propositions: [
-      or(lit("I like apples"), or(lit("I like bananas"), lit("I like oranges"))),
-    ],
-    target: or(or(lit("I like apples"), lit("I like bananas")), lit("I like oranges")),
-  },
-
-  {
-    name: 'Conjunction Distribution',
-    rules: [ConjunctionIntroduction, ConjunctionElimination, ConditionalIntroduction, ConstructiveDelimma],
-    description: [
-      "Hint: Whenever you have a conjunction, it's almost always a good idea to use conjunction elimination.",
-    ],
-    propositions: [
-      and(lit("I eat toast"), or(lit("I drink juice"), lit("I drink milk"))),
-    ],
-    target: or(and(lit("I eat toast"), lit("I drink juice")), and(lit("I eat toast"), lit("I drink milk"))),
-  },
-
-  {
-    name: 'Disjunction Distribution',
-    rules: [ConjunctionIntroduction, ConjunctionElimination, ConditionalIntroduction, DisjunctionIntroduction, DisjunctionElimination,],
-    description: [
-      "Hint: When the target is a conjunction, it's almost always a good idea to first get each side in the bank and then finish off with conjunction introduction.",
-    ],
-    propositions: [
-      or(lit("I'll have pasta"), and(lit("I'll have soup"), lit("I'll have salad"))),
-    ],
-    target: and(or(lit("I'll have pasta"), lit("I'll have soup")), or(lit("I'll have pasta"), lit("I'll have salad"))),
-  },
 ];
 export default NATURAL_DEDUCTION_SYSTEM;

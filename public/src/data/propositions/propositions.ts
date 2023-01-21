@@ -31,7 +31,7 @@ export const FOL_PROPOSITION_TYPES = [
 export function propositionTypeToString(t: PropositionType) {
   switch(t) {
     case PropositionType.LITERAL:
-      return "No Logical Symbols";
+      return "Simple Proposition";
     case PropositionType.NEGATION:
       return "Negation (¬)";
     case PropositionType.CONJUNCTION:
