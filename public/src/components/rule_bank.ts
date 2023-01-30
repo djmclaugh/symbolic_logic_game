@@ -38,6 +38,7 @@ export default {
       items.push(Vue.h('p', {class: 'inference-rules-p'}, [
       	Vue.h('h3', {style: {display: 'inline'}}, 'Inference Rules: '),
         Vue.h(SelectComponent, {
+	  selected: data.selectedRule, 
           options: ["Select an inference rule"].concat(props.rules.map((r: InferenceRule) => r.name)),
 	  onChange: (selected: number) => { data.selectedRule = selected; },
         }),
@@ -54,7 +55,10 @@ export default {
           allowedTypes: props.allowedTypes,
         }, {
           key: data.selectedRule,
-          onNewProposition: (p: Predicate) => { emit('newProposition', p); }
+          onNewProposition: (p: Predicate) => {
+	    data.selectedRule = 0;
+	    emit('newProposition', p);
+	  }
         }));
       }
 

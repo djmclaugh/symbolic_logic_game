@@ -17,6 +17,7 @@ const frak = ["𝔞","𝔟","𝔠","𝔡","𝔢","𝔣","𝔤","𝔥","𝔦","�
 
 function predicateToLI(p: Predicate) {
   return Vue.h("li", {
+    class: ['highlight-animation'], 
     style: {'margin-top': '2px', 'margin-bottom': '2px'},
     innerHTML: p.toHTMLString(),
   });

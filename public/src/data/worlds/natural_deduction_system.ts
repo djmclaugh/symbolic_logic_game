@@ -304,7 +304,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
       "Note: If you feel comfortable with conditionals, feel free to skip to the next level.",
     ],
     hints: [
-      "If you ever have a conditional as your target, it's usually a good idea to use conditional introduction and chose the 𝑃 and 𝑄 to match the left and right side of the target.",
+      "If you ever have a conditional as your target, it's usually a good idea to use conditional introduction and chose the 𝑃 and 𝑄 to match the left and right sides of the target.",
     ],
     rules: [
       ConjunctionIntroduction,
@@ -333,10 +333,10 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     name: "Rule #5: Disjunction Introduction",
     description: [
       "New logical symbol: ∨ (Disjunction)",
-      "The behaviour of the disjunction symbol (∨) is inspired by the word \"or\".\nThe idea is for \"(𝐿) ∨ (𝑅)\" to mean that at least one of 𝐿 or 𝑅 are true.",
+      "The behaviour of the disjunction symbol (∨) is inspired by the word \"or\".\nThe idea is for \"(𝐿) ∨ (𝑅)\" to mean that AT LEAST one of 𝐿 or 𝑅 are true (including the possibility that both 𝐿 and 𝑅 are true).",
       "Note: The conjunction (∧) and disjunction (∨) symbols are very similar. Be careful not to mix them up!",
       "Disjunction introduction let's you combine any assumed/deduced proposition any other proposition whatsoever (regardless of whether it's already assumed/deduced) by putting a \"∨\" in between.",
-      "The idea behind this rule is that if you know that something is true, then \"(that thing you know is true) or (anything else)\" must also be true as a whole.",
+      "The idea behind this rule is that if you know that something is true, then at least one of \"that thing you know is true\" or \"anything else\" must also be true.",
       "Note: Disjunction introduction is also called addition.",
     ],
     rules: [ DisjunctionIntroduction ],

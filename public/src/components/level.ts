@@ -57,8 +57,8 @@ export default {
     }
 
     return () => {
-      let items = [];
       let description = [];
+      let banks = [];
 
       description.push(Vue.h('h2', {}, props.level.name));
 
@@ -89,19 +89,21 @@ export default {
         description.push(Vue.h('br'));
       }
 
-      if (!props.isSublevel) {
-	items.push(Vue.h('div', {class: 'level-description'}, description));
-      }
+      let descriptionItem = Vue.h('div', {class: 'level-description'}, description);
 
-      items.push(Vue.h('p', {class: 'target-p'}, [
+      banks.push(Vue.h('p', {class: 'target-p'}, [
         Vue.h('h3', {style: {display: 'inline'}}, 'Target: '),
 	Vue.h('span', {innerHTML: props.level.target.toHTMLString()}),
       ]));
       if (didFindTarget()) {
         if (props.isSublevel) {
-          items.push(Vue.h('em', {}, 'Target proposition deduced - Ready to apply inference rule.'));
+          banks.push(Vue.h('em', {
+            class: ['highlight-animation'],
+	  }, 'Target proposition deduced - Ready to apply inference rule.'));
         } else {
-          items.push(Vue.h('em', {}, [
+          banks.push(Vue.h('em', {
+            class: ['highlight-animation'],
+	  }, [
             'Target proposition deduced - Next level unlocked - ',
             Vue.h('button', {
               onClick: () => { emit("nextLevel"); }
@@ -110,25 +112,27 @@ export default {
         }
       } else {
         if (props.isSublevel) {
-          items.push(Vue.h('em', {}, 'Create target proposition to complete this sublevel.'))
+          banks.push(Vue.h('em', {}, 'Create target proposition to complete this sublevel.'))
 	} else {
-          items.push(Vue.h('em', {}, 'Create target proposition to complete this level.'))
+          banks.push(Vue.h('em', {}, 'Create target proposition to complete this level.'))
 	}
       }
 
-      const banks = [];
-
-      banks.push(makePropositionBank({
+      let propBank = makePropositionBank({
         assumptions: props.level.propositions,
         deductions: data.deductions,
         terms: data.terms,
         existentialTerms: data.existentialTerms,
         universalTerms: data.universalTerms,
         universalIntroductionPresent: props.level.rules.includes(UniversalIntroduction),
-      }));
+      });
+
+      banks.push(propBank);
+      let bottomItems = [];
+      bottomItems.push(Vue.h('div', {style: {'margin-right': '32px'}}, banks));
 
       if (props.level.rules.length > 0) {
-        banks.push(Vue.h(RuleBankComponent, {
+	bottomItems.push(Vue.h(RuleBankComponent, {
           key: data.uuid,
           rules: props.level.rules,
           propositions: props.level.propositions.concat(data.deductions),
@@ -146,7 +150,16 @@ export default {
         }));
       }
 
-      items.push(Vue.h('div', { class: 'banks' }, banks));
+      const bottomStyle = props.isSublevel ? {} : {'display': 'flex', 'flex-wrap': 'wrap'};
+      let bottomItem = Vue.h('div', {
+        style: bottomStyle,
+      }, bottomItems);
+
+      let items = [];
+      if (!props.isSublevel) {
+	items.push(descriptionItem);
+      }
+      items.push(bottomItem);
 
       return Vue.h('div', {
         class: {
