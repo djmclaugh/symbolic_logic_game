@@ -76,7 +76,7 @@ export const ConjunctionAssociation: InferenceRule = {
 export const DisjunctionCommutation: InferenceRule = {
   name: "Disjunction Commutation",
   inputDescriptions: [
-    "A proposition from the bank of the form (𝐿) ∨ (𝑅)",
+    "An assumed/deduced proposition of the form (𝐿) ∨ (𝑅)",
   ],
   outputDescription: "(𝑅) ∨ (𝐿)",
   inputTypes: [InputType.BankProposition],
@@ -254,8 +254,8 @@ export const LawOfExcludedMiddle: InferenceRule = {
 export const DisjunctiveSyllogism: InferenceRule = {
   name: "Disjunctive Syllogism",
   inputDescriptions: [
-    "Disjunction: A proposition from the bank of the form (𝐿) ∨ (𝑅).",
-    "Negation: Any proposition already in the bank of the form ¬(𝐿) or ¬(𝑅).",
+    "Disjunction: An assumed/deduced proposition of the form (𝐿) ∨ (𝑅).",
+    "Negation: An assumed/deduced proposition of the form ¬(𝐿) or ¬(𝑅).",
   ],
   outputDescription: "𝑅 if the chosen negation was ¬(𝐿). 𝐿 if the chosen negation was ¬(𝑅)",
   inputTypes: [InputType.BankProposition, InputType.BankProposition],

@@ -48,10 +48,10 @@ const PROPOSITIONAL_LOGIC_CONTRADICTION: Level[] = [
   {
     name: 'Rule #1: Formal Contradiction',
     description: [
-      "Setting up negation introduciton arguments can be a bit complicated and tedious.\nYou first need to figure out which contradiciton you're going to create and then set up both conditional propositions using conditional introduction.",
+      "Setting up negation introduction arguments can be a bit complicated and tedious.\nYou first need to figure out which contradiciton you're going to expose and then set up two conditional propositions using conditional introduction.",
       "That's why in practice we instead use the concept of formal contradictions (as opposed to contradicting conditionals).",
       "New logical symbol: ⊥ (Formal Contradiction).",
-      "To create the proposition that consists of only ⊥, all you have to do is find a proposition in your assumptions/deductions that happens to be the negation of another proposition in your assumptions/deductions.",
+      "To create the proposition that consists of only ⊥, all you have to do is find two propositions in your assumptions/deductions such that one is the negation of the other.",
     ],
     rules: [
       DetectContradiction

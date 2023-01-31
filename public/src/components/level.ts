@@ -112,9 +112,9 @@ export default {
         }
       } else {
         if (props.isSublevel) {
-          banks.push(Vue.h('em', {}, 'Create target proposition to complete this sublevel.'))
+          banks.push(Vue.h('em', {}, 'Deduce target proposition to complete this sublevel.'))
 	} else {
-          banks.push(Vue.h('em', {}, 'Create target proposition to complete this level.'))
+          banks.push(Vue.h('em', {}, 'Deduce target proposition to complete this level.'))
 	}
       }
 
