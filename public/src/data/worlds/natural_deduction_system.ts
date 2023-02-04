@@ -24,8 +24,8 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   {
     name: "Propositional Logic Introduction",
     description: [
-      "The goal of each level is to have an EXACT copy of the target proposition in your proposition bank.",
-      "For this first level, we already start with the target proposition in our bank, so we already won!\nClick the \"Go to next level\" button to proceed.",
+      "The goal in each level is to deduce an EXACT copy of the target proposition.",
+      "For this first level, we already start with the target proposition as an assumption, so we already won!\nClick the \"Go to next level\" button to proceed.",
       "Note: \"Propositional logic\", \"propositional calculus\", and \"zeroth-order logic\" are all synonyms.",
     ],
     rules: [],
@@ -38,8 +38,8 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     name: "Rule #1: Conjunction Introduction",
     description: [
       "You can deduce new propositions by using inference rules.\nThe version of propositional logic we'll see in this game has nine inference rules that we take for granted.\nWe'll go through them one at a time.",
-      "For this level, you're given \"conjunction introduction\".\nIt lets you take two propositions and combine them by putting a \"∧\" in between.",
-      "The behaviour of the conjunction symbol (∧) is inspired by the word \"and\".\nThe idea is for \"(𝐿) ∧ (𝑅)\" to mean that both 𝐿 and 𝑅 are true.",
+      "In this level, you're given \"conjunction introduction\".\nIt lets you take two propositions you already know and combine them by putting a \"∧\" in between.",
+      "The ∧ symbol is called the conjunction symbol. Its behaviour is inspired by the word \"and\".\nThe idea is for \"(𝐿) ∧ (𝑅)\" to mean that both 𝐿 and 𝑅 are true.",
       "Note: In this game we're doing symbolic logic; You need to deduce the EXACT same sequence of symbols as the target.\nFor example, \"1+2\" is not the same as \"2+1\"; The symbols are not in the same order.",
     ],
     rules: [ ConjunctionIntroduction ],
@@ -53,7 +53,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   {
     name: "Nested Conjunctions",
     description: [
-      "You can use the inference rules on your deductions as well.\nSo it's possible to have conjunctions inside conjunctions.",
+      "You can use conjunction introduction on your assumptions AND on your deductions.\nSo it's possible to have conjunctions inside conjunctions.",
       "Note: Again, remember that we're doing symbolic logic in this game.\nYou have to deduce the EXACT same sequence of symbols as the target.\nFor example, \"(1+2)+3\" is not the same as \"1+(2+3)\"; The parentheses are in different positions.",
     ],
     hints: [
@@ -74,8 +74,8 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     name: "Rule #2: Conjunction Elimination",
     description: [
       "In this level you're given conjunction elimination (conjunction introduction's counterpart).",
-      "If you already have a conjunction, it lets you extract either side of the conjunction.",
-      "The idea behind conjunction elimination is that if \"𝐿 and 𝑅\" is true as a whole, then both 𝐿 and 𝑅 must be true by themselves.",
+      "If you already have a conjunction, this rule lets you extract either side of the conjunction.",
+      "The idea behind conjunction elimination is that if the sentence \"𝐿 and 𝑅\" is true as a whole, then both 𝐿 and 𝑅 must be true individually.",
       "Note: Conjunction elimination is also called \"simplification\".",
     ],
     rules: [ ConjunctionElimination ],
@@ -87,9 +87,9 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   {
     name: "Conjunction Practice",
     description: [
-      "Let's see if you can use the two conjunction rules to clear this level.",
+      "Use the two conjunction rules to clear this level.",
       "It's up to you to figure out how, in what order, and how many times to use each of the rules.",
-      "Note: Here's a trick to remember which rule does what.\n- \"Conjunction introduction\" introduces/adds a conjunction symbol in the result.\n- \"Conjunction elimination\" takes a proposition that already has a conjunction symbol and the result has that conjunction symbol eliminated/removed.", 
+      "Here's a trick to remember which rule does what:\n· \"Conjunction introduction\" introduces/adds a conjunction symbol in the result.\n· \"Conjunction elimination\" takes a proposition that already has a conjunction symbol and the result has that conjunction symbol eliminated/removed.", 
     ],
     hints: [
       "Again, it's generally a good idea to try and work backwards."
@@ -151,10 +151,10 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     name: 'Rule #3: Conditional Elimination',
     description: [
       "New logical symbol: → (Conditional)",
-      "The behaviour of the conditional symbol (→) is inspired by the word \"implies\".\nThe idea is for \"(𝑃) → (𝑄)\" to mean that whenever 𝑃 is true, then 𝑄 must be true as well.",
+      "The behaviour of the conditional symbol (→) is inspired by the word \"implies\".\nThe idea is for \"(𝑃) → (𝑄)\" to mean that whenever 𝑃 is true, then 𝑄 must be true as well.\nBut whenever 𝑃 is false, then it doesn't say anything about 𝑄 one way or another.",
       "A proposition of the form \"(𝑃) → (𝑄)\" is called a conditional proposition.\nThe left side is called the antecedent.\nThe right side is called the consequent.",
-      "The first rule we'll see about conditionals is conditional elimination.\nIf you have a conditional proposition and you also have its antecedent, then it lets you deduce its consequent.",
-      "Note: Conditional elimination is also called modus ponens",
+      "In this level you're given the \"conditional elimination\" inference rule.\nIf you have a conditional proposition and you also have its antecedent, then it lets you deduce its consequent.",
+      "Note: Conditional elimination is also called modus ponens.",
     ],
     rules: [ConditionalElimination],
     propositions: [
@@ -167,8 +167,8 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   {
     name: 'Conditional Elimination Chaining',
     description: [
-      "You need to also have the antecedent before you can use conditional eliminition!",
-      "Before you can use conditional eliminition with \"(I wake up late) → (I get to work late)\", you first have to deduce \"I wake up late\".",
+      "You need to have the antecedent before you can use conditional eliminition!",
+      "Before you can use conditional eliminition with \"(I wake up late) → (I get to work late)\", you'll first have to deduce \"I wake up late\".",
     ],
     rules: [ConditionalElimination],
     propositions: [
@@ -216,7 +216,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   {
     name: 'Rule #4: Conditional Introduction',
     description: [
-      "Conditional introduction is arguably the most complicated inference rule.\nBut it's also arguably the most important!",
+      "Conditional introduction is the most complicated inference rule, but it's also arguably the most important!",
       "This rule says that if you can \"prove\" 𝑄 by assuming 𝑃, then you can deduce the proposition \"(𝑃) → (𝑄)\".",
       "To \"prove\" 𝑄, you have to clear the sublevel where 𝑃 has been added as an assumption and where 𝑄 is the target proposition.\nSo to use this inference rule, you'll need to clear a level within a level.",
       "Note: Conditional introduction can use ANY propositions you can think of!\nThe chosen antecedent and consequent don't need to already be assumed/deduced.\nYou'll have to specify them before you start working on the proof.",
@@ -256,7 +256,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     name: 'Conditional Tautology',
     description: [
       "A tautology is any proposition you can deduce without using any assumptions (except for the inference rules of course).",
-      "Using conditional introduction, we can get our first tautology!\nAnything implies itself.",
+      "Using conditional introduction, we can get our first tautology: Anything implies itself.",
     ],
     rules: [ConditionalIntroduction],
     propositions: [],
@@ -286,7 +286,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
   {
     name: 'Prove Derived Rule: Hypothetical Syllogism',
     description: [
-      "Here we'll derive the rule called hypothetical syllogism.\nIt tells us that a chain of conditionals can be contracted.",
+      "Here we'll derive the inference rule called hypothetical syllogism.\nIt tells us that if you have a chain of conditionals, then the first proposition in the chain implies the last proposition in chain.",
     ],
     rules: [ConditionalIntroduction, ConditionalElimination],
     propositions: [
