@@ -88,12 +88,13 @@ ROB.push({
   name: "Axiom #1",
   description: [
     "In mathematics, a formal theory is the combination of a symbolic logic, a collection of terms/functions/predicates, and a collection of starting propositions called axioms.",
-    "In this world, we'll explore the formal theory called Robinson arithmetic.",
-    "Robinson arithmetic uses first-order logic with equality as its symbolic logic, so I highly recommend you complete that world first.",
-    "It has one term: 0.\nIt has three functions: S(_), (_) + (_), and (_) × (_).\nIt has no predicates.\nIt has seven axioms: We'll see them one at a time.",
-    "The idea behind the term 0 is to represent the number zero.\nThe idea behind the function S(_) is to represent the successor of a number, number that comes after.\nFor example, the idea behind S(0) would be the nubmer that comes after 0.",
+    "In these levels, we'll explore the formal theory called Robinson arithmetic.",
+    "Robinson arithmetic uses first-order logic with equality as its symbolic logic, so I highly recommend you complete those levels first.",
+    "It has one term: 0.\nIt has three functions: S(_), (_) + (_), and (_) × (_).\nIt has no predicates.\nIt has seven axioms (we'll see them one at a time).",
+    "The idea behind the term 0 is to represent the number zero.\nThe idea behind the function S(_) is to represent the successor of a number, number that comes after.\nFor example, the idea behind S(0) would be the nubmer that comes after 0.\nThe idea behind Robinson arithmetic as a whole is to formalize the natural numbers (so no negative numbers nor fractions).",
     "The first axiom we'll see is ∀𝑥 ¬(S(𝑥) = 0).\nThe idea behind this axiom is to say that 0 doesn't come after any number.",
-    "For this first level, use that axiom to prove that the number that comes after the number that comes after 0 is not 0."
+    "Usually, axioms are treated as assumptions. But to avoid clutter, instead of adding the axioms as assumptions, I've added an inference rule that allows you to deduce any of the seven axioms.",
+    "For this first level, use the first axiom to prove that the number that comes after the number that comes after 0 is not 0."
   ],
   rules: [
     RobinsonAxioms,
@@ -107,20 +108,19 @@ ROB.push({
 ROB.push({
   name: "Definitions",
   description: [
-    "Although technically Robinson arithmetic only has the base term 0, nothing is stopping us from giving names to terms we build using functions.",
+    "Robinson arithmetic technically only has one term, \"0\".\nBut nothing is stopping us from giving names to the terms we build using functions.",
     "Instead of writting S(0) for the number that comes after 0, we could just call that number 1.\nInstead of writting S(S(0)) for the number that comes after the number that comes after 0, we could just call that number 2.\nAnd so on...",
     "This level is the same as the previous, but with definitions added."
   ],
   rules: [
     RobinsonAxioms,
     UniversalElimination,
-    Symmetry,
     Substitution,
   ],
   terms: [zero, one, two],
   propositions: [
-    eq(one, S.withSlots([zero])),
-    eq(two, S.withSlots([one]))
+    eq(S.withSlots([zero]), one),
+    eq(S.withSlots([one]), two)
   ],
   target: not(eq(two, zero)),
 });
@@ -128,20 +128,19 @@ ROB.push({
 ROB.push({
   name: "Axiom #2",
   description: [
-    "The second axiom is ∀𝑥 (∀𝑦 ((S𝑥 = S𝑦) → (𝑥 = 𝑦))).\nThe idea behind this axiom is to say if the number that comes after 𝑥 is the same as the number that comes after 𝑦, then 𝑥 and 𝑦 must be the same number.",
+    "The second axiom is ∀𝑥 (∀𝑦 ((S(𝑥) = S(𝑦)) → (𝑥 = 𝑦))).\nThe idea behind this axiom is to say if the number that comes after 𝑥 is the same as the number that comes after 𝑦, then 𝑥 and 𝑦 must be the same number.",
     "Use the first and second axioms to prove that 2 is not the same number as 1."
   ],
   rules: [
     RobinsonAxioms,
     ModusTollens,
     UniversalElimination,
-    Symmetry,
     Substitution,
   ],
   terms: [zero, one, two],
   propositions: [
-    eq(one, S.withSlots([zero])),
-    eq(two, S.withSlots([one]))
+    eq(S.withSlots([zero]), one),
+    eq(S.withSlots([one]), two)
   ],
   target: not(eq(two, one)),
 });
@@ -183,7 +182,7 @@ ROB.push({
   ],
   terms: [zero, one],
   propositions: [
-    eq(one, S.withSlots([zero]))
+    eq(S.withSlots([zero]), one)
   ],
   target: eq(plus.withSlots([one, zero]), one),
 });
@@ -197,13 +196,12 @@ ROB.push({
   rules: [
     RobinsonAxioms,
     UniversalElimination,
-    Symmetry,
     Substitution,
   ],
   terms: [zero, one, two],
   propositions: [
-    eq(one, S.withSlots([zero])),
-    eq(two, S.withSlots([one]))
+    eq(S.withSlots([zero]), one),
+    eq(S.withSlots([one]), two)
   ],
   target: eq(plus.withSlots([one, one]), two),
 });
@@ -217,12 +215,11 @@ ROB.push({
     RobinsonAxioms,
     UniversalIntroduction,
     UniversalElimination,
-    Symmetry,
     Substitution,
   ],
   terms: [zero, one],
   propositions: [
-    eq(one, S.withSlots([zero])),
+    eq(S.withSlots([zero]), one),
   ],
   target: forAll(x, eq(plus.withSlots([x, one]), S.withSlots([x]))),
 });
@@ -233,14 +230,13 @@ ROB.push({
   rules: [
     RobinsonAxioms,
     UniversalElimination,
-    Symmetry,
     Substitution,
   ],
   terms: [zero, one, two, three],
   propositions: [
-    eq(one, S.withSlots([zero])),
-    eq(two, S.withSlots([one])),
-    eq(three, S.withSlots([two])),
+    eq(S.withSlots([zero]), one),
+    eq(S.withSlots([one]), two),
+    eq(S.withSlots([two]), three),
   ],
   target: eq(plus.withSlots([two, one]), three),
 });
@@ -251,14 +247,13 @@ ROB.push({
   rules: [
     RobinsonAxioms,
     UniversalElimination,
-    Symmetry,
     Substitution,
   ],
   terms: [zero, one, two, three],
   propositions: [
-    eq(one, S.withSlots([zero])),
-    eq(two, S.withSlots([one])),
-    eq(three, S.withSlots([two])),
+    eq(S.withSlots([zero]), one),
+    eq(S.withSlots([one]), two),
+    eq(S.withSlots([two]), three),
   ],
   target: eq(plus.withSlots([one, two]), three),
 });
@@ -277,7 +272,7 @@ ROB.push({
   ],
   terms: [zero, one],
   propositions: [
-    eq(one, S.withSlots([zero]))
+    eq(S.withSlots([zero]), one)
   ],
   target: eq(times.withSlots([one, zero]), zero),
 });
@@ -291,15 +286,14 @@ ROB.push({
   rules: [
     RobinsonAxioms,
     UniversalElimination,
-    Symmetry,
     Substitution,
   ],
   terms: [zero, one, two, three, four],
   propositions: [
-    eq(one, S.withSlots([zero])),
-    eq(two, S.withSlots([one])),
-    eq(three, S.withSlots([two])),
-    eq(four, S.withSlots([three])),
+    eq(S.withSlots([zero]), one),
+    eq(S.withSlots([one]), two),
+    eq(S.withSlots([two]), three),
+    eq(S.withSlots([three]), four),
   ],
   target: eq(times.withSlots([two, two]), four),
 });
@@ -313,12 +307,11 @@ ROB.push({
     RobinsonAxioms,
     UniversalIntroduction,
     UniversalElimination,
-    Symmetry,
     Substitution,
   ],
   terms: [zero, one],
   propositions: [
-    eq(one, S.withSlots([zero])),
+    eq(S.withSlots([zero]), one),
   ],
   target: forAll(x, eq(times.withSlots([x, one]), x)),
 });
@@ -333,13 +326,12 @@ ROB.push({
     RobinsonAxioms,
     UniversalIntroduction,
     UniversalElimination,
-    Symmetry,
     Substitution,
   ],
   terms: [zero, one, two],
   propositions: [
-    eq(one, S.withSlots([zero])),
-    eq(two, S.withSlots([one])),
+    eq(S.withSlots([zero]), one),
+    eq(S.withSlots([one]), two),
     forAll(x, eq(times.withSlots([x, one]), x))
   ],
   target: forAll(x, eq(times.withSlots([x, two]), plus.withSlots([x, x]))),

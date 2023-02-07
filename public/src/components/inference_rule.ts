@@ -207,7 +207,7 @@ const InferenceRuleComponent = {
             return Vue.h('em', params, info);
           }
           return Vue.h(SelectComponent, {
-            selected: 0,
+	    objectType: "an axiom",
             options: info.map(p => p.toString()),
             onChange: (i: number) => { params.onChange(info[i]) },
             style: params.style,

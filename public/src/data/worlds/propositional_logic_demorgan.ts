@@ -41,7 +41,7 @@ const PROPOSITIONAL_LOGIC_DEMORGAN: Level[] = [
   {
     name: 'Conjunction of Negations',
     description: [
-      "In this world, you'll prove both De Morgan's laws (in both directions).",
+      "In these four levels, you'll prove both De Morgan's laws (in both directions).",
       "All nine base inference rules will be available, but you won't need them all for each level.\nIt's up to you to figure out which ones are usefull for each level.",
       "These levels are trickier than the previous ones.\nYou'll need to be comfortable with setting up negation introduction arguments.",
       "Conjunction of negations into negation of disjunction: If you dislike both, then it's not true that you like one or the other.",

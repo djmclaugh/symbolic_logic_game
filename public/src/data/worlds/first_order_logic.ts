@@ -21,6 +21,11 @@ import {
   ExistentialElimination,
 } from '../inference_rules/first_order_logic.js'
 
+import {
+  ProofOfNegation,
+  ProofByContradiction,
+  DetectContradiction,
+} from '../inference_rules/propositional_logic_negation.js'
 
 import { litTerm } from '../terms/literal.js'
 import { func } from '../terms/function.js'
@@ -51,8 +56,8 @@ const bob_mother = func(["", "'s mom"], [bob])
 FIRST_ORDER_LOGIC.push({
   name: "Propositional Logic Background",
   description: [
-    "First-order logic is built on top of propositional logic.\nAll inference rules (assumed and derived) from that world will be taken for granted.",
-    "I highly recommend you complete that world first."
+    "First-order logic is built on top of propositional logic.\nAll inference rules (assumed and derived) will be taken for granted.",
+    "I highly recommend you complete the propositional logic levels first."
   ],
   rules: [
     ConditionalElimination,
@@ -436,6 +441,8 @@ FIRST_ORDER_LOGIC.push({
     ModusTollens,
     ExistentialElimination,
     UniversalElimination,
+    ProofOfNegation,
+    DetectContradiction,
   ],
   propositions: [
     exists(x, not(litWithTerms(["", " likes coffee"], [x]))),
@@ -457,6 +464,8 @@ FIRST_ORDER_LOGIC.push({
     ModusTollens,
     ExistentialIntroduction,
     UniversalIntroduction,
+    ProofOfNegation,
+    DetectContradiction,
   ],
   propositions: [
     not(exists(x, litWithTerms(["", " likes coffee"], [x]))),
@@ -479,6 +488,8 @@ FIRST_ORDER_LOGIC.push({
     // Explosion,
     ExistentialElimination,
     UniversalElimination,
+    ProofOfNegation,
+    DetectContradiction,
   ],
   propositions: [
     forAll(x, not(litWithTerms(["", " likes coffee"], [x]))),
@@ -503,6 +514,8 @@ FIRST_ORDER_LOGIC.push({
     DoubleNegationElimination,
     ExistentialIntroduction,
     UniversalIntroduction,
+    ProofByContradiction,
+    DetectContradiction,
   ],
   propositions: [
     not(forAll(x, litWithTerms(["", " likes coffee"], [x]))),
@@ -516,78 +529,4 @@ FIRST_ORDER_LOGIC.push({
   ]
 });
 
-  //
-  // {
-  //   name: "Prove Derieved Rule: De Morgan (Existential Negation)",
-  //   description: [],
-  //   rules: [
-  //     ConditionalIntroduction,
-  //     NegationIntroduction,
-  //     NegationElimination,
-  //     UniversalIntroduction,
-  //     UniversalElimination,
-  //     ExistentialIntroduction,
-  //     ExistentialElimination,
-  //   ],
-  //   propositions: [
-  //     exists("𝑥", not(lit("𝑥 is an elephant"))),
-  //   ],
-  //   target: not(forall("𝑥", lit("𝑥 is an elephant"))),
-  // },
-  //
-  // {
-  //   name: "Prove Derieved Rule: De Morgan (Negation of Existential)",
-  //   description: [],
-  //   rules: [
-  //     ConditionalIntroduction,
-  //     NegationIntroduction,
-  //     NegationElimination,
-  //     ModusTollens,
-  //     UniversalIntroduction,
-  //     UniversalElimination,
-  //     ExistentialIntroduction,
-  //     ExistentialElimination,
-  //   ],
-  //   propositions: [
-  //     not(exists("𝑥", lit("𝑥 is an immortal human"))),
-  //   ],
-  //   target: forall("𝑥", not(lit("𝑥 is an immortal human"))),
-  // },
-  //
-  // {
-  //   name: "Prove Derieved Rule: De Morgan (Universal Negation)",
-  //   description: [],
-  //   rules: [
-  //     ConditionalIntroduction,
-  //     NegationIntroduction,
-  //     NegationElimination,
-  //     UniversalIntroduction,
-  //     UniversalElimination,
-  //     ExistentialIntroduction,
-  //     ExistentialElimination,
-  //   ],
-  //   propositions: [
-  //     forall("𝑥", not(lit("𝑥 is an immortal human"))),
-  //   ],
-  //   target: not(exists("𝑥", lit("𝑥 is an immortal human"))),
-  // },
-  //
-  // {
-  //   name: "Prove Derieved Rule: De Morgan (Negation of Universal)",
-  //   description: [],
-  //   rules: [
-  //     ConditionalIntroduction,
-  //     NegationIntroduction,
-  //     NegationElimination,
-  //     DoubleNegationElimination,
-  //     UniversalIntroduction,
-  //     UniversalElimination,
-  //     ExistentialIntroduction,
-  //     ExistentialElimination,
-  //   ],
-  //   propositions: [
-  //     not(forall("𝑥", lit("𝑥 is an elephant"))),
-  //   ],
-  //   target: exists("𝑥", not(lit("𝑥 is an elephant"))),
-  // },
 export default FIRST_ORDER_LOGIC;

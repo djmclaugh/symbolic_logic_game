@@ -204,14 +204,15 @@ FIRST_ORDER_LOGIC.push({
   name: "Equality and Quantifiers",
   description: [],
   rules: [
-    ExistentialIntroduction,
-    UniversalElimination,
     DisjunctiveSyllogism,
+    Substitution,
+    Symmetry,
+    EqualityNegationSymmetry,
   ],
-  terms: [alice, bob, tallest],
+  terms: [alice, bob, carol, tallest],
   propositions: [
     forAll(x, or(eq(x, tallest), isTaller.withSlots([tallest, x]))),
-    not(eq(bob, tallest)),
+    neq(bob, tallest),
   ],
   target: exists(x, isTaller.withSlots([x, bob])),
   allowedPropositionTypes: [

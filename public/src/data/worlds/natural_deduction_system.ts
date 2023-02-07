@@ -40,6 +40,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
       "You can deduce new propositions by using inference rules.\nThe version of propositional logic we'll see in this game has nine inference rules that we take for granted.\nWe'll go through them one at a time.",
       "In this level, you're given \"conjunction introduction\".\nIt lets you take two propositions you already know and combine them by putting a \"∧\" in between.",
       "The ∧ symbol is called the conjunction symbol. Its behaviour is inspired by the word \"and\".\nThe idea is for \"(𝐿) ∧ (𝑅)\" to mean that both 𝐿 and 𝑅 are true.",
+      "Once you deduce the target proposition, the \"Go to next level\" button will appear.",
       "Note: In this game we're doing symbolic logic; You need to deduce the EXACT same sequence of symbols as the target.\nFor example, \"1+2\" is not the same as \"2+1\"; The symbols are not in the same order.",
     ],
     rules: [ ConjunctionIntroduction ],
@@ -679,7 +680,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     name: 'Prove Tautology: Law Of Noncontradiction',
     description: [
       "Congratulations! You now know all of the base rules of propositional logic!",
-      "In the last two levels, we'll derive two fundamental tautologies that are often taken for granted even though they are technically not base rules.",
+      "In the last two levels, we'll derive two fundamental tautologies that are often taken for granted.",
       "Law of noncontradiction: A thing cannot be true and not true at the same time."
     ],
     hints: [

@@ -7,7 +7,7 @@ import Predicate, {isSameSlot} from '../predicates/predicate.js'
 import Term from '../terms/term.js'
 
 export const Symmetry: InferenceRule = {
-  name: "Symmetry (=)",
+  name: "Equality Symmetry",
   inputDescriptions: [
     "Equality: A proposition already in the bank of the form 𝑎 = 𝑏.",
   ],
@@ -27,7 +27,7 @@ export const Symmetry: InferenceRule = {
 }
 
 export const EqualityNegationSymmetry: InferenceRule = {
-  name: "Equality Negation Symmetry",
+  name: "Inequation Symmetry",
   inputDescriptions: [
     "A proposition already in the bank of the form ¬(𝑎 = 𝑏).",
   ],

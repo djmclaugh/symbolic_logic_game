@@ -86,7 +86,7 @@ const PROPOSITIONAL_LOGIC_CONTRADICTION: Level[] = [
   {
     name: 'Rule #2: Proof of Negation',
     description: [
-      "Usually, to deduce the negation of a proposition, we need two contradictory conditional statments with that proposition as the antecedent.\nThis usually involves using conditional introduciton twice, which involves clearing two sublevels.",
+      "Usually, to deduce the negation of a proposition, we need two contradictory conditional statments with that proposition as the antecedent.\nThis usually involves using conditional introduction twice, which involves clearing two sublevels.",
       "Instead we can use the proof of negation rule of inference.\nTo deduce the negation of a proposition, you just have to prove that the proposition leads to a formal contradiction, you just need to clear one sublevel.",
       "The idea behing proof of negation is that if you're able to deduce a formal contradiction, then you would have been able to deduce contradictory conditionals and then use negation introduction.",
       "Try beating this level (modus tollens) with and without using the proof of negation rule.",
