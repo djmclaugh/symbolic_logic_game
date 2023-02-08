@@ -107,7 +107,7 @@ const PROPOSITIONAL_LOGIC_CONTRADICTION: Level[] = [
   },
 
   {
-    name: 'Proof of Negation Practice (Double Negation Introduction)',
+    name: 'Double Negation Introduction',
     description: [
       "Again, try beating this level with and without using the proof of negation rule.",
     ],
@@ -125,7 +125,7 @@ const PROPOSITIONAL_LOGIC_CONTRADICTION: Level[] = [
   },
 
   {
-    name: 'Proof of Negation Practice (Law Of Noncontradiction)',
+    name: 'Law Of Noncontradiction',
     description: [
       "Law of noncontradiction: A thing cannot be true and not true at the same time."
     ],
@@ -146,7 +146,7 @@ const PROPOSITIONAL_LOGIC_CONTRADICTION: Level[] = [
   },
 
   {
-    name: 'Proof of Negation Practice (Conjunction of Negations)',
+    name: 'Conjunction of Negations',
     description: [
       "If you want to use negation introduction to prove the target, you need to know which contradiciton you want to expose ahead of time.\nBut if you use proof of negation, you can get started right away.\nYou can set the proposition to \"(I like tea) ∨ (I like coffee)\" and figure out the contradiciton along the way.",
     ],
@@ -167,7 +167,7 @@ const PROPOSITIONAL_LOGIC_CONTRADICTION: Level[] = [
   },
 
   {
-    name: 'Proof of Negation Practice (Negation of Disjunction)',
+    name: 'Negation of Disjunction',
     description: [
       "Negation of disjunction into conjunction of negations: If it's not true that you like one or the other, then you dislike like both.",
       "Try using proof of negation to prove both ¬(I like tea) and ¬(I like coffee) individually.",
@@ -187,7 +187,7 @@ const PROPOSITIONAL_LOGIC_CONTRADICTION: Level[] = [
 
   
   {
-    name: 'Proof of Negation Practice (Disjunction of Negations)',
+    name: 'Disjunction of Negations',
     description: [
       "Disjunction of negations into negation of conjunction: If you dislike one or the other, then it's not true that you like both."
     ],
@@ -232,7 +232,34 @@ const PROPOSITIONAL_LOGIC_CONTRADICTION: Level[] = [
   },
   
   {
-    name: 'Practice Proof by Contradiction (Negation of Conjunction)',
+    name: 'Law Of Excluded Middle',
+    description: [
+      "Law of exclude middle: A thing HAS to be either true or not true.",
+    ],
+    hints: [
+      "Use proof by contradiction with the proposition \"(I like tea) ∨ (¬(I like tea)).\"",
+      "Within your proof by contradiction, prove \"I like tea\" using proof by contradiction and prove \"¬(I like tea)\" using proof of negation.",
+    ],
+    rules: [
+      ConditionalIntroduction,
+      DisjunctionIntroduction,
+      NegationIntroduction,
+      DoubleNegationElimination,
+      DetectContradiction,
+      ProofOfNegation,
+      ProofByContradiction,
+    ],
+    propositions: [],
+    target: or(lit("I like tea"), not(lit("I like tea"))),
+    allowedPropositionTypes: [
+      PropositionType.LITERAL,
+      PropositionType.NEGATION,
+      PropositionType.DISJUNCTION
+    ]
+  },
+  
+  {
+    name: 'Negation of Conjunction',
     description: [
       "Negation of conjunction into disjunction of negations: If it's not true that you like both, then you dislike one or the other."
     ],
