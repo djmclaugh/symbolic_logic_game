@@ -22,6 +22,12 @@ import {
 } from '../inference_rules/propositional_logic_derived.js'
 
 import {
+  DetectContradiction,
+  ProofOfNegation,
+  ProofByContradiction,
+} from '../inference_rules/propositional_logic_negation.js'
+
+import {
   Reflexivity,
   Substitution,
   UniversalIntroduction,
@@ -282,6 +288,7 @@ ROB.push({
   description: [
     "The seventh and final axiom is ∀𝑥 (∀𝑦 ((𝑥) × (S(𝑦)) = ((𝑥) × (𝑦)) + (𝑥))).\nThe idea behind this axiom is to say that 𝑥 times the number that comes after 𝑦 should be the same as 𝑥 times 𝑦 plus an extra copy of 𝑥.",
     "Use all the addition and multiplication axioms to prove that (2) × (2) = 4.",
+    "Warning: This level is more tedious than it is hard.",
   ],
   rules: [
     RobinsonAxioms,
@@ -335,6 +342,39 @@ ROB.push({
     forAll(x, eq(times.withSlots([x, one]), x))
   ],
   target: forAll(x, eq(times.withSlots([x, two]), plus.withSlots([x, x]))),
+});
+
+ROB.push({
+  name: "World Complete!",
+  description: [
+    "That's it for Robinson arithmetic!",
+    "This is the last world implemented so far. Congratulations on completing everything!",
+    "Let me know if there are any other level, logic, or theory you would me to add: https://github.com/djmclaugh/symbolic_logic_game/issues",
+  ],
+  rules: [
+    RobinsonAxioms,
+    ConjunctionIntroduction,
+    ConjunctionElimination,
+    ConditionalIntroduction,
+    ConditionalElimination,
+    DisjunctionIntroduction,
+    DisjunctionElimination,
+    NegationIntroduction,
+    NegationElimination,
+    DoubleNegationElimination,
+    ExistentialIntroduction,
+    ExistentialElimination,
+    UniversalIntroduction,
+    UniversalElimination,
+    Reflexivity,
+    Substitution,
+    DetectContradiction,
+    ProofOfNegation,
+    ProofByContradiction,
+  ],
+  propositions: [],
+  terms: [zero],
+  target: lit("⊥"),
 });
 
 export default ROB;

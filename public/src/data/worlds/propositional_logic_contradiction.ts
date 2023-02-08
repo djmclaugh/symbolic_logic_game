@@ -253,6 +253,22 @@ const PROPOSITIONAL_LOGIC_CONTRADICTION: Level[] = [
     target: or(not(lit("I like tea")), not(lit("I like coffee"))),
     allowedPropositionTypes: BASE_TYPES,
   },
+  
+  {
+    name: 'World Complete!',
+    description: [
+      "That's it for formal contradictions!",
+      "Try out first-order logic next to learn about terms, functions, and quantifiers",
+    ],
+    rules: [
+      DetectContradiction,
+      ProofOfNegation,
+      ProofByContradiction,
+    ],
+    propositions: [],
+    target: lit("⊥"),
+    allowedPropositionTypes: BASE_TYPES,
+  },
 
 ];
 export default PROPOSITIONAL_LOGIC_CONTRADICTION;

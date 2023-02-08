@@ -96,5 +96,17 @@ const PROPOSITIONAL_LOGIC_DEMORGAN: Level[] = [
     target: or(not(lit("I like tea")), not(lit("I like coffee"))),
     allowedPropositionTypes: BASE_TYPES,
   },
+  
+  {
+    name: 'World Complete!',
+    description: [
+      "That's it for De Morgan's laws!",
+      "Try out \"Propositional logic: Contradictions\" next for a more natural way to deal with negation introduction.",
+    ],
+    rules: ALL_BASE_RULES,
+    propositions: [],
+    target: lit("⊥"),
+    allowedPropositionTypes: BASE_TYPES,
+  },
 ];
 export default PROPOSITIONAL_LOGIC_DEMORGAN;

@@ -728,6 +728,38 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
       PropositionType.DISJUNCTION
     ]
   },
+  
+  {
+    name: 'World Complete!',
+    description: [
+      "That's it for propositional logic!",
+      "Try out \"Propositional logic: De Morgan's Laws\" for a challenge or \"Propositional logic: Contradictions\" to learn about shortcuts people use to work with contradictions.",
+      "You can use this level as a sandbox. All nine inference rules are available.\n𝑇 is something that's assumed to be true. 𝐹 is something that's assumed to be false.\nThe target is just there so that 𝑃 and 𝑄 (which are neither assumed true nor false) appear as options when creating propositions in some inference rules (like conditional introduction).\n(You won't be able to deduce the target from the assumptions.)",
+    ],
+    rules: [
+      ConjunctionIntroduction,
+      ConjunctionElimination,
+      ConditionalIntroduction,
+      ConditionalElimination,
+      DisjunctionIntroduction,
+      DisjunctionElimination,
+      NegationIntroduction,
+      NegationElimination,
+      DoubleNegationElimination,
+    ],
+    propositions: [
+        lit("𝑇"),
+        not(lit("𝐹")),
+    ],
+    target: and(lit("𝑃"), lit("𝑄")),
+    allowedPropositionTypes: [
+      PropositionType.LITERAL,
+      PropositionType.CONJUNCTION,
+      PropositionType.CONDITIONAL,
+      PropositionType.NEGATION,
+      PropositionType.DISJUNCTION
+    ]
+  },
 
 ];
 export default NATURAL_DEDUCTION_SYSTEM;

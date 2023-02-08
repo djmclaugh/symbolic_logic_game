@@ -220,6 +220,22 @@ FIRST_ORDER_LOGIC.push({
   ]
 });
 
+FIRST_ORDER_LOGIC.push({
+  name: "World Complete!",
+  description: [
+    "That's it for first-order logic with equality!",
+    "Now that you know first-order logic, try applying it within a mathematical theory like Robinson arithmetic.",
+  ],
+  rules: [
+    Reflexivity,
+    Substitution,
+  ],
+  terms: [alice, bob, carol],
+  propositions: [],
+  target: lit("⊥"),
+  allowedPropositionTypes: [],
+});
+
 
 /*
 FIRST_ORDER_LOGIC.push({

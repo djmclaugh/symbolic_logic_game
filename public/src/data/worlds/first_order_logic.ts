@@ -249,7 +249,7 @@ FIRST_ORDER_LOGIC.push({
   name: "Universal Elimination Practice",
   description: [
     "It's very rare that a predicate is unconditionally true for all terms.",
-    "Most universals you'll encount will be universals of conditionals: Propositions of the form ∀𝑥 ((𝑃) → (𝑄)).",
+    "Most universals you'll encounter will be universals of conditionals: Propositions of the form ∀𝑥 ((𝑃) → (𝑄)).",
   ],
   rules: [
     ConditionalElimination,
@@ -394,7 +394,7 @@ FIRST_ORDER_LOGIC.push({
 FIRST_ORDER_LOGIC.push({
   name: "Prove Derived Rule: Universal Change Of Variable",
   description: [
-    "Here we show that the variable that we use with the universal quantifier doesn't matter."
+    "Here we show that the variable we use with the universal quantifier doesn't matter."
   ],
   rules: [
     UniversalIntroduction,
@@ -521,6 +521,28 @@ FIRST_ORDER_LOGIC.push({
     not(forAll(x, litWithTerms(["", " likes coffee"], [x]))),
   ],
   target: exists(x, not(litWithTerms(["", " likes coffee"], [x]))),
+  allowedPropositionTypes: [
+    PropositionType.LITERAL,
+    PropositionType.NEGATION,
+    PropositionType.EXISTENTIAL,
+    PropositionType.UNIVERSAL,
+  ]
+});
+
+FIRST_ORDER_LOGIC.push({
+  name: "World Complete!",
+  description: [
+    "That's it for first-order logic!",
+    "Try out first-order logic with equality next!"
+  ],
+  rules: [
+    ExistentialIntroduction,
+    ExistentialElimination,
+    UniversalIntroduction,
+    UniversalElimination,
+  ],
+  propositions: [],
+  target: lit("⊥"),
   allowedPropositionTypes: [
     PropositionType.LITERAL,
     PropositionType.NEGATION,
