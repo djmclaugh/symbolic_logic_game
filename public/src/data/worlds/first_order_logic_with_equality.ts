@@ -87,7 +87,7 @@ FIRST_ORDER_LOGIC.push({
   name: "Rule #1: Reflexivity",
   description: [
     "New logical symbol: = (Equality)",
-    "Almost all theories built on top of first-order logic uses the same concept of equality.\nSo many people prefer considering equality as part of the logic itself instead of an addition from the theory.\nThis upgraded version of first-order logic is called \"first-order logic with equality\".\nBut most people just call it \"first-order logic\" anyway.",
+    "Almost all theories built on top of first-order logic use the same concept of equality.\nSo many people prefer considering equality as part of the logic itself instead of an addition from the theory.\nThis upgraded version of first-order logic is called \"first-order logic with equality\".\nBut most people just call it \"first-order logic\" anyway.",
     "The \"=\" symbol is inspired by the word \"equals\". The idea is for \"𝑥 = 𝘺\" to mean that 𝑥 and 𝘺 both refer to the same thing.",
     "This first rule is called reflexivity.\nGiven any term, it let's you put the \"=\" in between two copies of that term and add that proposition to your bank.",
     "The idea behind reflexivity is that a term should always refer to the same \"thing\"."
