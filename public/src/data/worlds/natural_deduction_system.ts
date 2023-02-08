@@ -139,7 +139,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     name: 'Prove Derived Rule: Conjunction Association',
     description: [
       "Here we'll derive a rule that tells us that conjunction is associative.\nIn other words, we can rearange how the conjunctions are grouped.",
-      "Note: Because conjunction is associative, people will use the shorthand \"𝑃 ∧ 𝑄 ∧ 𝑅\" instead of the formally correct \"(𝑃 ∧ 𝑄) ∧ 𝑅\" or \"𝑃 ∧ (𝑄 ∧ 𝑅)\"\nThis is similar to how people just write \"2 + 3 + 4\" instead of \"(2 + 3) + 4\" or \"2 + (3 + 4)\".",
+      "Note: Because conjunction is associative, people will use the shorthand \"𝑃 ∧ 𝑄 ∧ 𝑅\" instead of the formally correct \"(𝑃 ∧ 𝑄) ∧ 𝑅\" or \"𝑃 ∧ (𝑄 ∧ 𝑅)\".\nThis is similar to how people just write \"2 + 3 + 4\" instead of \"(2 + 3) + 4\" or \"2 + (3 + 4)\".",
     ],
     rules: [ConjunctionIntroduction, ConjunctionElimination],
     propositions: [
