@@ -25,7 +25,7 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     name: "Propositional Logic Introduction",
     description: [
       "The goal in each level is to deduce an EXACT copy of the target proposition.",
-      "For this first level, we already start with the target proposition as an assumption, so we already won!\nClick the \"Go to next level\" button to proceed.",
+      "For this first level, we already start with the target proposition as an assumption, so you already won!\nClick the \"Go to next level\" button to proceed.",
       "Note: \"Propositional logic\", \"propositional calculus\", and \"zeroth-order logic\" are all synonyms.",
     ],
     rules: [],
