@@ -56,26 +56,7 @@ import { then } from '../predicates/conditional.js'
 import { eq } from '../predicates/equality.js'
 import { forAll } from '../predicates/universal.js'
 import { exists } from '../predicates/existential.js'
-import { PropositionType } from '../propositions/propositions.js'
-
-const ALL_BASE_RULES = [
-  RobinsonAxioms,
-  ConjunctionIntroduction,
-  ConjunctionElimination,
-  ConditionalIntroduction,
-  ConditionalElimination,
-  DisjunctionIntroduction,
-  DisjunctionElimination,
-  NegationIntroduction,
-  NegationElimination,
-  DoubleNegationElimination,
-  ExistentialIntroduction,
-  ExistentialIntroduction,
-  UniversalIntroduction,
-  UniversalElimination,
-  Reflexivity,
-  Substitution,
-]
+import { PropositionType, FOL_PROPOSITION_TYPES } from '../propositions/propositions.js'
 
 const x = litTerm("𝑥");
 const y = litTerm("𝑦");
@@ -372,6 +353,7 @@ ROB.push({
     ProofOfNegation,
     ProofByContradiction,
   ],
+  allowedPropositionTypes: FOL_PROPOSITION_TYPES,
   propositions: [],
   terms: [zero],
   target: lit("⊥"),

@@ -7,6 +7,8 @@ export enum PropositionType {
   EQUALITY,
   UNIVERSAL,
   EXISTENTIAL,
+  NECESSITY,
+  POSSIBILITY,
 }
 
 export const PROPOSITION_TYPES = [
@@ -28,6 +30,16 @@ export const FOL_PROPOSITION_TYPES = [
   PropositionType.EXISTENTIAL,
 ]
 
+export const MODAL_LOGIC_PROPOSITION_TYPES = [
+  PropositionType.LITERAL,
+  PropositionType.NEGATION,
+  PropositionType.CONJUNCTION,
+  PropositionType.DISJUNCTION,
+  PropositionType.CONDITIONAL,
+  PropositionType.NECESSITY,
+  PropositionType.POSSIBILITY,
+]
+
 export function propositionTypeToString(t: PropositionType) {
   switch(t) {
     case PropositionType.LITERAL:
@@ -46,5 +58,9 @@ export function propositionTypeToString(t: PropositionType) {
       return "Universal (∀)";
     case PropositionType.EXISTENTIAL:
       return "Existential (∃)";
+    case PropositionType.NECESSITY:
+      return "Necessity (□)";
+    case PropositionType.POSSIBILITY:
+      return "Possibility (◊)";
   }
 }
