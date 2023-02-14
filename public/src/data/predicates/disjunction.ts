@@ -1,7 +1,7 @@
 import BinaryOperatorPredicate from './binary_operator.js'
 import Predicate, { Slot } from './predicate.js'
 
-export function or(l: Predicate, r: Predicate) {
+export function or(l: Predicate|string, r: Predicate|string) {
   return new DisjunctionPredicate(l, r);
 }
 

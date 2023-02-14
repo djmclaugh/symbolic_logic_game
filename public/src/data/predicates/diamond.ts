@@ -1,15 +1,11 @@
 import Predicate, { Slot } from './predicate.js'
 import UnaryOperatorPredicate from './unary_operator.js';
 
-export function diamond(p: Predicate) { return new DiamondPredicate(p); }
+export function can(p: Predicate|string) { return new DiamondPredicate(p); }
 
 export default class DiamondPredicate extends UnaryOperatorPredicate {
-  constructor(sub: Predicate) {
-    super(sub);
-  }
-
   public get symbol(): string {
-    return "◊";
+    return "◇";
   }
 
   public withSlots(newSlots: Slot[]): DiamondPredicate {

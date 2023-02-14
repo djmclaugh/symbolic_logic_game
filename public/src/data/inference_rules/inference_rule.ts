@@ -34,8 +34,8 @@ export default interface InferenceRule {
     readonly anyPropositionInfo?: (inputs: (Input|null)[]) => Term[],
     readonly propositionFreeTermInfo?: (inputs: (Input|null)[]) => Predicate|string,
     readonly replacementInfo?: (inputs: (Input|null)[]) => [Predicate, Term, Term]|string,
-    // [What to add to proposition bank, what to add to term bank, new target]
-    readonly proofInfo?: (inputs: (Input|null)[]) => [Predicate[], Term[], Predicate]|string,
+    // [assumptions to add, can use main level assumptions/deductions, new target]
+    readonly proofInfo?: (inputs: (Input|null)[]) => [Predicate[], boolean, Predicate]|string,
     readonly axiomInfo?: (inputs: (Input|null)[]) => Predicate[],
 
 }

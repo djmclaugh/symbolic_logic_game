@@ -4,6 +4,7 @@ export enum PropositionType {
   CONJUNCTION,
   DISJUNCTION,
   CONDITIONAL,
+  BICONDITIONAL,
   EQUALITY,
   UNIVERSAL,
   EXISTENTIAL,
@@ -52,6 +53,8 @@ export function propositionTypeToString(t: PropositionType) {
       return "Disjunction (∨)";
     case PropositionType.CONDITIONAL:
       return "Conditional (→)";
+    case PropositionType.BICONDITIONAL:
+      return "Biconditional (↔)";
     case PropositionType.EQUALITY:
       return "Equality (=)";
     case PropositionType.UNIVERSAL:

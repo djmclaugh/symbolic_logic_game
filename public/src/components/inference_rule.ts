@@ -223,7 +223,7 @@ const InferenceRuleComponent = {
             return Vue.h('em', params, info);
           }
 
-          let newProps = props.propositions.concat();
+          let newProps = info[1] ? props.propositions.concat() : [];
           for (const p of info[0]) {
             if (!newProps.some(existingProp => p.equals(existingProp))) {
               newProps.unshift(p);
@@ -262,7 +262,7 @@ const InferenceRuleComponent = {
           if (typeof info === 'string') {
             data.lastProofKey = '';
           } else {
-            data.lastProofKey = info[0].map(p => p.toString()).join() + info[1].map(t => t.toString()).join() + info[2].toString();
+            data.lastProofKey = info[0].map(p => p.toString()).join() + info[1].toString() + info[2].toString();
           }
         }
         data.errorMessage = null;

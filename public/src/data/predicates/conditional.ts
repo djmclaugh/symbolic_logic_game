@@ -1,7 +1,7 @@
 import BinaryOperatorPredicate from './binary_operator.js'
 import Predicate, { Slot } from './predicate.js'
 
-export function then(l: Predicate, r: Predicate) {
+export function then(l: Predicate|string, r: Predicate|string) {
   return new ConditionalPredicate(l, r);
 }
 

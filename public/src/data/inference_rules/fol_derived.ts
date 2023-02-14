@@ -1,10 +1,6 @@
 import InferenceRule, {InputType, Input} from './inference_rule.js'
 import Negation, {not} from '../predicates/negation.js'
 import Equality, {eq} from '../predicates/equality.js'
-import Universal, {forAll} from '../predicates/universal.js'
-import Existential, {exists} from '../predicates/existential.js'
-import Predicate, {isSameSlot} from '../predicates/predicate.js'
-import Term from '../terms/term.js'
 
 export const Symmetry: InferenceRule = {
   name: "Equality Symmetry",
@@ -35,14 +31,14 @@ export const EqualityNegationSymmetry: InferenceRule = {
   inputTypes: [ InputType.BankProposition ],
   doesApply: (inputs: Input[]) => {
     let p = inputs[0] as Negation;
-    if (!(p instanceof Negation) || !(p.subPredicate instanceof Equality)) {
+    if (!(p instanceof Negation) || !(p.sub instanceof Equality)) {
       return "Chosen proposition must be the negation of an equality.";
     }
     return "";
   },
   apply: (inputs: Input[]) => {
     const p = inputs[0] as Negation;
-    const e = p.subPredicate as Equality;
+    const e = p.sub as Equality;
     return not(eq(e.right, e.left));
   },
 }

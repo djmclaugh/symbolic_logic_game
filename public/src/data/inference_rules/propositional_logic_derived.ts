@@ -4,8 +4,6 @@ import Negation, {not} from '../predicates/negation.js'
 import Conjunction, {and} from '../predicates/conjunction.js'
 import Disjunction, {or} from '../predicates/disjunction.js'
 import Conditional, {then} from '../predicates/conditional.js'
-import {lit} from '../predicates/literal.js'
-
 
 export const DoubleNegationIntroduction: InferenceRule = {
   name: "Double Negation Introduction",
@@ -271,7 +269,7 @@ export const DisjunctiveSyllogism: InferenceRule = {
     if (!(n  instanceof Negation)) {
       return "Chosen negation must start with \"¬(\".";
     }
-    if (!d.left.equals(n.subPredicate) && !d.right.equals(n.subPredicate)) {
+    if (!d.left.equals(n.sub) && !d.right.equals(n.sub)) {
       return "Consequent negation must be the negation either left or right side of the disjunction.";
     }
     return "";
@@ -279,6 +277,6 @@ export const DisjunctiveSyllogism: InferenceRule = {
   apply: (inputs: Input[]) => {
     const d = inputs[0] as Disjunction;
     const n = inputs[1] as Negation;
-    return d.left.equals(n.subPredicate) ? d.right : d.left;
+    return d.left.equals(n.sub) ? d.right : d.left;
   },
 }

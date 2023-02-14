@@ -7,9 +7,12 @@ import Predicate, {allFunctions} from '../../data/predicates/predicate.js'
 import { PropositionType, propositionTypeToString } from '../../data/propositions/propositions.js'
 import { lit } from '../../data/predicates/literal.js'
 import { not } from '../../data/predicates/negation.js'
+import { must } from '../../data/predicates/box.js'
+import { can } from '../../data/predicates/diamond.js'
 import { and } from '../../data/predicates/conjunction.js'
 import { or } from '../../data/predicates/disjunction.js'
 import { then } from '../../data/predicates/conditional.js'
+import { iff } from '../../data/predicates/biconditional.js'
 import { eq } from '../../data/predicates/equality.js'
 import { forAll } from '../../data/predicates/universal.js'
 import { exists } from '../../data/predicates/existential.js'
@@ -66,6 +69,12 @@ const AnyPropositionInput = {
         case PropositionType.NEGATION:
           emit('change', not(p));
           break;
+	case PropositionType.NECESSITY:
+	  emit('change', must(p));
+	  break;
+	case PropositionType.POSSIBILITY:
+	  emit('change', can(p));
+	  break;
         case PropositionType.UNIVERSAL:
           emit('change', forAll(data.variable, p));
           break;
@@ -101,6 +110,9 @@ const AnyPropositionInput = {
           break;
         case PropositionType.CONDITIONAL:
           emit('change', then(data.prop1, data.prop2));
+          break;
+	case PropositionType.BICONDITIONAL:
+          emit('change', iff(data.prop1, data.prop2));
           break;
         default:
           throw new Error("This should never happen.");
@@ -190,6 +202,8 @@ const AnyPropositionInput = {
           }));
           break;
         case PropositionType.NEGATION:
+	case PropositionType.NECESSITY:
+	case PropositionType.POSSIBILITY:
           items.push(Vue.h(AnyPropositionInput, {
             bank: props.bank,
             termBank: props.termBank,
@@ -201,7 +215,8 @@ const AnyPropositionInput = {
           break;
         case PropositionType.CONJUNCTION:
         case PropositionType.DISJUNCTION:
-        case PropositionType.CONDITIONAL: {
+        case PropositionType.CONDITIONAL:
+	case PropositionType.BICONDITIONAL: {
           let word: string;
           if (data.chosenType == PropositionType.CONJUNCTION) {
             word = "and";
@@ -209,7 +224,9 @@ const AnyPropositionInput = {
             word = "or";
           } else if (data.chosenType == PropositionType.CONDITIONAL) {
             word = "then";
-          } else {
+          } else if (data.chosenType == PropositionType.BICONDITIONAL) {
+	    word = "if and only if";
+	  } else {
             throw new Error("This should never happen");
           }
           const inner = [];

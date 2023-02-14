@@ -20,7 +20,7 @@ export const DetectContradiction: InferenceRule = {
     const n = inputs[1] as Predicate;
     if (!(n instanceof Negation)) {
       return "Chosen negation must start with \"¬(\"";
-    } else if (!n.subPredicate.equals(p)) {
+    } else if (!n.sub.equals(p)) {
       return "Chosen negation must be negation of chosen proposition.";
     }
     return "";
@@ -42,7 +42,7 @@ export const ProofOfNegation: InferenceRule = {
     if (inputs[0] === null) {
       return "Proposition must be chosen before working on proof.";
     } else {
-      return [[inputs[0] as Predicate], [], lit("⊥")];
+      return [[inputs[0] as Predicate], true, lit("⊥")];
     }
   },
   doesApply: (inputs: Input[]) => {
@@ -59,7 +59,7 @@ export const ProofOfNegation: InferenceRule = {
 export const ProofByContradiction: InferenceRule = {
   name: "Proof By Contradiction",
   inputDescriptions: [
-    "Proposition: Any proposition whatsoever.",
+    "Proposition: Any proposition whatsoever",
     "Proof: Win the level with the negation of the chosen proposition added as an assumption and with ⊥ as the target",
   ],
   outputDescription: "𝑃",
@@ -68,7 +68,7 @@ export const ProofByContradiction: InferenceRule = {
     if (inputs[0] === null) {
       return "Proposition must be chosen before working on proof.";
     } else {
-      return [[not(inputs[0] as Predicate)], [], lit("⊥")];
+      return [[not(inputs[0] as Predicate)], true, lit("⊥")];
     }
   },
   doesApply: (inputs: Input[]) => {

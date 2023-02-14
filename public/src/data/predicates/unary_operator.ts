@@ -1,15 +1,18 @@
 import Predicate from './predicate.js'
 import Term from '../terms/term.js'
+import { lit } from './literal.js';
 
 export default abstract class UnaryOperatorPredicate extends Predicate {
+  public readonly sub: Predicate;
   public abstract get symbol(): string;
 
   public get slots() {
     return this.sub.slots;
   }
 
-  constructor(public readonly sub: Predicate) {
+  constructor(sub: Predicate|string) {
     super();
+    this.sub = (sub instanceof Predicate) ? sub : lit(sub);
   }
 
   public toString(slotIndexStart: number = 0) {

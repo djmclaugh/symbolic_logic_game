@@ -9,15 +9,24 @@ import {
   DisjunctionElimination,
   ConditionalIntroduction,
   ConditionalElimination,
+  BiconditionalIntroduction,
+  BiconditionalElimination,
 } from '../inference_rules/natural_deduction_system.js'
+
+import {
+  DetectContradiction,
+  ProofOfNegation,
+  ProofByContradiction,
+} from '../inference_rules/propositional_logic_negation.js'
 
 import { lit } from '../predicates/literal.js'
 import { not } from '../predicates/negation.js'
 import { and } from '../predicates/conjunction.js'
 import { or } from '../predicates/disjunction.js'
+import { iff } from '../predicates/biconditional.js'
 import { PropositionType } from '../propositions/propositions.js'
 
-const ALL_BASE_RULES = [
+const ALL_RULES = [
   ConjunctionIntroduction,
   ConjunctionElimination,
   ConditionalIntroduction,
@@ -26,7 +35,12 @@ const ALL_BASE_RULES = [
   DisjunctionElimination,
   NegationIntroduction,
   NegationElimination,
+  BiconditionalIntroduction,
+  BiconditionalElimination,
   DoubleNegationElimination,
+  DetectContradiction,
+  ProofOfNegation,
+  ProofByContradiction,
 ]
 
 const BASE_TYPES = [
@@ -39,61 +53,27 @@ const BASE_TYPES = [
 
 const PROPOSITIONAL_LOGIC_DEMORGAN: Level[] = [
   {
-    name: 'Conjunction of Negations',
-    description: [
-      "In these four levels, you'll prove both De Morgan's laws (in both directions).",
-      "All nine base inference rules will be available, but you won't need them all for each level.\nIt's up to you to figure out which ones are useful for each level.",
-      "These levels are trickier than the previous ones.\nYou'll need to be comfortable with setting up negation introduction arguments.",
-      "Conjunction of negations into negation of disjunction: If you dislike both, then it's not true that you like one or the other.",
-    ],
-    rules: ALL_BASE_RULES,
-    propositions: [
-      and(not(lit("I like tea")), not(lit("I like coffee"))),
-    ],
-    target: not(or(lit("I like tea"), lit("I like coffee"))),
-    allowedPropositionTypes: BASE_TYPES,
-  },
-
-  {
     name: 'Negation of Disjunction',
     description: [
-      "Negation of disjunction into conjunction of negations: If it's not true that you like one or the other, then you dislike like both."
+      "In these two levels, you'll prove both De Morgan's laws.",
+      "All assumed inference rules seen so far will be available (but you probably won't need them all them).\nIt's up to you to figure out which ones are useful for each level.",
+      "These levels are much trickier than the previous ones!",
+      "This law is basically saying that \"it's not true that there's at least one you like\" is equivalent to \"You dislike both\".",
     ],
-    rules: ALL_BASE_RULES,
-    propositions: [
-      not(or(lit("I like tea"), lit("I like coffee"))),
-    ],
-    target: and(not(lit("I like tea")), not(lit("I like coffee"))),
-    allowedPropositionTypes: BASE_TYPES,
-  },
-
-  {
-    name: 'Disjunction of Negations',
-    description: [
-      "Disjunction of negations into negation of conjunction: If you dislike one or the other, then it's not true that you like both."
-    ],
-    rules: ALL_BASE_RULES,
-    propositions: [
-      or(not(lit("I like tea")), not(lit("I like coffee"))),
-    ],
-    target: not(and(lit("I like tea"), lit("I like coffee"))),
+    rules: ALL_RULES,
+    propositions: [],
+    target: iff(not(or("I like tea", "I like coffee")), and(not("I like tea"), not("I like coffee"))),
     allowedPropositionTypes: BASE_TYPES,
   },
 
   {
     name: 'Negation of Conjunction',
     description: [
-      "Negation of conjunction into disjunction of negations: If it's not true that you like both, then you dislike one or the other."
+      "This law is basically saying that \"it's not true that you like both\" is equivalent to \"there's at least one you dislike\".",
     ],
-    hints: [
-      "First try to get (I like tea) ∨ (¬(I like tea)) in your bank.\nIf you forgot how to do that, retry the Law of Excluded Middle level in the first propositional logic world.",
-      "Try to deduce \"(I like tea) → ¬(I like coffee)\".",
-    ],
-    rules: ALL_BASE_RULES,
-    propositions: [
-      not(and(lit("I like tea"), lit("I like coffee"))),
-    ],
-    target: or(not(lit("I like tea")), not(lit("I like coffee"))),
+    rules: ALL_RULES,
+    propositions: [],
+    target: iff(not(and("I like tea", "I like coffee")), or(not("I like tea"), not("I like coffee"))),
     allowedPropositionTypes: BASE_TYPES,
   },
   
@@ -101,9 +81,9 @@ const PROPOSITIONAL_LOGIC_DEMORGAN: Level[] = [
     name: 'World Complete!',
     description: [
       "That's it for De Morgan's laws!",
-      "Try out \"Propositional logic: Contradictions\" next for a more natural way to deal with negation introduction.",
+      "Try out first-order logic, to learn about terms, functions, and quantifiers.",
     ],
-    rules: ALL_BASE_RULES,
+    rules: ALL_RULES,
     propositions: [],
     target: lit("⊥"),
     allowedPropositionTypes: BASE_TYPES,

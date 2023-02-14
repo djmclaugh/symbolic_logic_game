@@ -4,6 +4,7 @@ import Negation, {not} from '../predicates/negation.js'
 import Conjunction, {and} from '../predicates/conjunction.js'
 import Disjunction, {or} from '../predicates/disjunction.js'
 import Conditional, {then} from '../predicates/conditional.js'
+import Biconditional, { iff } from '../predicates/biconditional.js'
 
 export const NegationIntroduction: InferenceRule = {
   name: "Negation (¬) Introduction",
@@ -60,7 +61,7 @@ export const NegationElimination: InferenceRule = {
   apply: (inputs: Input[]) => {
     let a = inputs[0] as Negation;
     let b = inputs[1] as Predicate;
-    return then(a.subPredicate, b);
+    return then(a.sub, b);
   },
 };
 
@@ -76,17 +77,17 @@ export const DoubleNegationElimination: InferenceRule = {
       return "Can only be applied to a single proposition at a time."
     }
     const p = propositions[0];
-    if (!(p instanceof Negation) || !(p.subPredicate instanceof Negation)) {
+    if (!(p instanceof Negation) || !(p.sub instanceof Negation)) {
       return "Can only be applied to propositions that start with ¬(¬(."
     }
     return "";
   },
   apply: (propositions: Input[]) => {
     const prop = propositions[0] as Negation;
-    const sub = prop.subPredicate as Negation;
-    return sub.subPredicate;
+    const sub = prop.sub as Negation;
+    return sub.sub;
   },
-}
+};
 
 export const ConjunctionIntroduction: InferenceRule = {
   name: "Conjunction (∧) Introduction",
@@ -105,7 +106,7 @@ export const ConjunctionIntroduction: InferenceRule = {
   apply: (propositions: Input[]) => {
     return and(propositions[0] as Predicate, propositions[1] as Predicate);
   },
-}
+};
 
 export const ConjunctionElimination: InferenceRule = {
   name: "Conjunction (∧) Elimination",
@@ -139,7 +140,7 @@ export const ConjunctionElimination: InferenceRule = {
     }
     throw new Error(`This should never happen: ${JSON.stringify(inputs)}`);
   },
-}
+};
 
 export const DisjunctionIntroduction: InferenceRule = {
   name: "Disjunction (∨) Introduction",
@@ -165,7 +166,7 @@ export const DisjunctionIntroduction: InferenceRule = {
     }
     throw new Error(`This should never happen: ${JSON.stringify(inputs)}`);
   },
-}
+};
 
 export const DisjunctionElimination: InferenceRule = {
   name: "Disjunction (∨) Elimination",
@@ -207,7 +208,7 @@ export const DisjunctionElimination: InferenceRule = {
     const p = inputs[1] as Conditional;
     return p.right;
   },
-}
+};
 
 export const ConditionalIntroduction: InferenceRule = {
   name: "Conditional (→) Introduction",
@@ -222,7 +223,7 @@ export const ConditionalIntroduction: InferenceRule = {
     if (inputs[0] === null || inputs[1] === null) {
       return "Antecedent and consequent must be chosen before working on proof.";
     } else {
-      return [[inputs[0] as Predicate], [], inputs[1] as Predicate];
+      return [[inputs[0] as Predicate], true, inputs[1] as Predicate];
     }
   },
   doesApply: (inputs: Input[]) => {
@@ -239,7 +240,7 @@ export const ConditionalIntroduction: InferenceRule = {
     const q = inputs[1] as Predicate;
     return then(p, q);
   },
-}
+};
 
 export const ConditionalElimination: InferenceRule = {
   name: "Conditional (→) Elimination",
@@ -267,4 +268,73 @@ export const ConditionalElimination: InferenceRule = {
     const p = inputs[0] as Conditional;
     return p.right;
   },
+};
+
+export const BiconditionalIntroduction: InferenceRule = {
+  name: "Biconditional (↔) Introduction",
+  inputDescriptions: [
+    "Conditional: An assumed/deduced proposition of the form (𝑃) → (𝑄)",
+    "Converse: An assumed/deduced proposition of the form (𝑄) → (𝑃)"
+  ],
+  outputDescription: "(𝑃) ↔ (𝑄)",
+  inputTypes: [InputType.BankProposition, InputType.BankProposition],
+  doesApply: (inputs: Input[]) => {
+    if (inputs.length != 2) {
+      return "Can only be applied to two propositions at a time.";
+    }
+    const c1 = inputs[0] as Predicate;
+    const c2 = inputs[1] as Predicate;
+    if (!(c1 instanceof Conditional)) {
+      return "Chosen conditional must have a \"→\" that isn't inside parentheses.";
+    }
+    if (!(c2 instanceof Conditional)) {
+      return "Chosen converse must have a \"→\" that isn't inside parentheses.";
+    }
+    if (!c1.left.equals(c2.right)) {
+      return "Left side of conditional must match right side of converse.";
+    }
+    if (!c1.right.equals(c2.left)) {
+      return "Right side of conditional must match left side of converse.";
+    }
+    return "";
+  },
+  apply: (inputs: Input[]) => {
+    const c = inputs[0] as Conditional;
+    return iff(c.left, c.right);
+  },
 }
+
+export const BiconditionalElimination: InferenceRule = {
+  name: "Biconditional (↔) Elimination",
+  inputDescriptions: [
+    "Biconditional: An assumed/deduced proposition of the form (𝐿) ↔ (𝑅)",
+    "Direction to Keep: Left or Right.",
+  ],
+  outputDescription: "(𝑅) → (𝐿) if \"Left\" was chosen. (𝐿) → (𝑅) if \"Right\" was chosen.",
+  inputTypes: [InputType.BankProposition, InputType.LeftRight],
+  doesApply: (inputs: Input[]) => {
+    if (inputs.length != 2) {
+      return "Can only be applied to one proposition and one side at a time.";
+    }
+    const p = inputs[0] as Predicate;
+    if (!(p instanceof Biconditional)) {
+      return "Chosen biconditional must have a \"↔\" that isn't inside parentheses.";
+    }
+    const d = inputs[1];
+    if (d != "Left" && d != "Right") {
+      return "Chosen side must be \"Left\" or \"Right\".";
+    }
+    return "";
+  },
+  apply: (inputs: Input[]) => {
+    const bc = inputs[0] as Biconditional;
+    const d = inputs[1];
+    if (d == "Left") {
+      return then(bc.right, bc.left);
+    } else if (d == "Right") {
+      return then(bc.left, bc.right);
+    }
+    throw new Error(`This should never happen: ${JSON.stringify(inputs)}`);
+  },
+}
+
