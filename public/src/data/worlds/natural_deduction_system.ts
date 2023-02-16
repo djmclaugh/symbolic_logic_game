@@ -613,6 +613,9 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
       not(lit('Pigs fly')),
     ],
     target: then(lit('Pigs fly'), lit("I'm the king of the world")),
+    allowedPropositionTypes: [
+      PropositionType.LITERAL,
+    ],
   },
 
   {
@@ -629,6 +632,9 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
       not(lit("I like apples")),
     ],
     target: lit("I like oranges"),
+    allowedPropositionTypes: [
+      PropositionType.LITERAL,
+    ],
   },
 
   {
@@ -646,6 +652,10 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
       not(lit("I like apples")),
     ],
     target: then(lit("I like apples"), lit("I like oranges")),
+    allowedPropositionTypes: [
+      PropositionType.LITERAL,
+      PropositionType.DISJUNCTION,
+    ],
   },
 
   {
@@ -661,6 +671,9 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
       not(lit("I like apples")),
     ],
     target: lit("Socrates loved oranges"),
+    allowedPropositionTypes: [
+      PropositionType.LITERAL,
+    ],
   },
 
   {
