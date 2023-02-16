@@ -654,7 +654,6 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
     target: then(lit("I like apples"), lit("I like oranges")),
     allowedPropositionTypes: [
       PropositionType.LITERAL,
-      PropositionType.DISJUNCTION,
     ],
   },
 
