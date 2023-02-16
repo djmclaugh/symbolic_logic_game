@@ -64,6 +64,6 @@ export function propositionTypeToString(t: PropositionType) {
     case PropositionType.NECESSITY:
       return "Necessity (□)";
     case PropositionType.POSSIBILITY:
-      return "Possibility (◊)";
+      return "Possibility (◇)";
   }
 }

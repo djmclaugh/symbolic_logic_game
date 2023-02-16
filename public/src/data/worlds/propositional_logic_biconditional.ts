@@ -197,7 +197,7 @@ const PROPOSITIONAL_LOGIC_BICONDITIONAL: Level[] = [
     ],
     rules: [
       BiconditionalIntroduction,
-      BiconditionalIntroduction,
+      BiconditionalElimination,
     ],
     propositions: [],
     target: lit("⊥"),

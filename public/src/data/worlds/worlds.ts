@@ -11,11 +11,11 @@ import MODAL from './modal_logic.js'
 export type World = { name: string, levels: Level[] };
 
 export const WORLDS: World[] = [
-  //{ name: "Modal Logic (Work in Progress)", levels: MODAL }, 
   { name: "Propositional Logic", levels: NDS },
   { name: "Propositional Logic: Biconditional", levels: BICONDITIONAL },
   { name: "Propositional Logic: Contradictions", levels: PROPOSITIONAL_LOGIC_CONTRADICTION },
   { name: "Propositional Logic: De Morgan's Laws", levels: PROPOSITIONAL_LOGIC_DEMORGAN },
+  { name: "Modal Logic (Work in Progress)", levels: MODAL }, 
   { name: "First-Order Logic", levels: FOL },
   { name: "First-Order Logic With Equality", levels: FOL_WITH_EQ },
   { name: "Robinson Arithmetic", levels: ROB },

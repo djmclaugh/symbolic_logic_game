@@ -58,7 +58,7 @@ const PROPOSITIONAL_LOGIC_DEMORGAN: Level[] = [
       "In these two levels, you'll prove both De Morgan's laws.",
       "All assumed inference rules seen so far will be available (but you probably won't need them all them).\nIt's up to you to figure out which ones are useful for each level.",
       "These levels are much trickier than the previous ones!",
-      "This law is basically saying that \"it's not true that there's at least one you like\" is equivalent to \"You dislike both\".",
+      "This law is basically saying that \"it's not true that there's at least one you like\" is equivalent to \"you dislike both\".",
     ],
     rules: ALL_RULES,
     propositions: [],

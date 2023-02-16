@@ -1,12 +1,13 @@
-import InferenceRule, {InputType, Input} from './inference_rule.js'
+import InferenceRule, { InputType, Input } from './inference_rule.js'
 import Predicate from '../predicates/predicate.js'
-import Negation, {not} from '../predicates/negation.js'
-import Conjunction, {and} from '../predicates/conjunction.js'
-import Disjunction, {or} from '../predicates/disjunction.js'
-import Conditional, {then} from '../predicates/conditional.js'
+import Negation, { not } from '../predicates/negation.js'
+import Conjunction, { and } from '../predicates/conjunction.js'
+import Disjunction, { or } from '../predicates/disjunction.js'
+import Conditional, { then } from '../predicates/conditional.js'
+import { iff } from '../predicates/biconditional.js'
 
 export const DoubleNegationIntroduction: InferenceRule = {
-  name: "Double Negation Introduction",
+  name: "Double Negation (¬) Introduction",
   inputDescriptions: ["Any proposition already in the bank, 𝑃."],
   outputDescription: "¬(¬(𝑃))",
   inputTypes: [InputType.BankProposition],
@@ -18,6 +19,23 @@ export const DoubleNegationIntroduction: InferenceRule = {
   },
   apply: (inputs: Input[]) => {
     return not(not(inputs[0] as Predicate));
+  },
+}
+
+export const DoubleNegationEquivalence: InferenceRule = {
+  name: "Double Negation Equivalence",
+  inputDescriptions: ["Any proposition whatsoever."],
+  outputDescription: "𝑃 ↔ ¬(¬(𝑃))",
+  inputTypes: [InputType.AnyProposition],
+  doesApply: (inputs: Input[]) => {
+    if (inputs.length != 1) {
+      return "Can only be applied to a single proposition at a time."
+    }
+    return "";
+  },
+  apply: (inputs: Input[]) => {
+    const p = inputs[0] as Predicate;
+    return iff(p, not(not(p)));
   },
 }
 
@@ -232,9 +250,26 @@ export const ConstructiveDelimma: InferenceRule = {
   },
 }
 
+export const LawOfNoncontradiction: InferenceRule = {
+  name: "Law Of Noncontradiction",
+  inputDescriptions: [ "Any proposition whatsoever"],
+  outputDescription: "¬((𝑃) ∧ ¬(𝑃))",
+  inputTypes: [InputType.AnyProposition],
+  doesApply: (inputs: Input[]) => {
+    if (inputs.length != 1) {
+      return "Can only be applied to one proposition and one side at a time.";
+    }
+    return "";
+  },
+  apply: (inputs: Input[]) => {
+    const p = inputs[0] as Predicate;
+    return not(and(p, not(p)));
+  },
+}
+
 export const LawOfExcludedMiddle: InferenceRule = {
   name: "Law Of Excluded Middle",
-  inputDescriptions: [ "Any proposition, 𝑃."],
+  inputDescriptions: [ "Any proposition whatsoever"],
   outputDescription: "(𝑃) ∨ ¬(𝑃)",
   inputTypes: [InputType.AnyProposition],
   doesApply: (inputs: Input[]) => {

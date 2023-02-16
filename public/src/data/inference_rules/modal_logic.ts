@@ -1,19 +1,74 @@
-import InferenceRule, {InputType, Input} from './inference_rule.js'
+import InferenceRule, { InputType, Input } from './inference_rule.js'
 import Predicate from '../predicates/predicate.js'
-import Negation, {not} from '../predicates/negation.js'
-import Conjunction, {and} from '../predicates/conjunction.js'
-import Disjunction, {or} from '../predicates/disjunction.js'
-import Conditional, {then} from '../predicates/conditional.js'
-import Necessity, {must} from '../predicates/box.js'
-import Possibility, {can} from '../predicates/diamond.js'
-import {lit} from '../predicates/literal.js'
+import Negation, { not } from '../predicates/negation.js'
+import Conjunction, { and } from '../predicates/conjunction.js'
+import Disjunction, { or } from '../predicates/disjunction.js'
+import Conditional, { then } from '../predicates/conditional.js'
+import { iff } from '../predicates/biconditional.js'
+import Necessity, { must } from '../predicates/box.js'
+import Possibility, { can } from '../predicates/diamond.js'
+
+export const NecessityEquivalence: InferenceRule = {
+  name: "Necessity Equivalence",
+  inputDescriptions: [
+    "Proposition 𝐴: Any proposition whatsoever",
+    "Proposition 𝐵: Any proposition whatsoever",
+    "Proof: Win the level with no assumptions and with (𝐴) ↔ (𝐵) as the target",
+  ],
+  outputDescription: "□(𝐴) ↔ □(𝐵)",
+  inputTypes: [InputType.AnyProposition, InputType.AnyProposition, InputType.Proof],
+  proofInfo: (inputs: (Input|null)[]) => {
+    if (inputs[0] === null || inputs[1] === null) {
+      return "Both propositions must be chosen before working on proof.";
+    } else {
+      return [[], false, iff(inputs[0] as Predicate, inputs[1] as Predicate)];
+    }
+  },
+  doesApply: (inputs: Input[]) => {
+    if (inputs[2] != "done") {
+      return "Proof not completed."
+    }
+    return "";
+  },
+  apply: (inputs: Input[]) => {
+    return iff(must(inputs[0] as Predicate), must(inputs[1] as Predicate));
+  },
+}
+
+export const PossibilityEquivalence: InferenceRule = {
+  name: "Possibility Equivalence",
+  inputDescriptions: [
+    "Proposition 𝐴: Any proposition whatsoever",
+    "Proposition 𝐵: Any proposition whatsoever",
+    "Proof: Win the level with no assumptions and with (𝐴) ↔ (𝐵) as the target",
+  ],
+  outputDescription: "◊(𝐴) ↔ ◊(𝐵)",
+  inputTypes: [InputType.AnyProposition, InputType.AnyProposition, InputType.Proof],
+  proofInfo: (inputs: (Input|null)[]) => {
+    if (inputs[0] === null || inputs[1] === null) {
+      return "Both propositions must be chosen before working on proof.";
+    } else {
+      return [[], false, iff(inputs[0] as Predicate, inputs[1] as Predicate)];
+    }
+  },
+  doesApply: (inputs: Input[]) => {
+    if (inputs[2] != "done") {
+      return "Proof not completed."
+    }
+    return "";
+  },
+  apply: (inputs: Input[]) => {
+    return iff(can(inputs[0] as Predicate), can(inputs[1] as Predicate));
+  },
+}
+
 
 
 export const Necessitation: InferenceRule = {
   name: "Necessitation (N)",
   inputDescriptions: [
     "Tautology: Any proposition whatsoever",
-    "Proof: Win the level with no assumptions and the chosen tautology as the target",
+    "Proof: Win the level with no assumptions and with the chosen tautology as the target",
   ],
   outputDescription: "□(𝑃)",
   inputTypes: [InputType.AnyProposition, InputType.Proof],
@@ -62,26 +117,48 @@ export const Distribution: InferenceRule = {
   },
 }
 
-export const NecessityDuality: InferenceRule = {
-  name: "Necessity Duality (□ into ◊)",
+export const Duality: InferenceRule = {
+  name: "Duality",
   inputDescriptions: [
-    "Necessity: An assumed/deduced proposition of the form □(𝑃))",
+    "An assumed/deduced proposition of the form ¬(□(𝑃)), ◇(¬(𝑃)), ¬(◇(𝑃)), or □(¬(𝑃))",
   ],
-  outputDescription: "¬(◊(¬(𝑃)))",
+  outputDescription: "The dual of the chosen proposition.",
   inputTypes: [InputType.BankProposition],
   doesApply: (inputs: Input[]) => {
     if (inputs.length != 1) {
       return "Can only be applied to one proposition at a time.";
     }
     const p = inputs[0] as Predicate;
-    if (!(p instanceof Necessity)) {
-      return "Chosen necessity must start with \"□\".";
+    if ((p instanceof Necessity) || (p instanceof Possibility)) {
+      if (p.sub instanceof Negation) {
+        return "";
+      }
     }
-    return "";
+    if (p instanceof Negation) {
+      if ((p.sub instanceof Necessity) || (p.sub instanceof Possibility)) {
+        return "";
+      }
+    }
+    return "Chosen proposition must be of the form, ¬(□(𝑃)), ◇(¬(𝑃)), ¬(◇(𝑃)), or □(¬(𝑃))";
   },
   apply: (inputs: Input[]) => {
-    const p = inputs[0] as Necessity;
-    return not(can(not(p.sub)));
+    const p = inputs[0] as Necessity|Possibility|Negation;
+    if (p instanceof Necessity) {
+      const n = p.sub as Negation;
+      return not(can(n.sub));
+    }
+    if (p instanceof Possibility) {
+      const n = p.sub as Negation;
+      return not(must(n.sub));
+    }
+    const modal = p.sub;
+    if (modal instanceof Necessity) {
+      return can(not(modal.sub));
+    }
+    if (modal instanceof Possibility) {
+      return must(not(modal.sub));
+    }
+    throw new Error("This should never happen");
   },
 }
 

@@ -46,7 +46,7 @@ const BASE_TYPES = [
 
 const PROPOSITIONAL_LOGIC_CONTRADICTION: Level[] = [
   {
-    name: 'Rule #1: Formal Contradiction',
+    name: 'New Rule: Formal Contradiction',
     description: [
       "Setting up negation introduction arguments can be a bit complicated and tedious.\nYou first need to figure out which contradiciton you're going to expose and then set up two conditional propositions using conditional introduction.",
       "That's why in practice we instead use the concept of formal contradictions (as opposed to contradicting conditionals).",
@@ -84,7 +84,7 @@ const PROPOSITIONAL_LOGIC_CONTRADICTION: Level[] = [
   },
   
   {
-    name: 'Rule #2: Proof of Negation',
+    name: 'New Rule: Proof of Negation',
     description: [
       "Usually, to deduce the negation of a proposition, we need two contradictory conditional statments with that proposition as the antecedent.\nThis usually involves using conditional introduction twice, which involves clearing two sublevels.",
       "Instead we can use the proof of negation rule of inference.\nTo deduce the negation of a proposition, you just have to prove that the proposition leads to a formal contradiction. You just need to clear one sublevel.",
@@ -146,68 +146,7 @@ const PROPOSITIONAL_LOGIC_CONTRADICTION: Level[] = [
   },
 
   {
-    name: 'Conjunction of Negations',
-    description: [
-      "If you want to use negation introduction to prove the target, you need to know which contradiciton you want to expose ahead of time.\nBut if you use proof of negation, you can get started right away.\nYou can set the proposition to \"(I like tea) ∨ (I like coffee)\" and figure out the contradiciton along the way.",
-    ],
-    rules: [
-      ConjunctionElimination,
-      ConditionalIntroduction,
-      DisjunctionElimination,
-      NegationElimination,
-      NegationIntroduction,
-      DetectContradiction,
-      ProofOfNegation,
-    ],
-    propositions: [
-      and(not(lit("I like tea")), not(lit("I like coffee"))),
-    ],
-    target: not(or(lit("I like tea"), lit("I like coffee"))),
-    allowedPropositionTypes: BASE_TYPES,
-  },
-
-  {
-    name: 'Negation of Disjunction',
-    description: [
-      "Negation of disjunction into conjunction of negations: If it's not true that you like one or the other, then you dislike like both.",
-      "Try using proof of negation to prove both ¬(I like tea) and ¬(I like coffee) individually.",
-    ],
-    rules: [
-      ConjunctionIntroduction,
-      DisjunctionIntroduction,
-      DetectContradiction,
-      ProofOfNegation,
-    ],
-    propositions: [
-      not(or(lit("I like tea"), lit("I like coffee"))),
-    ],
-    target: and(not(lit("I like tea")), not(lit("I like coffee"))),
-    allowedPropositionTypes: BASE_TYPES,
-  },
-
-  
-  {
-    name: 'Disjunction of Negations',
-    description: [
-      "Disjunction of negations into negation of conjunction: If you dislike one or the other, then it's not true that you like both."
-    ],
-    rules: [
-      ConjunctionElimination,
-      ConditionalIntroduction,
-      DisjunctionElimination,
-      DetectContradiction,
-      ProofOfNegation,
-    ],
-    propositions: [
-      or(not(lit("I like tea")), not(lit("I like coffee"))),
-    ],
-    target: not(and(lit("I like tea"), lit("I like coffee"))),
-    allowedPropositionTypes: BASE_TYPES,
-  },
-
-
-  {
-    name: 'Rule #3: Proof by Contradiction',
+    name: 'New Rule: Proof by Contradiction',
     description: [
       "Proof of Negation: If by assuming 𝑃 we get a contradiction, then we can deduce ¬(𝑃)",
       "Proof by Contradiction: If by assuming ¬(𝑃) we get a contradiction, then we can deduce 𝑃",
@@ -259,33 +198,11 @@ const PROPOSITIONAL_LOGIC_CONTRADICTION: Level[] = [
   },
   
   {
-    name: 'Negation of Conjunction',
-    description: [
-      "Negation of conjunction into disjunction of negations: If it's not true that you like both, then you dislike one or the other."
-    ],
-    hints: [
-      "Start off with a proof by contradiction with \"(¬(I like tea)) ∨ (¬(I like coffee))\" as your proposition.",
-      "Within your proof by contradiction, start another proof by contradiction to deduce \"I like tea\". Do the same to deduce \"I like coffee\".",
-      "Once you have \"I like tea\" and \"I like coffe\", combine them with conjunction introduciton and notice the contradiction with \"¬((I like tea) ∧ (I like coffee))\".",
-    ],
-    rules: [
-      ConjunctionIntroduction,
-      DisjunctionIntroduction,
-      DetectContradiction,
-      ProofByContradiction,
-    ],
-    propositions: [
-      not(and(lit("I like tea"), lit("I like coffee"))),
-    ],
-    target: or(not(lit("I like tea")), not(lit("I like coffee"))),
-    allowedPropositionTypes: BASE_TYPES,
-  },
-  
-  {
     name: 'World Complete!',
     description: [
       "That's it for formal contradictions!",
-      "Try out first-order logic next to learn about terms, functions, and quantifiers",
+      "If you want a challenge, try out De Morgan's laws.",
+      "If you want to learn about terms, functions, and quantifiers, try out first-order logic.",
     ],
     rules: [
       DetectContradiction,
