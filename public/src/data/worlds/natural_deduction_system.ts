@@ -560,6 +560,10 @@ const NATURAL_DEDUCTION_SYSTEM: Level[] = [
       then(lit("This sentence is a lie"), not(lit("This sentence is a lie"))),
     ],
     target: not(lit("This sentence is a lie")),
+    allowedPropositionTypes: [
+      PropositionType.LITERAL,
+      PropositionType.NEGATION,
+    ],
   },
   
   {
