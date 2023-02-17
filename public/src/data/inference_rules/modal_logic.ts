@@ -185,8 +185,8 @@ export const PossibilityDuality: InferenceRule = {
   },
 }
 
-export const SerialAxiom: InferenceRule = {
-  name: "Seriality (D)",
+export const DeonticAxiom: InferenceRule = {
+  name: "Deontic Axiom (D)",
   inputDescriptions: [
     "Necessity: Any assumed/deduced proposition of the form □(𝑃)",
   ],
@@ -209,7 +209,7 @@ export const SerialAxiom: InferenceRule = {
 };
 
 export const ReflexiveAxiom: InferenceRule = {
-  name: "Relfexivity (T)",
+  name: "T",
   inputDescriptions: [
     "Necessity: Any assumed/deduced proposition of the form □(𝑃)",
   ],

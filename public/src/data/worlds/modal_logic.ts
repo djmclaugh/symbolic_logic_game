@@ -34,6 +34,8 @@ import {
   Necessitation,
   Distribution,
   Duality,
+  DeonticAxiom,
+  ReflexiveAxiom,
 } from '../inference_rules/modal_logic.js'
 
 import { lit } from '../predicates/literal.js'
@@ -99,7 +101,7 @@ const MODAL_LOGIC: Level[] = [
       "However, there's one inference rule that practically every modal logic has.\nIf 𝑃 and 𝑄 are logically equivalent propositions, then you can deduce that □(𝑃) and □(𝑄) are also equivalent.\nIn other words, if you can show that 𝑃 ↔ 𝑄 is a tautology, then you can deduce □(𝑃) ↔ □(𝑄).", 
     ],
     hints: [
-      "The beat this level, use necessity equivalence with (I am polite) ∧ (I am courteous) as proposition 𝐴 and (I am courteous) ∧ (I am polite) as propoosition 𝐵.",
+      "Use necessity equivalence with (I am polite) ∧ (I am courteous) as proposition 𝐴 and (I am courteous) ∧ (I am polite) as propoosition 𝐵.",
     ],
     rules: [
       ConjunctionCommutation,
@@ -213,8 +215,12 @@ const MODAL_LOGIC: Level[] = [
     description: [
       "Another rule that's practically always accepted is distribution (sometimes called the Kripke schema or just K).",
       "It says that if you have □((𝑃) → (𝑄)), then you can deduce (□(𝑃)) → (□(𝑄)).\nIn other words, you can distribute the □ symbol inside a conditional.",
-      "Any modal logic that has the necessitation and distribution rules is called a normal modal logics.",
+      "Any modal logic that has the necessitation and distribution rules is called a normal modal logic.",
       "Using the necessitation and distribution rules, you can derive the equivalence rule we saw earlier.",
+    ],
+    hints: [
+      "Using necessitation, deduce □((it will rain) → (¬(¬(it will rain)))) and □((¬(¬(it will rain))) → (it will rain)) individually.",
+      "Use distribution on both these necessary conditionals, then combine them with biconditional introduction.",
     ],
     rules: [
       DoubleNegationEquivalence,
@@ -231,6 +237,74 @@ const MODAL_LOGIC: Level[] = [
       PropositionType.NEGATION,
     ],
   },
+
+  {
+    name: 'Deontic Axiom',
+    description: [
+      "The deontic axiom says that if you have □(𝑃), then you can deduce ◇(𝑃).\nIf something is necessary, then it's possible.",
+      "All the previous rules arguably applied to all natural concepts of necessity/possibility.\nBut this rule arguably doesn't always apply to the everyday meaning of necessity/possibility.\nFor example, if you have a very unreasonable boss, they might tell you that you need to have your report done by yesterday even though it's not possible to time travel.",
+      "That being said, this situation is only possible if your concept of necessity is \"unreasonable\".\nIf your goal is to explore whether or not your concept of necessity is \"reasonable\", then don't assume the deontic axiom and see if you can deduce such a situation.\nBut if your goal is to work with a \"reasonable\" concept of necessity, then you probably want the deontic axiom (in some form or another).",
+      "This rule is called the deontic axiom or just D because it is highly associated with deontic logic.\nMost other modal logics instead use a stronger version of this axiom that we'll see later.",
+    ],
+    rules: [
+      Duality,
+      DeonticAxiom,
+    ],
+    propositions: [
+      not(can("it will rain"))
+    ],
+    target: can(not("it will rain")),
+    allowedPropositionTypes: [
+      PropositionType.LITERAL,
+      PropositionType.POSSIBILITY,
+    ],
+  },
+
+  {
+    name: 'Deontic Axiom Practice',
+    description: [
+      "If it must rain, then it can't be necessary that it won't rain.",
+    ],
+    rules: [
+      DetectContradiction,
+      ProofOfNegation,
+      Duality,
+      DeonticAxiom,
+    ],
+    propositions: [
+      must("it will rain"),
+    ],
+    target: not(must(not("it will rain"))),
+    allowedPropositionTypes: [
+      PropositionType.LITERAL,
+      PropositionType.NEGATION,
+      PropositionType.NECESSITY,
+    ],
+  },
+
+  {
+    name: 'T Axiom',
+    description: [
+      "The T axiom says that if you have □(𝑃), then you can deduce 𝑃.\nIf something is necessary, then it's also the case.\nAs you'll show in this level, this is an upgraded version of the deontic axiom (in the sense that you can deduce the deontic axiom by assuming axiom T).",
+      "This rule is intuitive for must concepts of necessity, but it doesn't really hold for deontic necessity.\nEven though it could be argued that it's morally required to be honest, that doesn't mean that people are honest.",
+      "That's why deontic logic sticks with the deontic axiom instead of accepting T.",
+    ],
+    rules: [
+      DetectContradiction,
+      ProofByContradiction,
+      Duality,
+      ReflexiveAxiom,
+    ],
+    propositions: [
+      must("it will rain")
+    ],
+    target: can("it will rain"),
+    allowedPropositionTypes: [
+      PropositionType.LITERAL,
+      PropositionType.POSSIBILITY,
+    ],
+  },
+
 
 
   {
